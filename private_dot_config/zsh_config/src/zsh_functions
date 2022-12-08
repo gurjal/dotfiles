@@ -1,0 +1,214 @@
+# key bindings
+bindkey -M viins "^f" _seek_dir
+bindkey -M viins "^v" _seek_file
+bindkey -M viins "^[f" _seek_hidden_dir
+bindkey -M viins "^[v" _seek_hidden_file
+bindkey -M viins "^g" _seek_file_and_open
+bindkey -M viins "^p" _seek_proc_by_cpu
+bindkey -M viins "^[p" _seek_proc_by_mem
+bindkey -M viins "^e" _seek_env_vars
+bindkey -M viins "^k" _seek_kill_process
+bindkey -M viins "^r" _seek_history
+bindkey -M viins "^[m" _quick_mount
+# bindkey -M viins -s "^[c" "bc -l <<<"
+bindkey -M viins -s "^n" " neofetch\n"
+
+# fzf gui height
+local FZF_HEIGHT=60%
+
+# search for file with fzf
+#   if input is empty, open file in nvim
+#   if input is not empty, return path of file
+function _seek_file()
+{
+  if [[ -z $BUFFER ]]; then
+    local file=$(
+      fd -E .git -t f | fzf --height=$FZF_HEIGHT \
+        --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+        --bind 'ctrl-l:change-preview-window(right,70%|right)'
+    )
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER="$EDITOR '$file'"
+    zle accept-line
+  else
+    local file=$(fd -E .git -t f | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER+="'$file'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_file
+
+# search for hidden file with fzf
+#   if input is empty, open hidden file in nvim
+#   if input is not empty, return path of hidden file
+function _seek_hidden_file()
+{
+  if [[ -z $BUFFER ]]; then
+      # fd -E .git -t f -H | rg "\./\." | fzf --height=$FZF_HEIGHT \
+    local file=$(
+      fd -E .git -t f -H | fzf --height=$FZF_HEIGHT \
+        --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+        --bind 'ctrl-l:change-preview-window(right,70%|right)'
+    )
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER="$EDITOR '$file'"
+    zle accept-line
+  else
+    # local file=$(fd -E .git -t f -H | rg "\./\." | fzf --height=$FZF_HEIGHT)
+    local file=$(fd -E .git -t f -H | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER+="'$file'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_hidden_file
+
+# search for directory with fzf
+#   if input is empty, cd into directory
+#   if input is not empty, return path of directory
+function _seek_dir()
+{
+  if [[ -z $BUFFER ]]; then
+    local dir=$(fd -t d | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER="cd '$dir'"
+    zle accept-line
+  else
+    local dir=$(fd -t d | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER+="'$dir'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_dir
+
+# search for hidden directory with fzf
+#   if input is empty, cd into directory
+#   if input is not empty, return path of directory
+function _seek_hidden_dir()
+{
+  if [[ -z $BUFFER ]]; then
+    # local dir=$(fd -t d -H | rg "\./\." | fzf --height=$FZF_HEIGHT)
+    local dir=$(fd -t d -H | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER="cd '$dir'"
+    zle accept-line
+  else
+    # local dir=$(fd -t d -H | rg "\./\." | fzf --height=$FZF_HEIGHT)
+    local dir=$(fd -t d -H | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER+="'$dir'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_hidden_dir
+
+# open file with xdg-open
+function _seek_file_and_open()
+{
+  local file=$(fd -E .git -t f | fzf --height=$FZF_HEIGHT)
+  zle reset-prompt
+  [[ -z "$file" ]] && return
+  xdg-open "$file"
+}
+zle -N _seek_file_and_open
+
+# display and search 'ps -aux' sorted by cpu usage
+function _seek_proc_by_cpu()
+{
+  local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' \
+    | fzf --no-sort --tac --reverse \
+      --header='id      user    cpu mem start time command')
+  zle reset-prompt
+  [[ -z "$proc" ]] && return
+  echo "$proc"
+}
+zle -N _seek_proc_by_cpu
+
+# display and search 'ps -aux' sorted by cpu usage
+function _seek_proc_by_mem()
+{
+  local proc=$(ps axuk %mem | awk '{print $2"\t"$1"\t"$4" "$3" "$9" "$10" "$11}' \
+    | fzf --no-sort --tac --reverse \
+      --header='id      user    mem cpu start time command')
+  zle reset-prompt
+  [[ -z "$proc" ]] && return
+  echo "$proc"
+}
+zle -N _seek_proc_by_mem
+
+function _seek_env_vars()
+{
+  local env_var=$(env | fzf --tac --reverse)
+  zle reset-prompt
+  [[ -z $env_var ]] && return
+  if [[ -z $BUFFER ]]; then
+    echo $env_var
+  else
+    BUFFER+=$env_var
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_env_vars
+
+function _seek_kill_process()
+{
+  local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' \
+    | fzf --no-sort --tac --reverse \
+      --header='id      user    cpu mem start time command' | awk '{print $1}')
+  zle reset-prompt
+  [[ -z "$proc" ]] && return
+  sudo kill "$proc"
+}
+zle -N _seek_kill_process
+
+function _seek_history()
+{
+  local cmd=$(cat "$HISTFILE" \
+    | fzf --tac --no-sort --height=$FZF_HEIGHT)
+  zle reset-prompt
+  [[ -z $cmd ]] && return
+  zle push-input
+  BUFFER=$cmd
+  zle vi-end-of-line
+}
+zle -N _seek_history
+
+export mnt="$HOME/.mnt"
+function _quick_mount()
+{
+  [[ ! -d "$mnt" ]] && mkdir "$mnt"
+  for m in $(lsblk | tail +2 | awk -F ' ' '{print $7}'); do
+    if [[ $m = "$mnt" ]]; then
+      mntdev=$(findmnt $mnt | tail -1 | cut -d' ' -f2)
+      echo -n "unmount $mntdev? y/N "
+      read -r -k1 yn
+      zle reset-prompt
+      [[ $yn == 'y' ]] && BUFFER="sudo umount '$mnt'" && zle accept-line
+      return
+    fi
+  done
+  lsblk
+  local dev=$(fd . '/dev/' | fzf --height=$FZF_HEIGHT)
+  zle reset-prompt
+  [[ -z "$dev" ]] && return
+  BUFFER="sudo mount '$dev' $mnt"
+  zle accept-line
+}
+zle -N _quick_mount
+
+# run updatedb before locate
+function locat()
+{
+  sudo updatedb
+  locate $1
+}

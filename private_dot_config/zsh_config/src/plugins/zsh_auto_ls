@@ -1,0 +1,10 @@
+auto-ls() {
+
+    if [ -z $BUFFER ]; then
+      BUFFER=" ls"
+    fi
+    zle accept-line
+}
+zle -N auto-ls
+# rebind 'enter'
+bindkey '^M' auto-ls

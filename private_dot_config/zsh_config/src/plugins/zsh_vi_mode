@@ -1,0 +1,39 @@
+# use beam shape cursor on startup
+echo -ne '\e[5 q'
+
+# initialize new line in insert mode
+function zle-line-init() {
+  zle -K viins
+  echo -ne '\e[5 q'
+}
+zle -N zle-line-init
+
+# set cursor when swithcing keymaps
+function zle-keymap-select () {
+  if [ $KEYMAP = vicmd ]; then
+    echo -ne '\e[1 q' # block
+  else
+    echo -ne '\e[5 q' # beam
+  fi
+}
+zle -N zle-keymap-select
+
+# predraw cursor based on vi mode
+function zle-line-pre-redraw() {
+  if [ $KEYMAP = vicmd ]; then
+    echo -ne '\e[1 q' # block
+  else
+    echo -ne '\e[5 q' # beam
+  fi
+}
+zle -N zle-line-pre-redraw
+
+# kj esc sequence
+bindkey 'jk' vi-cmd-mode
+bindkey 'kj' vi-cmd-mode
+
+# backspace fix
+bindkey "^?" backward-delete-char
+bindkey "^W" backward-kill-word
+bindkey "^H" backward-delete-char      # Control-h also deletes the previous char
+bindkey "^U" backward-kill-line

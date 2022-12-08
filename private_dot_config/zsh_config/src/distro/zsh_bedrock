@@ -1,0 +1,11 @@
+alias _uvoidmusl="strat -r void-musl"
+alias _svoidmusl="sudo strat -r void-musl"
+
+alias _uvoid="strat -r void"
+alias _svoid="sudo strat -r void"
+alias _xi="strat -r void xi"
+alias _xs="strat -r void xbps-query -s"
+alias _xr="sudo strat -r void xbps-remove -R"
+
+alias _ufedora="strat -r fedora"
+alias _sfedora="sudo strat -r fedora"

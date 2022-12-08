@@ -1,0 +1,31 @@
+# Load version control information
+
+autoload -Uz vcs_info
+
+# Format the vcs_info_msg_0_ variable
+zstyle ':vcs_info:git:*' formats '(%b) '
+
+alias ,="git"
+alias ,s="git status -sb ."
+alias ,status="git status"
+alias ,l="git log --oneline --graph --decorate -10"
+alias ,lo="git log --oneline --graph --decorate"
+alias ,log="git log"
+alias ,ls="git ls-files -tco"
+alias ,b="git branch"
+alias ,sb="git show-branch"
+alias ,a="git add"
+alias ,ch="git checkout"
+alias ,fetch="git fetch"
+alias ,pull="git pull"
+alias ,push="git push"
+alias ,commit="git commit"
+alias ,merge="git merge"
+alias ,apply="git apply"
+alias ,remote="git remote"
+alias ,reset="git reset"
+alias ,restore="git restore"
+alias ,rm="git rm"
+alias ,mv="git mv"
+alias ,diff="git diff"
+alias ,clone="git clone"

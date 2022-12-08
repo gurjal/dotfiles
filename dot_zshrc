@@ -1,0 +1,2 @@
+[[ ! -o interactive ]] && return
+source "$ZSH_BIN/zsh_init"

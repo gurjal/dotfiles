@@ -1,0 +1,41 @@
+# sv
+alias sv="sudo sv"
+alias reboot="sudo reboot"
+alias poweroff="sudo poweroff"
+function svls()
+{
+    for service in $(ls "/var/service"); do
+        printf "$(sv check $service)"
+        log_status=$(sv status $service | rg ';' | cut -d ';' -f 2-)
+        if [[ ! -z "$log_status" ]]; then
+            printf ";$log_status\n"
+        else
+            printf "\n"
+        fi
+    done
+}
+
+# xbps
+alias xs="xbps-query -s"
+alias xr="sudo xbps-remove -R"
+function xilogm()
+{
+    [[ "$1" = "-h" ]] && echo "usage: xilogm [-qh]" && return
+    pkgs=""
+    for p in $(xbps-query -m | xargs -n1 xbps-uhelper getpkgname); do
+        pkgs+="\n$(xbps-query -p install-date $p) $p"
+    done
+    [[ "$1" = "-q" ]] && echo $pkgs | sort -k1 | cut -d' ' -f4 && return
+    echo $pkgs | sort -k1
+}
+
+# full update
+function xu()
+{
+    sudo printf "\n  running 'xbps-install -Su'...\n\n" && sudo xbps-install -Su \
+        && printf "\n  running 'updatedb'...\n\n" && sudo updatedb \
+        && printf "\n  running 'xlocate -S'...\n\n" && xlocate -S \
+        && printf "\n  running 'tldr --update'...\n\n" && tldr --update \
+        && printf "\n  running 'nix-channel --update'...\n\n" && nix-channel --update \
+        && printf "\n  running 'nix-env -u'...\n\n" && nix-env -u
+}
