@@ -8,6 +8,7 @@ build:
 		&& mv src/*.zwc bin
 	zsh -c "zcompile src/plugins/zsh_vi_mode" \
 		&& zsh -c "zcompile src/plugins/zsh_git" \
+		&& zsh -c "zcompile src/plugins/zsh_chezmoi" \
 		&& zsh -c "zcompile src/plugins/zsh_nnn" \
 		&& mv src/plugins/*.zwc bin
 	zsh -c "zcompile src/distro/zsh_ubuntu" \
