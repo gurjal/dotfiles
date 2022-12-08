@@ -1,0 +1,4 @@
+encryption = "age"
+[age]
+identity = "/home/gurjal/.keys/chezmoi.txt"
+recipient = "age1n59r2xx7wg5zu0kvc40fccz2n3668n0d5zr7f3u9whsv3ekwtauqjsp9rg"
