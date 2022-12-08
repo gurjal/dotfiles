@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo >>/etc/fstab
+cat /proc/mounts >>/etc/fstab
+vi /etc/fstab

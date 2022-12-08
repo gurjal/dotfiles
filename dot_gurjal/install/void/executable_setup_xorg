@@ -1,0 +1,47 @@
+#!/bin/bash
+
+source "./config"
+
+if [[ "$UID" -eq "$ROOT_UID" ]]; then
+    echo "run as user"
+    exit
+fi
+
+# tools
+sudo xbps-install -S base-devel xtools --yes
+xlocate -S
+
+# xorg
+sudo xbps-install -S xorg-minimal xrandr --yes
+
+# intel i915 video acceleration
+sudo xbps-install -S mesa-dri mesa-vulkan-intel intel-video-accel --yes
+
+# xorg config
+[[ ! -d "/usr/share/X11/xorg.conf.d/" ]] \
+    && sudo mkdir -p "/usr/share/X11/xorg.conf.d/"
+[[ ! -f "/usr/share/X11/xorg.conf.d/00-display.conf" ]] \
+    && sudo cp "$_CONFIG_PATH/xorg.conf.d/intel_dri/00-display.conf" "/usr/share/X11/xorg.conf.d/" \
+    && sudo chmod 644 "/usr/share/X11/xorg.conf.d/00-display.conf"
+
+# pipewire
+sudo xbps-install -S pipewire libjack-pipewire wireplumber --yes
+sudo xbps-install -S pulsemixer --yes
+sudo mkdir "/etc/pipewire"
+sudo cp "/usr/share/pipewire/pipewire.conf" "/etc/pipewire/"
+
+# fonts
+sudo xbps-install -S noto-fonts-ttf noto-fonts-cjk noto-fonts-emoji --yes
+sudo xbps-install -S nerd-fonts-ttf --yes
+
+# devel packages
+sudo xbps-install -S libX11-devel libXft-devel libXinerama-devel harfbuzz-devel --yes
+
+# home dirs
+sudo xbps-install -S xdg-user-dirs --yes
+
+# todo
+echo
+echo "done"
+echo
+echo "comment out pipewire-media-session in /etc/pipewire/pipewire.conf"

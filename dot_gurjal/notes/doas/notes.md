@@ -1,0 +1,2 @@
+# doas
+    /etc/doas.conf

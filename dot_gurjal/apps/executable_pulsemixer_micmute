@@ -1,0 +1,3 @@
+#!/bin/sh
+source_id=$(pulsemixer --list-sources | grep Default | cut -f3 | cut -d',' -f1 | cut -d' ' -f3)
+pulsemixer --toggle-mute --id "$source_id"

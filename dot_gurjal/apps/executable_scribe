@@ -1,0 +1,57 @@
+#!/bin/bash
+
+declare -A _VOL_PATH
+_VOL_PATH[root]="/"
+_VOL_PATH[home]="/home"
+_SNAPSHOTS_DIR="/.snapshots"
+
+function help()
+{
+    echo 'usage: backup [options] [subvolumes]'
+    echo 'options:'
+    echo '  -a, --all       snapshot all subvolumes'
+    echo '  -l, --list      list snapshots'
+    echo '  -h, --help      help'
+    exit
+}
+
+function list()
+{
+    for key in "${!_VOL_PATH[@]}"; do
+        echo "$key:"
+        for s in $(ls -r "$_SNAPSHOTS_DIR" | grep "$key"); do
+            echo "  $s"
+        done
+    done
+    exit
+}
+
+volumes=""
+if [ -z "$1" ]; then
+    list
+else
+    while [ -n "$1" ]; do
+        case $1 in
+        -h | --help)
+            help
+            ;;
+        -l | --list)
+            list
+            ;;
+        -a | --all)
+            for key in "${!_VOL_PATH[@]}"; do
+                volumes+="$key "
+            done
+            ;;
+        root | home)
+            volumes+="$1 "
+            ;;
+        esac
+        shift
+    done
+fi
+
+stamp=$(date +%F_%H%M%S)
+for vol in $volumes; do
+    sudo btrfs subvolume snapshot "${_VOL_PATH[$vol]}" "$_SNAPSHOTS_DIR"/"$vol"_"$stamp"
+done

@@ -1,0 +1,80 @@
+#!/bin/bash
+
+source "./config"
+
+if [[ "$UID" -eq "$ROOT_UID" ]]; then
+    echo "run as user"
+    exit
+fi
+
+# zsh
+sudo xbps-install -S zsh zsh-completions --yes
+sudo xbps-install -S zoxide --yes
+
+# xdg-open
+sudo xbps-install -S xdg-utils --yes
+
+# term apps
+sudo xbps-install -S fzf bat fd ripgrep --yes
+sudo xbps-install -S wget --yes
+sudo xbps-install -S htop --yes
+sudo xbps-install -S neofetch --yes
+
+# audio mixer
+sudo xbps-install -S pulsemixer --yes
+
+# notifications
+sudo xbps-install -S dunst --yes
+
+# compositor
+sudo xbps-install -S picom --yes
+
+# screen brightness
+sudo xbps-install -S light --yes
+sudo usermod "$USER" -aG video
+
+# hide cursor
+sudo xbps-install -S xbanish --yes
+
+# set_bg
+sudo xbps-install -S xwallpaper --yes
+
+# dj
+sudo xbps-install -S mpv yt-dlp streamlink --yes
+
+# screenshot
+sudo xbps-install -S maim --yes
+
+# nsxiv
+sudo xbps-install -S nsxiv xrdb --yes
+
+# pdf
+sudo xbps-install -S zathura zathura-pdf-poppler --yes
+
+# tldr
+sudo xbps-install -S tealdeer --yes
+
+# locate
+sudo xbps-install -S plocate --yes
+
+# update
+tldr --update
+sudo updatedb
+
+# dirs
+mkdir -p "$HOME/.local/bin"
+mkdir -p "$HOME/.local/share/gnupg"
+mkdir -p "$HOME/.local/share/go"
+
+# apps
+cd "$HOME/.gurjal/apps"
+make
+cd "$HOME/.gurjal/links"
+make
+
+# nvim
+sudo xbps-install -S neovim --yes
+sudo xbps-install -S xclip --yes
+[ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
+cd "$HOME/.config/" 
+git clone "https://github.com/gurjal/nvim.git"

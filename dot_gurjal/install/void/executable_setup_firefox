@@ -1,0 +1,10 @@
+#!/bin/bash
+
+gui_dir="$HOME/Source/gui"
+firefox_dir=$(dirname $(fd -H prefs.js $HOME/.mozilla | head -1))
+
+sed -i "s+firefox_dir=.*+firefox_dir=\"$firefox_dir\"+g" $gui_dir/set_theme
+
+[ ! -d "$firefox_dir/chrome" ] && mkdir "$firefox_dir/chrome"
+[ ! -f "$firefox_dir/chrome/userChrome.css" ] \
+    && cp "$gui_dir/.config/firefox/userChrome.css" "$firefox_dir/chrome/userChrome.css"

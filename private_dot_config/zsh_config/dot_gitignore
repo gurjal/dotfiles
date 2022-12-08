@@ -1,0 +1,3 @@
+src/plugins/zsh-history-substring-search/
+src/plugins/zsh-syntax-highlighting/
+bin

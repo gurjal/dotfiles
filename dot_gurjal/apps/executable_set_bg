@@ -1,0 +1,110 @@
+#!/bin/bash
+
+CONFIG_FILE='/home/'$USER/'.config/set_bg/set_bg.config'
+
+if [ ! -f '/home/'$USER/'.config/set_bg/set_bg.config' ]; then
+  rm -rf '/home/'$USER/'.config/set_bg'
+  mkdir '/home/'$USER/'.config/set_bg'
+  touch $CONFIG_FILE
+  echo "# set_bg config" >> $CONFIG_FILE
+  echo >> $CONFIG_FILE
+  echo "background=" >> $CONFIG_FILE
+  echo "random_bg=" >> $CONFIG_FILE
+  echo "random_bg_dir=" >> $CONFIG_FILE
+  echo "Set the config values in $CONFIG_FILE"
+fi
+
+
+help () {
+  echo "Usage: set_bg [OPTIONS]"
+  echo
+  echo "Options:"
+  echo "  -b    Set default background"
+  echo "  -r    Default or random background (0 or 1)"
+  echo "  -d    Randomize background directory"
+  echo "  -s    Print current status"
+  echo "  -h    pls help me cuz i a dum"
+  exit 1
+}
+
+status () {
+  . $CONFIG_FILE
+  if [ $random_bg == 0 ]; then
+    echo "Default or random background    ->  Default"
+  else
+    echo "Default or random background    ->  Random"
+  fi
+
+  echo "Default background file         ->  $background"
+  echo "Randomize background directory  ->  $random_bg_dir"
+}
+
+run () {
+  . $CONFIG_FILE
+  if [ $random_bg == 1 ]; then
+    background=$(fd . "$random_bg_dir" -d1 -tf -EREADME.md | shuf -n 1)
+  fi
+
+  xwallpaper --zoom $background
+
+  # multihead setup
+  #   each monitor set to zoomed fill with selected background
+  ##
+  # _MONITORS=$(xrandr --listactivemonitors | sed 1d | awk -F: '{print $1}')
+  # for _CUR_MONITOR in $_MONITORS
+  # do
+  #   nitrogen --set-zoom-fill --head=$_CUR_MONITOR $background >& /dev/null
+  # done
+}
+
+if [ -z "$1" ]; then 
+  run
+else
+  while getopts d:r:b:sh o; do
+    case $o in
+      b)
+        new_background=$(realpath $OPTARG)
+        if [ -d "$new_background" ]; then
+          echo "Default background must be a file"
+          exit 1
+        fi
+        sed -i "/background=/d" $CONFIG_FILE
+        echo "background=$new_background" >> $CONFIG_FILE
+        echo "Set default background"
+        ;;
+      r)
+        random_bg=$OPTARG
+        if [ $random_bg != 0 ] && [ $random_bg != 1 ]; then
+          echo "Randomize background value must bet 0 or 1"
+          exit 1
+        fi
+        sed -i "/random_bg=/d" $CONFIG_FILE
+        echo "random_bg=$random_bg" >> $CONFIG_FILE
+        if [ $random_bg == 0 ]; then
+          echo "Using default background"
+        else
+          echo "Using random background"
+        fi
+        ;;
+      d)
+        random_bg_dir=$(realpath $OPTARG)
+        if ! [ -d "$random_bg_dir" ]; then
+          random_bg_dir=$(dirname "$random_bg_dir")
+        fi
+        sed -i "/random_bg_dir=/d" $CONFIG_FILE
+        echo "random_bg_dir=$random_bg_dir" >> $CONFIG_FILE
+        echo "Set random background directory"
+        ;;
+      s)
+        status
+        exit 1
+        ;;
+      h)
+        help
+        exit 1
+        ;;
+    esac
+  done
+  echo
+  status
+fi

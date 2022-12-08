@@ -1,0 +1,71 @@
+#
+# shaan's bash function file
+#
+# ~/.config/bash_config/bash_functions
+#
+
+# key bindings
+bind '"\C-f":"fzfCd\n"'
+bind '"\C-o":"fzfOpen\n"'
+bind '"\C-b":"fzfRun\n"'
+bind '"\C-v":"fzfVim\n"'
+bind '"\C-p":"fzfListProcess\n"'
+bind '"\C-k":"fzfKillProcess\n"'
+bind '"\C-h":"pfetch\n"'
+bind '"\C-t":"testNetwork\n"'
+#bind '"\C-a":"quickCalc\n"'
+
+# functions
+fzfCd() {
+  dir=$( fd -t d | fzf )
+  if [[ -z "$dir" ]]; then
+    return
+  fi
+  cd "$dir"
+}
+
+fzfOpen() {
+  file=$( fd -t f -H | fzf )
+  if [[ -z "$file" ]]; then
+    return
+  fi
+  xdg-open "$file"
+}
+
+fzfRun() {
+  file=$( fd -t f -H | fzf )
+  if [[ -z "$file" ]]; then
+    return
+  fi
+  ./"$file"
+}
+
+fzfVim() {
+  file=$( fd -t f -H | fzf )
+  if [[ -z "$file" ]]; then
+    return
+  fi
+  nvim "$file" 
+}
+
+fzfListProcess() {
+  ps aux | fzf -m
+}
+
+fzfKillProcess() {
+  proc=$( ps aux | fzf | awk '{print $2}')
+  if [[ -z "$proc" ]]; then
+    return
+  fi
+  kill "$proc"
+}
+
+testNetwork() {
+  echo 'testing network speed...'
+  speedtest --simple
+}
+
+#quickCalc() {
+#  read -p 'eqn -> ' eq
+#  echo 'ans -> '$(echo $eq | bc)
+#}

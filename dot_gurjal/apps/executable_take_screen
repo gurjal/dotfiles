@@ -1,0 +1,2 @@
+#!/bin/sh
+maim -s ~/Pictures/screens/screenshot_$(date +%F_%H%M%S).png

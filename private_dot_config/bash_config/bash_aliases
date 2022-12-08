@@ -1,0 +1,49 @@
+#
+# shaan's bash alias file
+#
+# ~/.config/bash_config/bash_aliases
+#
+
+# cd
+alias ..='cd ..'
+
+# color ls / la
+alias ls='ls --color=auto'
+alias la='ls -a --color=auto'
+alias l='ls -l --color=auto'
+
+# du sort file size single depth
+alias ldu='du -d1 -h | sort -h'
+
+# ignore .gitignore file when using fd
+alias fd='/usr/bin/fd -I'
+
+# color grep
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# pacman
+alias pac='sudo pacman'
+
+# nvim
+alias vim='/usr/bin/nvim'
+alias v='/usr/bin/nvim'
+
+# tmux
+alias t='/usr/bin/tmux'
+
+# git
+alias gits='/usr/bin/git status'
+alias gitl='/usr/bin/git log'
+alias gitb='/usr/bin/git branch'
+alias gitsb='/usr/bin/git show-branch'
+alias gitch='/usr/bin/git checkout'
+alias gitco='/usr/bin/git commit'
+alias gitm='/usr/bin/git merge'
+
+# systemctl
+alias sysctl='sudo /usr/bin/systemctl'
+
+# bc
+alias bc='bc -q'

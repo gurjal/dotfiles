@@ -1,0 +1,172 @@
+#!/bin/bash
+
+# dj cli
+#
+
+help()
+{
+    echo "Usage: dj [OPTIONS] URL"
+    echo
+    echo "Options:"
+    echo "  -a, --audio   Select audio quality (default is best quality)"
+    echo "  -v, --video   Select video quality (default is worst quality)"
+    echo "  -l, --live    Select live quality"
+    echo "  --best        Select best single channel quality"
+    echo "  --download    Download from all available format options"
+    echo "  -h, --help    pls help me cuz i a dum"
+    exit 1
+}
+
+query_domain()
+{
+    case $1 in
+    youtube)
+        youtube
+        ;;
+    twitch)
+        twitch
+        ;;
+    esac
+}
+
+youtube()
+{
+    # default codec
+    audio_codec="opus"
+    video_codec="vp9"
+    # default file type
+    audio_file_format="webm"
+    video_file_format="webm"
+    # default quality
+    _audio="bestaudio"
+    _video="bestvideo"
+    _no_video=""
+
+    if [ -z $_flag ] && [ -z $_format ]; then # default
+        _audio+="[acodec^=$audio_codec]"
+        _video+="[vcodec^=$video_codec]"
+        _format="$_video"+"$_audio"
+    elif [ ${#_flag} -eq 2 ]; then # query all formats
+        yt-dlp -F "$_url" | grep -v 'video only' | grep -v 'audio only'
+        read -r -p "Which format? " _format
+    else # query specific formats
+        for ((i = 2; i < ${#_flag}; i++)); do
+            case ${_flag:$i:1} in # look for search setting flags
+            q)
+                audio_file_format=''
+                video_file_format=''
+                ;;
+            esac
+        done
+        for ((i = 2; i < ${#_flag}; i++)); do # query formats
+            case ${_flag:$i:1} in
+            a)
+                if [ -z $_format ]; then
+                    yt-dlp -F "$_url" | grep 'audio only' | grep "$audio_file_format"
+                    read -p "Which audio? " _audio
+                else
+                    _audio=$_format
+                fi
+                ;;
+            v)
+                if [ -z $_format ]; then
+                    yt-dlp -F "$_url" | grep 'video only' | grep "$video_file_format"
+                    read -p "Which video? " _video
+                else
+                    _video=$_format
+                fi
+                ;;
+            n)
+                _no_video="--no-video"
+                ;;
+            esac
+        done
+        _format="$_video"+"$_audio"
+    fi
+
+    _title=$(yt-dlp -e $_url)
+    echo
+    echo "  Now playing '$_title'..."
+    echo
+    mpv --ytdl-format="$_format" "$_url" "$_no_video"
+}
+
+twitch()
+{
+    _stream="default"
+    _stream=${_url/*videos*/}
+
+    if [ -z $_flag ] && [ -z $_format ]; then # default
+        _format="best"
+    elif [ ${#_flag} -eq 2 ]; then
+        streamlink $_url | grep 'Available streams:'
+        read -r -p "Which format? " _format
+    else
+        for ((i = 2; i < ${#_flag}; i++)); do
+            case ${_flag:$i:1} in # look for search setting flags
+            q)
+                _stream=""
+                if [ -z $_format ]; then
+                    yt-dlp -F "$_url" | grep -v 'video only' | grep -v 'audio only'
+                    read -r -p "Which format? " _format
+                fi
+                ;;
+            esac
+        done
+    fi
+
+    echo "$_url"
+
+    _title=$(yt-dlp -e $_url)
+    echo
+    echo "  Now playing '$_title'..."
+    echo
+    if [ ! -z $_stream ]; then
+        streamlink --player=mpv "$_url" "$_format"
+    else
+        mpv --ytdl-format="$_format" "$_url"
+    fi
+
+}
+
+# params
+_url=''
+_domain=''
+_flag=''
+_format=''
+
+# read in args
+if [ -z "$1" ]; then
+    help
+else
+    while [ -n "$1" ]; do
+        case "$1" in
+        -h | --help)
+            help
+            ;;
+        -Q*)
+            _flag=$1
+            ;;
+        *.*)
+            _url=$1
+            ;;
+        *)
+            _format=$1
+            ;;
+        esac
+        shift
+    done
+fi
+
+# check if we got url
+if [ -z "$_url" ]; then
+    echo "wtf gimme url you dum"
+else
+    # parse url
+    _url=${_url#"https://"}
+    _url=${_url#"http://"}
+    _url=${_url#"www."}
+    _domain=${_url%.*}
+    _url="https://www.$_url"
+    query_domain $_domain
+fi
