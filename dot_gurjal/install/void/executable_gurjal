@@ -67,14 +67,21 @@ mkdir -p "$HOME/.local/share/gnupg"
 mkdir -p "$HOME/.local/share/go"
 
 # apps
-cd "$HOME/.gurjal/apps"
-make
-cd "$HOME/.gurjal/links"
-make
+# cd "$HOME/.gurjal/apps"
+# make
+# cd "$HOME/.gurjal/links"
+# make
 
 # nvim
 sudo xbps-install -S neovim --yes
 sudo xbps-install -S xclip --yes
-[ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
-cd "$HOME/.config/" 
-git clone "https://github.com/gurjal/nvim.git"
+# [ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
+# cd "$HOME/.config/" 
+# git clone "https://github.com/gurjal/nvim.git"
+
+# pager
+sudo xbps-install -S nvimpager --yes
+
+# chezmoi
+sudo xbps-install -S chezmoi --yes
+sudo xbps-install -S age --yes

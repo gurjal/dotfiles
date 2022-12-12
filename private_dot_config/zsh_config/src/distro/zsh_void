@@ -36,6 +36,6 @@ function xu()
         && printf "\n  running 'updatedb'...\n\n" && sudo updatedb \
         && printf "\n  running 'xlocate -S'...\n\n" && xlocate -S \
         && printf "\n  running 'tldr --update'...\n\n" && tldr --update \
-        && printf "\n  running 'nix-channel --update'...\n\n" && nix-channel --update \
-        && printf "\n  running 'nix-env -u'...\n\n" && nix-env -u
+        # && printf "\n  running 'nix-channel --update'...\n\n" && nix-channel --update \
+        # && printf "\n  running 'nix-env -u'...\n\n" && nix-env -u
 }
