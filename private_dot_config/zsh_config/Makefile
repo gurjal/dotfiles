@@ -7,10 +7,14 @@ build:
 		&& zsh -c "zcompile src/zsh_options" \
 		&& mv src/*.zwc bin
 	zsh -c "zcompile src/plugins/zsh_vi_mode" \
+		&& zsh -c "zcompile src/plugins/zsh_emacs_mode" \
 		&& zsh -c "zcompile src/plugins/zsh_git" \
 		&& zsh -c "zcompile src/plugins/zsh_chezmoi" \
 		&& zsh -c "zcompile src/plugins/zsh_nnn" \
 		&& mv src/plugins/*.zwc bin
+	cp -rf src/plugins/zsh-vi-mode bin \
+		&& zsh -c "zcompile bin/zsh-vi-mode/zsh-vi-mode.plugin.zsh" \
+		&& zsh -c "zcompile bin/zsh-vi-mode/zsh-vi-mode.zsh"
 	zsh -c "zcompile src/distro/zsh_ubuntu" \
 		&& zsh -c "zcompile src/distro/zsh_arch" \
 		&& zsh -c "zcompile src/distro/zsh_void" \
@@ -32,7 +36,7 @@ build:
 		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/main/main-highlighter.zsh" \
 		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/pattern/pattern-highlighter.zsh" \
 		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/regexp/regexp-highlighter.zsh" \
-		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/root/root-highlighter.zsh" \
+		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/root/root-highlighter.zsh"
 
 clean:
 	rm -rf bin/*

@@ -1,39 +1,65 @@
-# use beam shape cursor on startup
-echo -ne '\e[5 q'
-
-# initialize new line in insert mode
-function zle-line-init() {
-  zle -K viins
-  echo -ne '\e[5 q'
+# jeffreytse/zsh-vi-mode
+function zvm_config() {
+    # ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_ZLE
+    # ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
+    ZVM_VI_ESCAPE_BINDKEY=jk
+    ZVM_INIT_MODE=sourcing
 }
-zle -N zle-line-init
+source "$ZSH_BIN/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
+# zsh function key bindings
+bindkey -M viins "^ " _seek_dir
+bindkey -M viins "^v" _seek_file
+bindkey -M viins "^[ " _seek_hidden_dir
+bindkey -M viins "^[v" _seek_hidden_file
+bindkey -M viins "^o" _seek_file_and_open
+bindkey -M viins "^p" _seek_proc_by_cpu
+bindkey -M viins "^[p" _seek_proc_by_mem
+bindkey -M viins "^e" _seek_env_vars
+bindkey -M viins "^k" _seek_kill_process
+bindkey -M viins "^r" _seek_history
+bindkey -M viins "^[m" _quick_mount
+bindkey -M viins -s "^n" " neofetch\n"
+bindkey -M viins -s "^[c" "bc -l <<<"
+source "$ZSH_BIN/zsh-history-substring-search.zsh"
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
 
-# set cursor when swithcing keymaps
-function zle-keymap-select () {
-  if [ $KEYMAP = vicmd ]; then
-    echo -ne '\e[1 q' # block
-  else
-    echo -ne '\e[5 q' # beam
-  fi
-}
-zle -N zle-keymap-select
-
-# predraw cursor based on vi mode
-function zle-line-pre-redraw() {
-  if [ $KEYMAP = vicmd ]; then
-    echo -ne '\e[1 q' # block
-  else
-    echo -ne '\e[5 q' # beam
-  fi
-}
-zle -N zle-line-pre-redraw
-
-# kj esc sequence
-bindkey 'jk' vi-cmd-mode
-bindkey 'kj' vi-cmd-mode
-
-# backspace fix
-bindkey "^?" backward-delete-char
-bindkey "^W" backward-kill-word
-bindkey "^H" backward-delete-char      # Control-h also deletes the previous char
-bindkey "^U" backward-kill-line
+# # use beam shape cursor on startup
+# echo -ne '\e[5 q'
+#
+# # initialize new line in insert mode
+# function zle-line-init() {
+#   zle -K viins
+#   echo -ne '\e[5 q'
+# }
+# zle -N zle-line-init
+#
+# # set cursor when swithcing keymaps
+# function zle-keymap-select () {
+#   if [ $KEYMAP = vicmd ]; then
+#     echo -ne '\e[1 q' # block
+#   else
+#     echo -ne '\e[5 q' # beam
+#   fi
+# }
+# zle -N zle-keymap-select
+#
+# # predraw cursor based on vi mode
+# function zle-line-pre-redraw() {
+#   if [ $KEYMAP = vicmd ]; then
+#     echo -ne '\e[1 q' # block
+#   else
+#     echo -ne '\e[5 q' # beam
+#   fi
+# }
+# zle -N zle-line-pre-redraw
+#
+# # kj esc sequence
+# bindkey 'jk' vi-cmd-mode
+# bindkey 'kj' vi-cmd-mode
+#
+# # backspace fix
+# bindkey "^?" backward-delete-char
+# bindkey "^W" backward-kill-word
+# bindkey "^H" backward-delete-char      # Control-h also deletes the previous char
+# bindkey "^U" backward-kill-line

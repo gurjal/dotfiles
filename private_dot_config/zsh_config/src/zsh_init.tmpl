@@ -1,31 +1,26 @@
 # if shell is not interactive then return
 [[ ! -o interactive ]] && return
-
+precmd() { 
+    vcs_info
+    if [[ "$USER" != "gurjal" ]]; then
+        PROMPT=' %F{magenta}%n%f%F{green}@%m%f %F{green}${vcs_info_msg_0_}%f%F{blue}%2~%f %F{yellow}->%f '
+    else
+        PROMPT=' %F{green}@%m%f %F{green}${vcs_info_msg_0_}%f%F{blue}%2~%f %F{yellow}->%f '
+    fi
+}
 export KEYTIMEOUT=10
 export EDITOR="nvim"
 export VISUAL="nvim"
 export PAGER="nvimpager"
 export BROWSER="firefox"
-
 source "$ZSH_BIN/zsh_aliases"
 source "$ZSH_BIN/zsh_options"
 source "$ZSH_BIN/zsh_functions"
 source "$ZSH_BIN/zsh_vi_mode"
+# source "$ZSH_BIN/zsh_emacs_mode"
 source "$ZSH_BIN/zsh_git"
 source "$ZSH_BIN/zsh_chezmoi"
-source "$ZSH_BIN/zsh_nnn"
-source "$ZSH_BIN/zsh-history-substring-search.zsh"
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
+# source "$ZSH_BIN/zsh_nnn"
 source "$ZSH_BIN/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-# source "$XDG_CONFIG_HOME/z/z.sh"
 eval "$(zoxide init zsh)"
-{{ if eq .chezmoi.osRelease.name "Void" }}
-source "$ZSH_BIN/zsh_void"
-{{ end }}
-precmd() {
-    vcs_info
-    # eval 'printf "\033]0;%s ${vcs_info_msg_0_}\007""${PWD/#$HOME/"~"}"'
-}
-
-PROMPT=' %F{green}%m%f %F{green}${vcs_info_msg_0_}%f%F{blue}%2~%f %F{yellow}->%f '
+{{ if eq .chezmoi.osRelease.name "Void" }}source "$ZSH_BIN/zsh_void"{{ end }}

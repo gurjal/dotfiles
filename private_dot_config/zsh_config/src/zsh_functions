@@ -1,18 +1,3 @@
-# key bindings
-bindkey -M viins "^f" _seek_dir
-bindkey -M viins "^v" _seek_file
-bindkey -M viins "^[f" _seek_hidden_dir
-bindkey -M viins "^[v" _seek_hidden_file
-bindkey -M viins "^g" _seek_file_and_open
-bindkey -M viins "^p" _seek_proc_by_cpu
-bindkey -M viins "^[p" _seek_proc_by_mem
-bindkey -M viins "^e" _seek_env_vars
-bindkey -M viins "^k" _seek_kill_process
-bindkey -M viins "^r" _seek_history
-bindkey -M viins "^[m" _quick_mount
-# bindkey -M viins -s "^[c" "bc -l <<<"
-bindkey -M viins -s "^n" " neofetch\n"
-
 # fzf gui height
 local FZF_HEIGHT=60%
 
