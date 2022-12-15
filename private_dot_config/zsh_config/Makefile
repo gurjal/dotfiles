@@ -1,30 +1,8 @@
 cleanbuild:
 	make clean build
+
 build:
-	zsh -c "zcompile src/zsh_init" \
-		&& zsh -c "zcompile src/zsh_aliases" \
-		&& zsh -c "zcompile src/zsh_functions" \
-		&& zsh -c "zcompile src/zsh_options" \
-		&& mv src/*.zwc bin
-	zsh -c "zcompile src/plugins/zsh_vi_mode" \
-		&& zsh -c "zcompile src/plugins/zsh_emacs_mode" \
-		&& zsh -c "zcompile src/plugins/zsh_git" \
-		&& zsh -c "zcompile src/plugins/zsh_chezmoi" \
-		&& zsh -c "zcompile src/plugins/zsh_nnn" \
-		&& mv src/plugins/*.zwc bin
-	cp -rf src/plugins/zsh-vi-mode bin \
-		&& zsh -c "zcompile bin/zsh-vi-mode/zsh-vi-mode.plugin.zsh" \
-		&& zsh -c "zcompile bin/zsh-vi-mode/zsh-vi-mode.zsh"
-	zsh -c "zcompile src/distro/zsh_ubuntu" \
-		&& zsh -c "zcompile src/distro/zsh_arch" \
-		&& zsh -c "zcompile src/distro/zsh_void" \
-		&& zsh -c "zcompile src/distro/zsh_bedrock" \
-		&& mv src/distro/*.zwc bin
-	zsh -c "zcompile src/completions/arduino_cli_completions.zsh" \
-		&& zsh -c "zcompile src/completions/fzf_completions.zsh" \
-		&& zsh -c "zcompile src/completions/git_completions.zsh" \
-		&& zsh -c "zcompile src/completions/rbw_completions.zsh" \
-		&& mv src/completions/*.zwc bin
+	zsh -c "zcompile src/zsh_init" && mv src/*.zwc bin
 	zsh -c "zcompile src/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh" \
 		&& mv src/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh.zwc bin
 	cp -rf src/plugins/zsh-syntax-highlighting bin \

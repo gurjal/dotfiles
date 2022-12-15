@@ -1,0 +1,416 @@
+# vim:foldmethod=marker
+
+# aliases {{{
+
+alias tm="trashman"
+alias l="ls -l --color=auto"
+alias ls="ls --color=auto"
+alias la="ls -a --color=auto"
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+alias diff="diff --color=auto"
+alias cat="bat --style=plain --color=auto --paging=never"
+alias pg="$PAGER"
+alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
+alias fzf="fzf --layout=reverse --bind=ctrl-d:preview-half-page-down,ctrl-u:preview-half-page-up"
+alias v="nvim"
+alias suv="sudo nvim"
+# alias emacs="emacsclient -c -a 'emacs'"
+alias clip="xclip -selection clipboard"
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+
+# }}}
+
+# options {{{
+
+# completion
+# fpath=($ZSH_BIN $fpath)
+autoload -Uz compinit
+compinit -d "$XDG_CACHE_HOME/zsh_compdump"
+_comp_options+=(globdots);
+
+# history
+HISTFILE="$XDG_CACHE_HOME/zsh_hist"
+HISTSIZE=1000
+SAVEHIST=1000
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt inc_append_history
+
+# type only directory name to cd
+setopt auto_cd
+
+# turn off case sensitivity
+setopt no_case_glob
+
+# expand prompt substring
+setopt PROMPT_SUBST
+
+# }}}
+
+# functions {{{
+
+# fzf gui height
+local FZF_HEIGHT=60%
+
+# search for file with fzf
+#   if input is empty, open file in nvim
+#   if input is not empty, return path of file
+function _seek_file()
+{
+  if [[ -z $BUFFER ]]; then
+    local file=$(
+      fd -E .git -t f | fzf --height=$FZF_HEIGHT \
+        --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+        --bind 'ctrl-l:change-preview-window(right,70%|right)'
+    )
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER="$EDITOR '$file'"
+    zle accept-line
+  else
+    local file=$(fd -E .git -t f | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER+="'$file'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_file
+
+# search for hidden file with fzf
+#   if input is empty, open hidden file in nvim
+#   if input is not empty, return path of hidden file
+function _seek_hidden_file()
+{
+  if [[ -z $BUFFER ]]; then
+      # fd -E .git -t f -H | rg "\./\." | fzf --height=$FZF_HEIGHT \
+    local file=$(
+      fd -E .git -t f -H | fzf --height=$FZF_HEIGHT \
+        --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+        --bind 'ctrl-l:change-preview-window(right,70%|right)'
+    )
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER="$EDITOR '$file'"
+    zle accept-line
+  else
+    # local file=$(fd -E .git -t f -H | rg "\./\." | fzf --height=$FZF_HEIGHT)
+    local file=$(fd -E .git -t f -H | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$file" ]] && return
+    BUFFER+="'$file'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_hidden_file
+
+# search for directory with fzf
+#   if input is empty, cd into directory
+#   if input is not empty, return path of directory
+function _seek_dir()
+{
+  if [[ -z $BUFFER ]]; then
+    local dir=$(fd -t d | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER="cd '$dir'"
+    zle accept-line
+  else
+    local dir=$(fd -t d | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER+="'$dir'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_dir
+
+# search for hidden directory with fzf
+#   if input is empty, cd into directory
+#   if input is not empty, return path of directory
+function _seek_hidden_dir()
+{
+  if [[ -z $BUFFER ]]; then
+    # local dir=$(fd -t d -H | rg "\./\." | fzf --height=$FZF_HEIGHT)
+    local dir=$(fd -t d -H | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER="cd '$dir'"
+    zle accept-line
+  else
+    # local dir=$(fd -t d -H | rg "\./\." | fzf --height=$FZF_HEIGHT)
+    local dir=$(fd -t d -H | fzf --height=$FZF_HEIGHT)
+    zle reset-prompt
+    [[ -z "$dir" ]] && return
+    BUFFER+="'$dir'"
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_hidden_dir
+
+# open file with xdg-open
+function _seek_file_and_open()
+{
+  local file=$(fd -E .git -t f | fzf --height=$FZF_HEIGHT)
+  zle reset-prompt
+  [[ -z "$file" ]] && return
+  xdg-open "$file"
+}
+zle -N _seek_file_and_open
+
+# display and search 'ps -aux' sorted by cpu usage
+function _seek_proc_by_cpu()
+{
+  local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' \
+    | fzf --no-sort --tac --reverse \
+      --header='id      user    cpu mem start time command')
+  zle reset-prompt
+  [[ -z "$proc" ]] && return
+  echo "$proc"
+}
+zle -N _seek_proc_by_cpu
+
+# display and search 'ps -aux' sorted by cpu usage
+function _seek_proc_by_mem()
+{
+  local proc=$(ps axuk %mem | awk '{print $2"\t"$1"\t"$4" "$3" "$9" "$10" "$11}' \
+    | fzf --no-sort --tac --reverse \
+      --header='id      user    mem cpu start time command')
+  zle reset-prompt
+  [[ -z "$proc" ]] && return
+  echo "$proc"
+}
+zle -N _seek_proc_by_mem
+
+function _seek_env_vars()
+{
+  local env_var=$(env | fzf --tac --reverse)
+  zle reset-prompt
+  [[ -z $env_var ]] && return
+  if [[ -z $BUFFER ]]; then
+    echo $env_var
+  else
+    BUFFER+=$env_var
+    zle vi-end-of-line
+  fi
+}
+zle -N _seek_env_vars
+
+function _seek_kill_process()
+{
+  local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' \
+    | fzf --no-sort --tac --reverse \
+      --header='id      user    cpu mem start time command' | awk '{print $1}')
+  zle reset-prompt
+  [[ -z "$proc" ]] && return
+  sudo kill "$proc"
+}
+zle -N _seek_kill_process
+
+function _seek_history()
+{
+  local cmd=$(cat "$HISTFILE" \
+    | fzf --tac --no-sort --height=$FZF_HEIGHT)
+  zle reset-prompt
+  [[ -z $cmd ]] && return
+  zle push-input
+  BUFFER=$cmd
+  zle vi-end-of-line
+}
+zle -N _seek_history
+
+export mnt="$HOME/.mnt"
+function _quick_mount()
+{
+  [[ ! -d "$mnt" ]] && mkdir "$mnt"
+  for m in $(lsblk | tail +2 | awk -F ' ' '{print $7}'); do
+    if [[ $m = "$mnt" ]]; then
+      mntdev=$(findmnt $mnt | tail -1 | cut -d' ' -f2)
+      echo -n "unmount $mntdev? y/N "
+      read -r -k1 yn
+      zle reset-prompt
+      [[ $yn == 'y' ]] && BUFFER="sudo umount '$mnt'" && zle accept-line
+      return
+    fi
+  done
+  lsblk
+  local dev=$(fd . '/dev/' | fzf --height=$FZF_HEIGHT)
+  zle reset-prompt
+  [[ -z "$dev" ]] && return
+  BUFFER="sudo mount '$dev' $mnt"
+  zle accept-line
+}
+zle -N _quick_mount
+
+# run updatedb before locate
+function locat()
+{
+  sudo updatedb
+  locate $1
+}
+
+# }}}
+
+# git {{{
+
+# Load version control information
+autoload -Uz vcs_info
+# Format the vcs_info_msg_0_ variable
+zstyle ':vcs_info:git:*' formats '(%b) '
+
+alias ,="git"
+alias ,s="git status -sb ."
+alias ,status="git status"
+alias ,l="git log --oneline --graph --decorate -10"
+alias ,lo="git log --oneline --graph --decorate"
+alias ,log="git log"
+alias ,ls="git ls-files -tco"
+alias ,b="git branch"
+alias ,sb="git show-branch"
+alias ,a="git add"
+alias ,ch="git checkout"
+alias ,fetch="git fetch"
+alias ,pull="git pull"
+alias ,push="git push"
+alias ,commit="git commit"
+alias ,merge="git merge"
+alias ,apply="git apply"
+alias ,remote="git remote"
+alias ,reset="git reset"
+alias ,restore="git restore"
+alias ,rm="git rm"
+alias ,mv="git mv"
+alias ,diff="git diff"
+alias ,clone="git clone"
+
+# }}}
+
+# chezmoi {{{
+
+alias cz="chezmoi"
+alias .s="chezmoi status ."
+alias .status="chezmoi status"
+alias .ls="chezmoi managed ."
+alias .uls="chezmoi unmanaged ."
+alias .a="chezmoi add"
+alias .rm="chezmoi remove"
+alias .e='chezmoi edit --watch ~/$(chezmoi managed . | fzf)'
+alias .d='chezmoi diff --reverse ~/$(chezmoi status . | cut -d" " -f2 | fzf)'
+alias .ap="chezmoi apply"
+alias .apr="chezmoi apply --refresh-externals"
+alias .cd="chezmoi cd"
+.diff() {
+    local file=$(chezmoi status | cut -d" " -f2 | fzf)
+    if [[ -z file ]] && return
+    chezmoi diff --reverse "~/$file"
+    local cmd=''
+    vared -p 'add file? [y/N] ' cmd
+    if [[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "~/$file"
+}
+
+# }}}
+
+# void {{{
+
+# sv
+alias sv="sudo sv"
+alias reboot="sudo reboot"
+alias poweroff="sudo poweroff"
+function svls()
+{
+    for service in $(ls "/var/service"); do
+        printf "$(sv check $service)"
+        log_status=$(sv status $service | rg ';' | cut -d ';' -f 2-)
+        if [[ ! -z "$log_status" ]]; then
+            printf ";$log_status\n"
+        else
+            printf "\n"
+        fi
+    done
+}
+
+# xbps
+alias xs="xbps-query -s"
+alias xr="sudo xbps-remove -R"
+function xilogm()
+{
+    [[ "$1" = "-h" ]] && echo "usage: xilogm [-qh]" && return
+    pkgs=""
+    for p in $(xbps-query -m | xargs -n1 xbps-uhelper getpkgname); do
+        pkgs+="\n$(xbps-query -p install-date $p) $p"
+    done
+    [[ "$1" = "-q" ]] && echo $pkgs | sort -k1 | cut -d' ' -f4 && return
+    echo $pkgs | sort -k1
+}
+
+# full update
+function xu()
+{
+    sudo printf "\n  running 'xbps-install -Su'...\n\n" && sudo xbps-install -Su \
+        && printf "\n  running 'updatedb'...\n\n" && sudo updatedb \
+        && printf "\n  running 'xlocate -S'...\n\n" && xlocate -S \
+        && printf "\n  running 'tldr --update'...\n\n" && tldr --update \
+        # && printf "\n  running 'nix-channel --update'...\n\n" && nix-channel --update \
+        # && printf "\n  running 'nix-env -u'...\n\n" && nix-env -u
+}
+
+# }}}
+
+# plugins {{{
+
+eval "$(zoxide init zsh)"
+source "$ZSH_BIN/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "$ZSH_BIN/zsh-history-substring-search.zsh"
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
+
+# }}}
+
+# vi mode {{{
+
+# initialize new line in insert mode
+function zle-line-init() {
+  # zle -K viins
+  echo -ne '\e[5 q' # beam
+}
+zle -N zle-line-init
+
+# set cursor when switching keymaps
+function zle-keymap-select () {
+  if [ $KEYMAP = vicmd ]; then
+    echo -ne '\e[1 q' # block
+  else
+    echo -ne '\e[5 q' # beam
+  fi
+}
+zle -N zle-keymap-select
+
+bindkey 'jk' vi-cmd-mode
+bindkey 'kj' vi-cmd-mode
+bindkey -M viins "^?" backward-delete-char # backspace fix
+bindkey -M viins "^W" backward-kill-word
+bindkey -M viins "^U" backward-kill-line
+bindkey -M viins "^H" run-help
+
+# function key bindings
+bindkey -M viins "^f" _seek_dir
+bindkey -M viins "^v" _seek_file
+bindkey -M viins "^[f" _seek_hidden_dir
+bindkey -M viins "^[v" _seek_hidden_file
+bindkey -M viins "^r" _seek_history
+bindkey -M viins "^o" _seek_file_and_open
+bindkey -M viins "^p" _seek_proc_by_cpu
+bindkey -M viins "^[p" _seek_proc_by_mem
+bindkey -M viins "^e" _seek_env_vars
+bindkey -M viins "^k" _seek_kill_process
+bindkey -M viins "^[m" _quick_mount
+
+# }}}
