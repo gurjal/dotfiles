@@ -1,3 +1,5 @@
+cleaninstall:
+	make uninstall install
 install:
 	cp display_cam -t ~/.local/bin
 	cp dj -t ~/.local/bin
@@ -6,6 +8,7 @@ install:
 	cp set_bg -t ~/.local/bin
 	cp take_screen -t ~/.local/bin
 	cp scribe -t ~/.local/bin
+	cp spcli -t ~/.local/bin
 uninstall:
 	rm ~/.local/bin/display_cam
 	rm ~/.local/bin/dj
@@ -14,3 +17,4 @@ uninstall:
 	rm ~/.local/bin/set_bg
 	rm ~/.local/bin/take_screen
 	rm ~/.local/bin/scribe
+	rm ~/.local/bin/spcli

@@ -25,6 +25,96 @@ alias ......="cd ../../../../.."
 
 # }}}
 
+# bindings {{{
+
+bindkey 'jk' vi-cmd-mode
+bindkey 'kj' vi-cmd-mode
+bindkey -M viins "^?" backward-delete-char # backspace fix
+bindkey -M viins "^W" backward-kill-word
+bindkey -M viins "^U" backward-kill-line
+bindkey "^[h" run-help
+
+# function key bindings
+bindkey -M viins "^f" _seek_dir
+bindkey -M viins "^v" _seek_file
+bindkey -M viins "^[f" _seek_hidden_dir
+bindkey -M viins "^[v" _seek_hidden_file
+bindkey -M viins "^r" _seek_history
+bindkey -M viins "^o" _seek_file_and_open
+bindkey -M viins "^p" _seek_proc_by_cpu
+bindkey -M viins "^[p" _seek_proc_by_mem
+bindkey -M viins "^e" _seek_env_vars
+bindkey -M viins "^k" _seek_kill_process
+bindkey -M viins "^[m" _quick_mount
+
+# }}}
+
+# git {{{
+
+# Load version control information
+autoload -Uz vcs_info
+# Format the vcs_info_msg_0_ variable
+zstyle ':vcs_info:git:*' formats '(%b) '
+
+alias ,="git"
+alias ,s="git status -sb ."
+alias ,status="git status"
+alias ,l="git log --oneline --graph --decorate -10"
+alias ,lo="git log --oneline --graph --decorate"
+alias ,log="git log"
+alias ,ls="git ls-files -tco"
+alias ,b="git branch"
+alias ,sb="git show-branch"
+alias ,a="git add"
+alias ,ch="git checkout"
+alias ,d="git diff"
+alias ,fetch="git fetch"
+alias ,pull="git pull"
+alias ,push="git push"
+alias ,commit="git commit"
+alias ,merge="git merge"
+alias ,apply="git apply"
+alias ,remote="git remote"
+alias ,reset="git reset"
+alias ,restore="git restore"
+alias ,rm="git rm"
+alias ,mv="git mv"
+alias ,clone="git clone"
+
+# }}}
+
+# chezmoi {{{
+
+alias cz="chezmoi"
+alias .s="chezmoi status ."
+alias .status="chezmoi status"
+alias .a="chezmoi add "
+alias .ls="chezmoi managed ."
+alias .uls="chezmoi unmanaged ."
+alias .rm="chezmoi remove"
+alias .e='chezmoi edit --watch ~/$(chezmoi managed . | fzf)'
+alias .ap="chezmoi apply"
+alias .apr="chezmoi apply --refresh-externals"
+alias .cd="chezmoi cd"
+.d() {
+    local file=$(chezmoi status . | cut -d" " -f2 | fzf)
+    if [[ -z file ]] && return
+    chezmoi diff --reverse "~/$file"
+    local cmd=''
+    vared -p 'add file? [y/N] ' cmd
+    if [[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "~/$file"
+}
+.diff() {
+    local file=$(chezmoi status | cut -d" " -f2 | fzf)
+    if [[ -z file ]] && return
+    chezmoi diff --reverse "~/$file"
+    local cmd=''
+    vared -p 'add file? [y/N] ' cmd
+    if [[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "~/$file"
+}
+
+# }}}
+
 # options {{{
 
 # completion
@@ -77,7 +167,7 @@ function _seek_file()
     local file=$(fd -E .git -t f | fzf --height=$FZF_HEIGHT)
     zle reset-prompt
     [[ -z "$file" ]] && return
-    BUFFER+="'$file'"
+    BUFFER+=" '$file'"
     zle vi-end-of-line
   fi
 }
@@ -104,7 +194,7 @@ function _seek_hidden_file()
     local file=$(fd -E .git -t f -H | fzf --height=$FZF_HEIGHT)
     zle reset-prompt
     [[ -z "$file" ]] && return
-    BUFFER+="'$file'"
+    BUFFER+=" '$file'"
     zle vi-end-of-line
   fi
 }
@@ -125,7 +215,7 @@ function _seek_dir()
     local dir=$(fd -t d | fzf --height=$FZF_HEIGHT)
     zle reset-prompt
     [[ -z "$dir" ]] && return
-    BUFFER+="'$dir'"
+    BUFFER+=" '$dir'"
     zle vi-end-of-line
   fi
 }
@@ -148,7 +238,7 @@ function _seek_hidden_dir()
     local dir=$(fd -t d -H | fzf --height=$FZF_HEIGHT)
     zle reset-prompt
     [[ -z "$dir" ]] && return
-    BUFFER+="'$dir'"
+    BUFFER+=" '$dir'"
     zle vi-end-of-line
   fi
 }
@@ -257,65 +347,6 @@ function locat()
 
 # }}}
 
-# git {{{
-
-# Load version control information
-autoload -Uz vcs_info
-# Format the vcs_info_msg_0_ variable
-zstyle ':vcs_info:git:*' formats '(%b) '
-
-alias ,="git"
-alias ,s="git status -sb ."
-alias ,status="git status"
-alias ,l="git log --oneline --graph --decorate -10"
-alias ,lo="git log --oneline --graph --decorate"
-alias ,log="git log"
-alias ,ls="git ls-files -tco"
-alias ,b="git branch"
-alias ,sb="git show-branch"
-alias ,a="git add"
-alias ,ch="git checkout"
-alias ,fetch="git fetch"
-alias ,pull="git pull"
-alias ,push="git push"
-alias ,commit="git commit"
-alias ,merge="git merge"
-alias ,apply="git apply"
-alias ,remote="git remote"
-alias ,reset="git reset"
-alias ,restore="git restore"
-alias ,rm="git rm"
-alias ,mv="git mv"
-alias ,diff="git diff"
-alias ,clone="git clone"
-
-# }}}
-
-# chezmoi {{{
-
-alias cz="chezmoi"
-alias .s="chezmoi status ."
-alias .status="chezmoi status"
-alias .ls="chezmoi managed ."
-alias .uls="chezmoi unmanaged ."
-alias .a="chezmoi add"
-alias .rm="chezmoi remove"
-alias .e='chezmoi edit --watch ~/$(chezmoi managed . | fzf)'
-alias .d='chezmoi diff --reverse ~/$(chezmoi status . | cut -d" " -f2 | fzf)'
-alias .ap="chezmoi apply"
-alias .apr="chezmoi apply --refresh-externals"
-alias .cd="chezmoi cd"
-.diff() {
-    local file=$(chezmoi status | cut -d" " -f2 | fzf)
-    if [[ -z file ]] && return
-    chezmoi diff --reverse "~/$file"
-    local cmd=''
-    vared -p 'add file? [y/N] ' cmd
-    if [[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "~/$file"
-}
-
-# }}}
-
 # void {{{
 
 # sv
@@ -392,25 +423,5 @@ function zle-keymap-select () {
   fi
 }
 zle -N zle-keymap-select
-
-bindkey 'jk' vi-cmd-mode
-bindkey 'kj' vi-cmd-mode
-bindkey -M viins "^?" backward-delete-char # backspace fix
-bindkey -M viins "^W" backward-kill-word
-bindkey -M viins "^U" backward-kill-line
-bindkey -M viins "^H" run-help
-
-# function key bindings
-bindkey -M viins "^f" _seek_dir
-bindkey -M viins "^v" _seek_file
-bindkey -M viins "^[f" _seek_hidden_dir
-bindkey -M viins "^[v" _seek_hidden_file
-bindkey -M viins "^r" _seek_history
-bindkey -M viins "^o" _seek_file_and_open
-bindkey -M viins "^p" _seek_proc_by_cpu
-bindkey -M viins "^[p" _seek_proc_by_mem
-bindkey -M viins "^e" _seek_env_vars
-bindkey -M viins "^k" _seek_kill_process
-bindkey -M viins "^[m" _quick_mount
 
 # }}}
