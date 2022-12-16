@@ -16,7 +16,7 @@ alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
 alias fzf="fzf --layout=reverse --bind=ctrl-d:preview-half-page-down,ctrl-u:preview-half-page-up"
 alias v="nvim"
 alias suv="sudo nvim"
-# alias emacs="emacsclient -c -a 'emacs'"
+alias emacs="emacsclient -c -a 'emacs'"
 alias clip="xclip -selection clipboard"
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -86,18 +86,21 @@ alias ,clone="git clone"
 # chezmoi {{{
 
 alias cz="chezmoi"
-alias .s="chezmoi status ."
+alias .cd="chezmoi cd"
+.s() { if [[ $PWD != $HOME ]]; then chezmoi status .; else chezmoi status; fi }
 alias .status="chezmoi status"
-alias .a="chezmoi add "
-alias .ls="chezmoi managed ."
-alias .uls="chezmoi unmanaged ."
-alias .rm="chezmoi remove"
-alias .e='chezmoi edit --watch ~/$(chezmoi managed . | fzf)'
 alias .ap="chezmoi apply"
 alias .apr="chezmoi apply --refresh-externals"
-alias .cd="chezmoi cd"
+alias .add="chezmoi add"
+.ls() { if [[ $PWD != $HOME ]]; then chezmoi managed .; else chezmoi managed; fi }
+.uls() { if [[ $PWD != $HOME ]]; then chezmoi unmanaged .; else chezmoi unmanaged; fi }
 .d() {
-    local file=$(chezmoi status . | cut -d" " -f2 | fzf)
+    local file=''
+    if [[ $PWD != $HOME ]]; then
+        file+=$(chezmoi status . | awk '{print $NF}' | fzf)
+    else
+        file+=$(chezmoi status | awk '{print $NF}' | fzf)
+    fi
     if [[ -z file ]] && return
     chezmoi diff --reverse "~/$file"
     local cmd=''
@@ -105,7 +108,7 @@ alias .cd="chezmoi cd"
     if [[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "~/$file"
 }
 .diff() {
-    local file=$(chezmoi status | cut -d" " -f2 | fzf)
+    local file=$(chezmoi status | awk '{print $NF}' | fzf)
     if [[ -z file ]] && return
     chezmoi diff --reverse "~/$file"
     local cmd=''

@@ -8,13 +8,11 @@ install:
 	cp set_bg -t ~/.local/bin
 	cp take_screen -t ~/.local/bin
 	cp scribe -t ~/.local/bin
-	cp spcli -t ~/.local/bin
 uninstall:
-	rm ~/.local/bin/display_cam
-	rm ~/.local/bin/dj
-	rm ~/.local/bin/trashman
-	rm ~/.local/bin/nsxiv_rifle
-	rm ~/.local/bin/set_bg
-	rm ~/.local/bin/take_screen
-	rm ~/.local/bin/scribe
-	rm ~/.local/bin/spcli
+	rm -f ~/.local/bin/display_cam
+	rm -f ~/.local/bin/dj
+	rm -f ~/.local/bin/trashman
+	rm -f ~/.local/bin/nsxiv_rifle
+	rm -f ~/.local/bin/set_bg
+	rm -f ~/.local/bin/take_screen
+	rm -f ~/.local/bin/scribe
