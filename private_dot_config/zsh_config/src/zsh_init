@@ -74,6 +74,7 @@ alias ,push="git push"
 alias ,commit="git commit"
 alias ,merge="git merge"
 alias ,apply="git apply"
+alias ,rv="git remote -v"
 alias ,remote="git remote"
 alias ,reset="git reset"
 alias ,restore="git restore"
@@ -86,12 +87,12 @@ alias ,clone="git clone"
 # chezmoi {{{
 
 alias cz="chezmoi"
+alias .a="chezmoi add"
 alias .cd="chezmoi cd"
 .s() { if [[ $PWD != $HOME ]]; then chezmoi status .; else chezmoi status; fi }
 alias .status="chezmoi status"
 alias .ap="chezmoi apply"
 alias .apr="chezmoi apply --refresh-externals"
-alias .add="chezmoi add"
 .ls() { if [[ $PWD != $HOME ]]; then chezmoi managed .; else chezmoi managed; fi }
 .uls() { if [[ $PWD != $HOME ]]; then chezmoi unmanaged .; else chezmoi unmanaged; fi }
 .d() {

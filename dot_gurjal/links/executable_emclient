@@ -1,0 +1,3 @@
+#!/bin/bash
+[[ -z $(pgrep emacs) ]] && emdaemon
+exec emacsclient -c

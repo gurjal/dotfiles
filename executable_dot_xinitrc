@@ -37,8 +37,6 @@ dunst &
 
 xbanish &
 
-emacs --daemon &
-
 # standard start #
 dbus-run-session -- dwm
 

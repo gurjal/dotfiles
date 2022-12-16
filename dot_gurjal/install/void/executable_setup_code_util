@@ -1,0 +1,5 @@
+#!/bin/sh
+sudo xbps-install shfmt --yes
+sudo xbps-install lua-language-server StyLua --yes
+sudo xbps-install rust-analyzer --yes
+sudo xbps-install clang --yes

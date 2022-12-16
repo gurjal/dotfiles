@@ -1,5 +1,5 @@
 #!/bin/bash
-spotifyd \
+exec spotifyd \
     --no-audio-cache \
     --volume-normalisation \
     --backend 'pulseaudio' \
