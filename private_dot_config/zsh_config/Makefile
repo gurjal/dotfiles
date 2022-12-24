@@ -14,5 +14,12 @@ build:
 		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/pattern/pattern-highlighter.zsh" \
 		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/regexp/regexp-highlighter.zsh" \
 		&& zsh -c "zcompile bin/zsh-syntax-highlighting/highlighters/root/root-highlighter.zsh"
+
 clean:
 	rm -rf bin/*
+
+plugins:
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+		&& mv -f zsh-syntax-highlighting src/plugins
+	git clone https://github.com/zsh-users/zsh-history-substring-search.git \
+		&& mv -f zsh-history-substring-search src/plugins

@@ -1,0 +1,41 @@
+:PROPERTIES:
+:ID:       6be8781c-394d-4c91-a7ca-cabbe193a18d
+:END:
+#+title: runit user services
+
+* system service
+
+make sure to give runsvdir XDG_RUNTIME_DIR location if necesary
+
+/etc/sv/gurjal/run
+'''sh
+#!/bin/sh
+export USER=gurjal
+export HOME=/home/$USER
+exec 2>&1
+exec env XDG_RUNTIME_DIR=/run/user/1000 \
+    chpst -u $USER:$USER -e $HOME runsvdir $HOME/.local/service
+'''
+
+* user env
+
+set '$SVDIR' location
+current using '$HOME/.local/service'
+
+* emacs service
+
+$SVDIR/emd/run
+'''sh
+#!/bin/sh
+exec emacs --fg-daemon
+'''
+
+run client using 'emacsclient -c'
+
+* spotidyd service
+
+$SVDIR/spd/run
+'''sh
+#!/bin/sh
+exec spotifyd --use-mpris false --no-daemon --no-audio-cache
+'''

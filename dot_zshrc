@@ -10,6 +10,6 @@ fi
 export KEYTIMEOUT=20
 export EDITOR="nvim"
 export VISUAL="nvim"
-export PAGER="nvimpager"
-export BROWSER="firefox"
+export PAGER="bat -pf"
+export BROWSER="qutebrowser"
 source "$ZSH_BIN/zsh_init"

@@ -27,8 +27,6 @@ light -S 100
 
 set_bg &
 
-slstatus &
-
 picom &
 
 pipewire &
@@ -36,6 +34,8 @@ pipewire &
 dunst &
 
 xbanish &
+
+slstatus &
 
 # standard start #
 dbus-run-session -- dwm

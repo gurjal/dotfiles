@@ -190,7 +190,7 @@ c.colors.statusbar.passthrough.fg = bg_default
 c.colors.statusbar.passthrough.bg = bg_passthrough_mode
 
 # Foreground color of the statusbar in private browsing mode.
-c.colors.statusbar.private.fg = bg_default
+c.colors.statusbar.private.fg = bg_warning
 
 # Background color of the statusbar in private browsing mode.
 c.colors.statusbar.private.bg = bg_lighter
@@ -202,7 +202,7 @@ c.colors.statusbar.command.fg = fg_default
 c.colors.statusbar.command.bg = bg_default
 
 # Foreground color of the statusbar in private browsing + command mode.
-c.colors.statusbar.command.private.fg = fg_default
+c.colors.statusbar.command.private.fg = bg_warning
 
 # Background color of the statusbar in private browsing + command mode.
 c.colors.statusbar.command.private.bg = bg_default

@@ -13,7 +13,7 @@ alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
 alias diff="diff --color=auto"
-alias cat="bat --style=plain --color=auto --paging=never"
+alias cat="bat -ppf"
 alias pg="$PAGER"
 alias sk="sk -p ' ' --inline-info"
 alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
@@ -88,56 +88,6 @@ alias ,clone="git clone"
 
 # }}}
 
-# chezmoi {{{
-
-alias cz="chezmoi"
-alias .a="chezmoi add"
-alias .cd="chezmoi cd"
-.s() { [[ $PWD != $HOME ]] && chezmoi status . || chezmoi status }
-alias .status="chezmoi status"
-alias .ap="chezmoi apply"
-alias .apr="chezmoi apply --refresh-externals"
-.ls() { [[ $PWD != $HOME ]] && chezmoi managed . || chezmoi managed }
-.uls() { [[ $PWD != $HOME ]] && chezmoi unmanaged . || chezmoi unmanaged }
-.d() {
-    [[ $PWD != $HOME ]] && local file=$(chezmoi status .) || local file=$(chezmoi status)
-    local file=$(echo $file | awk '{print $NF}' | sk --reverse --height=$SK_HEIGHT)
-    [ -z $file ] && return
-    chezmoi diff --reverse "~/$file"
-    local cmd=''
-    vared -p 'add file? [y/N] ' cmd
-    if [[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "~/$file"
-}
-.diff() {
-    local file=$(chezmoi status | awk '{print $NF}' | sk --reverse --height=$SK_HEIGHT)
-    if [[ -z file ]] && return
-    chezmoi diff --reverse "~/$file"
-    local cmd=''
-    vared -p 'add file? [y/N] ' cmd
-    if [[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "~/$file"
-}
-
-# }}}
-
-# bitwarden {{{
-
-function rbwl() {
-    local name=$(rbw ls | sk)
-    local cmd=''
-    vared -p 'copy username? [Y/n] ' cmd
-    if [[ $cmd != 'n' ]] || [[ $cmd != 'N' ]]; then
-        rbw get $name --full | head -2 | tail -1 | cut -d' ' -f2- \
-            | xclip -sel clip
-    fi
-    local cmd=''
-    vared -p 'copy password? [Y/n] ' cmd
-    if [[ $cmd != 'n' ]] || [[ $cmd != 'N' ]]; then
-        rbw get $name | xclip -sel clip
-    fi
-}
-
-# }}}
-
 # options {{{
 
 # completion
@@ -173,17 +123,17 @@ setopt PROMPT_SUBST
 #   if input is not empty, return path of file
 function _seek_file()
 {
-  if [[ -z $BUFFER ]]; then
+  if [ -z $BUFFER ]; then
     local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT \
-        --preview 'bat --style=numbers --color=always --line-range :500 {}')
+        --preview 'bat -ppf --line-range :500 {}')
     zle reset-prompt
-    [[ -z "$file" ]] && return
+    [ -z $file ] && return
     BUFFER="$EDITOR '$file'"
     zle accept-line
   else
     local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
-    [[ -z "$file" ]] && return
+    [ -z $file ] && return
     BUFFER+=" '$file'"
     zle vi-end-of-line
   fi
@@ -195,17 +145,17 @@ zle -N _seek_file
 #   if input is not empty, return path of hidden file
 function _seek_hidden_file()
 {
-  if [[ -z $BUFFER ]]; then
+  if [ -z $BUFFER ]; then
     local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT \
-        --preview 'bat --style=numbers --color=always --line-range :500 {}')
+        --preview 'bat -ppf --line-range :500 {}')
     zle reset-prompt
-    [[ -z "$file" ]] && return
+    [ -z $file ] && return
     BUFFER="$EDITOR '$file'"
     zle accept-line
   else
     local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
-    [[ -z "$file" ]] && return
+    [ -z $file ] && return
     BUFFER+=" '$file'"
     zle vi-end-of-line
   fi
@@ -217,16 +167,16 @@ zle -N _seek_hidden_file
 #   if input is not empty, return path of directory
 function _seek_dir()
 {
-  if [[ -z $BUFFER ]]; then
+  if [ -z $BUFFER ]; then
     local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
-    [[ -z "$dir" ]] && return
+    [ -z $dir ] && return
     BUFFER="cd '$dir'"
     zle accept-line
   else
     local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
-    [[ -z "$dir" ]] && return
+    [ -z $dir ] && return
     BUFFER+=" '$dir'"
     zle vi-end-of-line
   fi
@@ -238,29 +188,28 @@ zle -N _seek_dir
 #   if input is not empty, return path of directory
 function _seek_hidden_dir()
 {
-  if [[ -z $BUFFER ]]; then
+  if [ -z $BUFFER ]; then
     local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
-    [[ -z "$dir" ]] && return
+    [ -z $dir ] && return
     BUFFER="cd '$dir'"
     zle accept-line
   else
     local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
-    [[ -z "$dir" ]] && return
+    [ -z $dir ] && return
     BUFFER+=" '$dir'"
     zle vi-end-of-line
   fi
 }
 zle -N _seek_hidden_dir
 
-# open file with xdg-open
 function _seek_file_and_open()
 {
   local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
   zle reset-prompt
-  [[ -z "$file" ]] && return
-  xdg-open "$file"
+  [ -z $file ] && return
+  xdg-open $file
 }
 zle -N _seek_file_and_open
 
@@ -271,8 +220,8 @@ function _seek_proc_by_cpu()
     | sk --reverse --no-sort --tac \
       --header='id      user    cpu mem start time command')
   zle reset-prompt
-  [[ -z "$proc" ]] && return
-  echo "$proc"
+  [ -z $proc ] && return
+  echo $proc
 }
 zle -N _seek_proc_by_cpu
 
@@ -283,8 +232,8 @@ function _seek_proc_by_mem()
     | sk --reverse --no-sort --tac \
       --header='id      user    mem cpu start time command')
   zle reset-prompt
-  [[ -z "$proc" ]] && return
-  echo "$proc"
+  [ -z $proc ] && return
+  echo $proc
 }
 zle -N _seek_proc_by_mem
 
@@ -292,8 +241,8 @@ function _seek_env_vars()
 {
   local env_var=$(env | sk --reverse --tac)
   zle reset-prompt
-  [[ -z $env_var ]] && return
-  if [[ -z $BUFFER ]]; then
+  [ -z $env_var ] && return
+  if [ -z $BUFFER ]; then
     echo $env_var
   else
     BUFFER+=$env_var
@@ -308,17 +257,17 @@ function _seek_kill_process()
     | sk --reverse --no-sort --tac \
       --header='id      user    cpu mem start time command' | awk '{print $1}')
   zle reset-prompt
-  [[ -z "$proc" ]] && return
-  sudo kill "$proc"
+  [ -z $proc ] && return
+  sudo kill $proc
 }
 zle -N _seek_kill_process
 
 function _seek_history()
 {
-  local cmd=$(cat "$HISTFILE" \
+  local cmd=$(bat -pp "$HISTFILE" \
     | sk --reverse --tac --no-sort --height=$SK_HEIGHT)
   zle reset-prompt
-  [[ -z $cmd ]] && return
+  [ -z $cmd ] && return
   zle push-input
   BUFFER=$cmd
   zle vi-end-of-line
@@ -328,9 +277,9 @@ zle -N _seek_history
 export mnt="$HOME/.mnt"
 function _quick_mount()
 {
-  [[ ! -d "$mnt" ]] && mkdir "$mnt"
+  [ ! -d $mnt ] && mkdir $mnt
   for m in $(lsblk | tail +2 | awk -F ' ' '{print $7}'); do
-    if [[ $m = "$mnt" ]]; then
+    if [[ $m == $mnt ]]; then
       mntdev=$(findmnt $mnt | tail -1 | cut -d' ' -f2)
       echo -n "unmount $mntdev? y/N "
       read -r -k1 yn
@@ -342,7 +291,7 @@ function _quick_mount()
   lsblk
   local dev=$(fd . '/dev/' | sk --reverse --height=$SK_HEIGHT)
   zle reset-prompt
-  [[ -z "$dev" ]] && return
+  [ -z $dev ] && return
   BUFFER="sudo mount '$dev' $mnt"
   zle accept-line
 }
@@ -357,78 +306,15 @@ function locat()
 
 # }}}
 
-# void {{{
-
-alias poweroff="sudo poweroff"
-alias reboot="sudo reboot"
-
-# sv
-alias uv="\sv"
-alias sv="sudo sv"
-function uvls()
-{
-    echo "user:"
-    for service in $(ls $SVDIR); do
-        printf "    $(uv check $service)"
-        local log_status=$(uv status $service | rg ';' | cut -d ';' -f 2-)
-        if [[ ! -z $log_status ]]; then
-            printf ";$log_status\n"
-        else
-            printf "\n"
-        fi
-    done
-}
-function svls()
-{
-    sudo echo "system:"
-    for service in $(ls /var/service); do
-        printf "    $(sudo sv check $service)"
-        local log_status=$(sudo sv status $service | rg ';' | cut -d ';' -f 2-)
-        if [[ ! -z $log_status ]]; then
-            printf ";$log_status\n"
-        else
-            printf "\n"
-        fi
-    done
-}
-
-# xbps
-alias xs="xbps-query -s"
-alias xr="sudo xbps-remove -R"
-function xilogm()
-{
-    [[ "$1" = "-h" ]] && echo "usage: xilogm [-qh]" && return
-    pkgs=""
-    for p in $(xbps-query -m | xargs -n1 xbps-uhelper getpkgname); do
-        pkgs+="\n$(xbps-query -p install-date $p) $p"
-    done
-    [[ "$1" = "-q" ]] && echo $pkgs | sort -k1 | cut -d' ' -f4 && return
-    echo $pkgs | sort -k1
-}
-
-# full update
-function xu()
-{
-    sudo env \
-        printf "\n  running 'xbps-install -Su'...\n\n" && sudo xbps-install -Su \
-        && printf "\n  running 'updatedb'...\n\n" && sudo updatedb \
-        && printf "\n  running 'xlocate -S'...\n\n" && xlocate -S \
-        && printf "\n  running 'tldr --update'...\n\n" && tldr --update \
-        # && printf "\n  running 'nix-channel --update'...\n\n" && nix-channel --update \
-        # && printf "\n  running 'nix-env -u'...\n\n" && nix-env -u
-}
-
-# }}}
-
 # plugins {{{
 
-eval "$(zoxide init zsh)"
 source "$ZSH_BIN/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 source "$ZSH_BIN/zsh-history-substring-search.zsh"
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
+eval "$(zoxide init zsh)"
 
 # }}}
 
@@ -443,7 +329,7 @@ zle -N zle-line-init
 
 # set cursor when switching keymaps
 function zle-keymap-select () {
-  if [ $KEYMAP = vicmd ]; then
+  if [[ $KEYMAP == vicmd ]]; then
     echo -ne '\e[1 q' # block
   else
     echo -ne '\e[5 q' # beam

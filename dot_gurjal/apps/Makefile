@@ -1,13 +1,11 @@
-cleaninstall:
-	make uninstall install
 install:
-	cp display_cam -t ~/.local/bin
-	cp dj -t ~/.local/bin
-	cp trashman -t ~/.local/bin
-	cp nsxiv_rifle -t ~/.local/bin
-	cp set_bg -t ~/.local/bin
-	cp take_screen -t ~/.local/bin
-	cp scribe -t ~/.local/bin
+	ln -sf ~/.gurjal/apps/display_cam ~/.local/bin
+	ln -sf ~/.gurjal/apps/dj ~/.local/bin
+	ln -sf ~/.gurjal/apps/trashman ~/.local/bin
+	ln -sf ~/.gurjal/apps/nsxiv_rifle ~/.local/bin
+	ln -sf ~/.gurjal/apps/set_bg ~/.local/bin
+	ln -sf ~/.gurjal/apps/take_screen ~/.local/bin
+	ln -sf ~/.gurjal/apps/scribe ~/.local/bin
 uninstall:
 	rm -f ~/.local/bin/display_cam
 	rm -f ~/.local/bin/dj

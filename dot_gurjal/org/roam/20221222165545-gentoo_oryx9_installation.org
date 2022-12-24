@@ -1,0 +1,6 @@
+:PROPERTIES:
+:ID:       d6aa6fdc-8e3d-4880-9543-1fd13705833d
+:END:
+#+title: gentoo oryx9 installation
+
+*

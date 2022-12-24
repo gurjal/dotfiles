@@ -1,0 +1,9 @@
+#!/bin/bash
+
+[[ $1 == "-h" ]] && echo "usage: xilogm [-qh]" && exit
+pkgs=""
+for p in $(xbps-query -m | xargs -n1 xbps-uhelper getpkgname); do
+    pkgs+="\n$(xbps-query -p install-date $p) $p"
+done
+[[ $1 == "-q" ]] && echo -e $pkgs | sort -k1 | cut -d' ' -f4 && exit
+echo -e $pkgs | sort -k1

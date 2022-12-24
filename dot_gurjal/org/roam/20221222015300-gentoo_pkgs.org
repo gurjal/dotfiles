@@ -1,0 +1,150 @@
+:PROPERTIES:
+:ID:       ec3f14ca-0659-49c2-a0f8-856e2600bea2
+:END:
+#+title: gentoo pkgs
+
+* oryx9
+** i2c_hid_acpi
+block it i think
+getting failed to reset device error on boot
+
+* kernel
+** Enable support for GPT
+```
+-*- Enable the block layer --->
+    Partition Types --->
+        [*] Advanced partition selection
+        [*] EFI GUID Partition support
+```
+** Enable ISO8859-1 codepage and support for VFAT
+```
+-*- File Systems --->
+    DOS/FAT/EXFAT/NT Filesystems  --->
+        <*> VFAT (Windows-95) fs support
+        (437) Default codepage for FAT
+        (iso8859-1) Default iocharset for FAT
+    Native Language support --->
+        [*] NLS ISO 8859-1  (Latin 1; Western European Languages)
+```
+
+** Mounting misc binary format filesystem
+```
+Executable file formats  --->
+    [*] Kernel support for MISC binaries
+```
+
+* dbus
+USE="dbus"
+** setup
+```bash
+emerge --ask --changed-use --deep @world
+```
+
+* udev
+USE="udev"
+** kernel
+```
+General setup  --->
+    [*] Configure standard kernel features (expert users)  --->
+        [ ] Enable deprecated sysfs features to support old userspace tools
+        [*] Enable signalfd() system call
+Enable the block layer  --->
+    [*] Block layer SG support v4
+Networking support  --->
+    Networking options  --->
+        <*> Unix domain sockets
+Device Drivers  --->
+    Generic Driver Options  --->
+        ()  path to uevent helper
+        [*] Maintain a devtmpfs filesystem to mount at /dev
+    < > ATA/ATAPI/MFM/RLL support (DEPRECATED)  --->
+File systems  --->
+    [*] Inotify support for userspace
+    Pseudo filesystems --->
+        [*] /proc file system support
+        [*] sysfs file system support
+```
+** setup
+```bash
+emerge --ask --changed-use --deep @world
+```
+
+* policykit
+USE="policykit pam"
+** kernel
+CONFIG_FUTEX=y
+** setup
+```bash
+emerge --ask --changed-use --deep @world
+```
+
+* elogind
+USE="elogind -systemd"
+** kernel
+```
+General setup  --->
+    [*] Control Group support  --->
+File systems  --->
+    [*] Inotify support for userspace
+```
+** setup
+```bash
+rc-update add elogind boot
+emerge --ask --changed-use --deep @world
+```
+
+* connman
+** install
+```bash
+emerge --ask net-misc/connman
+```
+** setup
+rc-update add connman default
+add user to wheel and network groups
+
+* btrfs-progs
+** install
+```bash
+emerge --ask sys-fs/btrfs-progs
+```
+** kernel
+```
+File systems  --->
+    <*> Btrfs filesystem
+```
+
+* ext4
+** Enable ext4 support
+```
+File systems  --->
+   <*> The Extended 4 (ext4) filesystem
+```
+** Enabling optional features
+```
+File systems  --->
+   [*]   Ext4 POSIX Access Control Lists
+   [*]   Ext4 Security Labels
+   [ ]   EXT4 debugging support
+```
+* udisks
+requires dbus and policykit
+USE="udisks"
+** kernel
+```
+General setup  --->
+    [*] Support for paging of anonymous memory (swap)
+Device Drivers  --->
+    < > ATA/ATAPI/MFM/RLL support (DEPRECATED)  --->
+    [*] USB support  --->
+        <*>   Support for Host-side USB
+File Systems -->
+    Native Language Support -->
+        <*> NLS UTF8
+    Pseudo filesystems  --->
+        -*- Tmpfs virtual memory file system support (former shm fs)
+        [*]   Tmpfs POSIX Access Control Lists
+```
+** setup
+```bash
+emerge --ask --changed-use --deep @world
+```

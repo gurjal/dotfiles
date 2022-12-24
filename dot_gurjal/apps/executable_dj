@@ -88,7 +88,8 @@ youtube()
     echo
     echo "  Now playing '$_title'..."
     echo
-    mpv --ytdl-format="$_format" "$_url" "$_no_video"
+    mpv --resume-playback --save-position-on-quit  --hwdec \
+       --ytdl-format="$_format" "$_url" "$_no_video"
 }
 
 twitch()
@@ -124,7 +125,8 @@ twitch()
     if [ ! -z $_stream ]; then
         streamlink --player=mpv "$_url" "$_format"
     else
-        mpv --ytdl-format="$_format" "$_url"
+        mpv --resume-playback --save-position-on-quit  --hwdec \
+            --ytdl-format="$_format" "$_url"
     fi
 
 }
