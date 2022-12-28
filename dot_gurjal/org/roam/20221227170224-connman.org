@@ -1,0 +1,22 @@
+:PROPERTIES:
+:ID:       88c33dc3-21b3-4e70-bf25-2759ec564cbb
+:END:
+#+title: connman
+
+* /etc/connman/main.conf
+** [General]
+*** PreferredTechnologies=technology[,...]
+- if virtual network getting in the way on main network device specify order of technologies
+  - ex. wifi,ethernet
+* eduroam
+** /var/lib/connman/eduroam.config
+'''
+[service_eduroam]
+Type = wifi
+Name = eduroam
+EAP = peap
+Phase2 = MSCHAPV2
+CACertFile = /etc/ssl/certs/ca-certificates.crt
+Identity={username}
+Passphrase={password}
+'''

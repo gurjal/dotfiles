@@ -24,8 +24,8 @@
 ;; (setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 
-(setq doom-font (font-spec :family "Sarasa Term CL" :size 18)
-      doom-serif-font (font-spec :family "Sarasa Term Slab CL" :size 18)
+(setq doom-font (font-spec :family "Iosevka Nerd Font Mono" :size 18)
+      doom-serif-font (font-spec :family "Iosevka Nerd Font Mono" :size 18)
       doom-variable-pitch-font (font-spec :family "NotoSans Nerd Font" :size 18))
 
 ;;

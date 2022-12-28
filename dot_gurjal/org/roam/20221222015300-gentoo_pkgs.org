@@ -7,7 +7,6 @@
 ** i2c_hid_acpi
 block it i think
 getting failed to reset device error on boot
-
 * kernel
 ** Enable support for GPT
 ```
@@ -26,20 +25,17 @@ getting failed to reset device error on boot
     Native Language support --->
         [*] NLS ISO 8859-1  (Latin 1; Western European Languages)
 ```
-
 ** Mounting misc binary format filesystem
 ```
 Executable file formats  --->
     [*] Kernel support for MISC binaries
 ```
-
 * dbus
 USE="dbus"
 ** setup
 ```bash
 emerge --ask --changed-use --deep @world
 ```
-
 * udev
 USE="udev"
 ** kernel
@@ -68,7 +64,6 @@ File systems  --->
 ```bash
 emerge --ask --changed-use --deep @world
 ```
-
 * policykit
 USE="policykit pam"
 ** kernel
@@ -77,7 +72,6 @@ CONFIG_FUTEX=y
 ```bash
 emerge --ask --changed-use --deep @world
 ```
-
 * elogind
 USE="elogind -systemd"
 ** kernel
@@ -101,7 +95,6 @@ emerge --ask net-misc/connman
 ** setup
 rc-update add connman default
 add user to wheel and network groups
-
 * btrfs-progs
 ** install
 ```bash
@@ -112,7 +105,6 @@ emerge --ask sys-fs/btrfs-progs
 File systems  --->
     <*> Btrfs filesystem
 ```
-
 * ext4
 ** Enable ext4 support
 ```
