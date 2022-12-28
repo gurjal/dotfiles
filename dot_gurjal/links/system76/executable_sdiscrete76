@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo system76-power graphics power $@
