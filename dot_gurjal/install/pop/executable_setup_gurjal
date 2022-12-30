@@ -1,0 +1,9 @@
+#!/bin/sh
+
+sudo apt install mpv streamlink yt-dlp --yes
+
+sudo apt install sxiv --yes
+
+sudo apt install zathura zathura-pdf-poppler --yes
+
+sudo apt install arandr --yes

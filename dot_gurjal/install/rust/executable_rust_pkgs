@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# install pkgs
+cargo install bat
+cargo install fd-find
+cargo install skim
+cargo install tealdeer
+cargo install ripgrep
