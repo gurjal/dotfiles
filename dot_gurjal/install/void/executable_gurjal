@@ -15,7 +15,7 @@ sudo xbps-install -S zoxide --yes
 sudo xbps-install -S xdg-utils --yes
 
 # term apps
-sudo xbps-install -S fzf bat fd ripgrep --yes
+sudo xbps-install -S skim bat fd ripgrep --yes
 sudo xbps-install -S wget --yes
 sudo xbps-install -S htop --yes
 sudo xbps-install -S neofetch --yes
@@ -79,9 +79,9 @@ sudo xbps-install -S xclip --yes
 # cd "$HOME/.config/" 
 # git clone "https://github.com/gurjal/nvim.git"
 
-# pager
-sudo xbps-install -S nvimpager --yes
-
 # chezmoi
 sudo xbps-install -S chezmoi --yes
 sudo xbps-install -S age --yes
+
+# bitwarden
+sudo xbps-install -S rbw --yes

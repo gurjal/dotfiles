@@ -88,5 +88,7 @@
 (map!
         :n "C-n" #'next-error
         :n "C-p" #'previous-error
-        :n "s"   #'avy-goto-char-2-below
-        :n "S"   #'avy-goto-char-2-above)
+        :n "s"   #'avy-goto-char-2)
+
+        ;; :n "s"   #'avy-goto-char-2-below
+        ;; :n "S"   #'avy-goto-char-2-above)

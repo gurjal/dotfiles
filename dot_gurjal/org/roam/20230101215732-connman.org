@@ -1,7 +1,7 @@
 :PROPERTIES:
-:ID:       88c33dc3-21b3-4e70-bf25-2759ec564cbb
+:ID:       6ddcfbd5-d7f4-498e-aabc-0b8ceb157692
 :END:
-#+title: connman
+#+title: ConnMan
 
 * /etc/connman/main.conf
 ** [General]

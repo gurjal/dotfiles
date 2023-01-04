@@ -1,20 +1,21 @@
 :PROPERTIES:
-:ID:       e623b380-97fb-40fc-8260-f341e99c47c6
+:ID:       6e887839-1a69-4c97-b62e-de4a098b3232
 :END:
 #+title: libvirt
 
-* packages
-** libvirt
+* libvirt
+** packages
+*** libvirt
 - libvirt
-** hypervisor
+*** hypervisor
 - qemu
-** networking
+*** networking
 - iptables-vft
 - dnsmasq
 - dmidecode
-** bridged networking
+*** bridged networking
 - bridge-utils
-* setup
+** setup
 1. add user to 'libvirt' group
 2. enable 'libvirtd', 'virtlockd' and 'virtlogd' services
 3. reboot
@@ -23,6 +24,6 @@
    - Hypervisor: QEMU/KVM
    - Autoconnect: true
    - Generated URI: qemu:///system
-** if using btrfs
+*** if using btrfs
 - chattr +C /var/lib/libvirt/images
 - change default storage from qcow2 to raw

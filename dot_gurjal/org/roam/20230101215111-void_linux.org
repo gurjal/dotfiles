@@ -1,0 +1,10 @@
+:PROPERTIES:
+:ID:       01ecb4b4-3fa2-4e46-9690-bb4b7604dc2d
+:END:
+#+title: Void Linux
+
+[[id:dbea018a-c9c6-45c7-8f35-b9522cf84d41][runit user services]]
+
+[[id:6e887839-1a69-4c97-b62e-de4a098b3232][libvirt]]
+
+[[id:6ddcfbd5-d7f4-498e-aabc-0b8ceb157692][connman]]

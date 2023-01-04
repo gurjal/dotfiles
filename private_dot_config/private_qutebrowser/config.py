@@ -44,4 +44,4 @@ config.bind("zw", ":set colors.webpage.bg white")
 config.bind("zt", "set-cmd-text -s :tab-take")
 config.bind("zg", "tab-give")
 
-config.source('themes/seoul256.py')
+config.source('themes/tundra.py')
