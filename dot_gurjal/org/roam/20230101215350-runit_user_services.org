@@ -39,3 +39,11 @@ $SVDIR/spd/run
 #!/bin/sh
 exec spotifyd --use-mpris false --no-daemon --no-audio-cache
 #+end_src
+
+* kakoune service
+
+$SVDIR/spd/run
+#+begin_src
+#!/bin/sh
+exec kak -d -s kakd
+#+end_src

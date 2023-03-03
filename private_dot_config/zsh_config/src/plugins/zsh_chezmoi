@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 alias cz="chezmoi"
 # alias .c="chezmoi"
 # alias .s="chezmoi status"

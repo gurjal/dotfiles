@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 # systemctl
 alias sys="sudo systemctl"
 alias usr="systemctl --user"

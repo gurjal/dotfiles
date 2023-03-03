@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 # export NNN_FIFO='/tmp/nnn.fifo'
 # export NNN_OPENER='/home/gurjal/.config/nnn/plugins/nuke'
 # export NNN_PLUG='l:preview-tabbed;;:dragdropfile;d:dragdrop;n:nuke'

@@ -1,6 +1,6 @@
+#!/bin/zsh
 # vim:foldmethod=marker
 
-# sk gui height
 local SK_HEIGHT=20
 
 # aliases {{{
@@ -13,12 +13,12 @@ alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
 alias diff="diff --color=auto"
-alias cat="bat -ppf"
+alias cat="bat -pp"
 alias pg="$PAGER"
 alias sk="sk -p ' ' --inline-info"
 alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
-alias v="nvim"
-alias suv="sudo nvim"
+alias v="kakc"
+alias suv="sudo $EDITOR"
 alias cl="xclip -selection clipboard"
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -26,24 +26,6 @@ alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
 # }}}
-
-# key bindings {{{
-
-# function key bindings
-bindkey -M viins "^f" _seek_dir
-bindkey -M viins "^v" _seek_file
-bindkey -M viins "^[f" _seek_hidden_dir
-bindkey -M viins "^[v" _seek_hidden_file
-bindkey -M viins "^r" _seek_history
-bindkey -M viins "^o" _seek_file_and_open
-bindkey -M viins "^p" _seek_proc_by_cpu
-bindkey -M viins "^[p" _seek_proc_by_mem
-bindkey -M viins "^e" _seek_env_vars
-bindkey -M viins "^k" _seek_kill_process
-bindkey -M viins "^[m" _quick_mount
-
-# }}}
-
 # git {{{
 
 # Load version control information
@@ -62,7 +44,8 @@ alias ,b="git branch"
 alias ,sb="git show-branch"
 alias ,a="git add"
 alias ,ch="git checkout"
-alias ,d="git diff"
+alias ,d="git diff | $PAGER"
+alias ,diff="git diff"
 alias ,fetch="git fetch"
 alias ,pull="git pull"
 alias ,pullrebase="git pull --rebase"
@@ -80,8 +63,10 @@ alias ,mv="git mv"
 alias ,clone="git clone"
 
 # }}}
-
 # options {{{
+
+autoload edit-command-line
+zle -N edit-command-line
 
 # completion
 # fpath=($ZSH_BIN $fpath)
@@ -104,7 +89,7 @@ compinit -d "$XDG_CACHE_HOME/zsh_compdump"
 
 # zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 # zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
-_comp_options+=(globdots);
+_comp_options+=(globdots)
 
 # history
 HISTFILE="$XDG_CACHE_HOME/zsh_history"
@@ -125,238 +110,256 @@ setopt no_case_glob
 setopt PROMPT_SUBST
 
 # }}}
-
 # functions {{{
 
-# search for file with sk
-#   if input is empty, open file in nvim
-#   if input is not empty, return path of file
-function _seek_file()
+# grip a file with sk
+#   if cmdline buffer is empty, open file in nvim
+#   if cmdline buffer is not empty, return path of file
+function __you_alone_determine_your_mark()
 {
-  if [ -z $BUFFER ]; then
-    local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT \
-        --preview 'bat -ppf --line-range :500 {}')
-    zle reset-prompt
-    [ -z $file ] && return
-    BUFFER="$EDITOR '$file'"
-    zle accept-line
-  else
+    if [ -z $BUFFER ]; then
+        local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT \
+            --preview 'bat -ppf --line-range :500 {}')
+        zle reset-prompt
+        [ -z $file ] && return
+        BUFFER="kakc '$file'"
+        zle accept-line
+    else
+        local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
+        zle reset-prompt
+        [ -z $file ] && return
+        BUFFER+=" '$file'"
+        zle end-of-line
+    fi
+}
+zle -N __you_alone_determine_your_mark
+
+# grip a hidden file with sk
+#   if cmdline buffer is empty, open hidden file in nvim
+#   if cmdline buffer is not empty, return path of hidden file
+function __always_check_twice_moron()
+{
+    if [ -z $BUFFER ]; then
+        local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT \
+            --preview 'bat -ppf --line-range :500 {}')
+        zle reset-prompt
+        [ -z $file ] && return
+        BUFFER="kakc '$file'"
+        zle accept-line
+    else
+        local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
+        zle reset-prompt
+        [ -z $file ] && return
+        BUFFER+=" '$file'"
+        zle end-of-line
+    fi
+}
+zle -N __always_check_twice_moron
+
+# hop to a directory with sk
+#   if cmdline buffer is empty, cd into directory
+#   if cmdline buffer is not empty, return path of directory
+function __a_fine_day_to_be_a_visitor()
+{
+    if [ -z $BUFFER ]; then
+        local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
+        zle reset-prompt
+        [ -z $dir ] && return
+        BUFFER="cd '$dir'"
+        zle accept-line
+    else
+        local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
+        zle reset-prompt
+        [ -z $dir ] && return
+        BUFFER+=" '$dir'"
+        zle end-of-line
+    fi
+}
+zle -N __a_fine_day_to_be_a_visitor
+
+# hop to a hidden directory with sk
+#   if cmdline buffer is empty, cd into directory
+#   if cmdline buffer is not empty, return path of directory
+function __you_might_be_chasing_a_ghost
+{
+    if [ -z $BUFFER ]; then
+        local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
+        zle reset-prompt
+        [ -z $dir ] && return
+        BUFFER="cd '$dir'"
+        zle accept-line
+    else
+        local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
+        zle reset-prompt
+        [ -z $dir ] && return
+        BUFFER+=" '$dir'"
+        zle end-of-line
+    fi
+}
+zle -N __you_might_be_chasing_a_ghost
+
+# operate a file with xdg-open
+function __initiative_begets_greatness()
+{
     local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
     [ -z $file ] && return
-    BUFFER+=" '$file'"
-    zle vi-end-of-line
-  fi
+    xdg-open $file
 }
-zle -N _seek_file
+zle -N __initiative_begets_greatness
 
-# search for hidden file with sk
-#   if input is empty, open hidden file in nvim
-#   if input is not empty, return path of hidden file
-function _seek_hidden_file()
+# interrogate ps about cpu usage
+function __interrogate_proc_cpu()
 {
-  if [ -z $BUFFER ]; then
-    local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT \
-        --preview 'bat -ppf --line-range :500 {}')
+    local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
+        sk --reverse --no-sort --tac \
+            --header='id      user    cpu mem start time command')
     zle reset-prompt
-    [ -z $file ] && return
-    BUFFER="$EDITOR '$file'"
-    zle accept-line
-  else
-    local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
+    [ -z $proc ] && return
+    echo $proc
+}
+zle -N __interrogate_proc_cpu
+
+# interrogate ps about mem usage
+function __interrogate_proc_mem()
+{
+    local proc=$(ps axuk %mem | awk '{print $2"\t"$1"\t"$4" "$3" "$9" "$10" "$11}' |
+        sk --reverse --no-sort --tac \
+            --header='id      user    mem cpu start time command')
     zle reset-prompt
-    [ -z $file ] && return
-    BUFFER+=" '$file'"
-    zle vi-end-of-line
-  fi
+    [ -z $proc ] && return
+    echo $proc
 }
-zle -N _seek_hidden_file
+zle -N __interrogate_proc_mem
 
-# search for directory with sk
-#   if input is empty, cd into directory
-#   if input is not empty, return path of directory
-function _seek_dir()
+function __nothing_new_under_the_sun()
 {
-  if [ -z $BUFFER ]; then
-    local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
+    local env_var=$(env | sk --reverse --tac)
     zle reset-prompt
-    [ -z $dir ] && return
-    BUFFER="cd '$dir'"
-    zle accept-line
-  else
-    local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
+    [ -z $env_var ] && return
+    if [ -z $BUFFER ]; then
+        echo $env_var
+    else
+        BUFFER+=$env_var
+        zle end-of-line
+    fi
+}
+zle -N __nothing_new_under_the_sun
+
+function __the_world_was_born_from_debt()
+{
+    local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
+        sk --reverse --no-sort --tac --color=header:160 \
+            --header="id      user    cpu mem start time command" | awk '{print $1}')
     zle reset-prompt
-    [ -z $dir ] && return
-    BUFFER+=" '$dir'"
-    zle vi-end-of-line
-  fi
+    [ -z $proc ] && return
+    sudo kill $proc
 }
-zle -N _seek_dir
+zle -N __the_world_was_born_from_debt
 
-# search for hidden directory with sk
-#   if input is empty, cd into directory
-#   if input is not empty, return path of directory
-function _seek_hidden_dir()
+function __through_the_passage_of_time()
 {
-  if [ -z $BUFFER ]; then
-    local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
+    local cmd=$(bat -pp "$HISTFILE" |
+        sk --reverse --tac --no-sort --height=$SK_HEIGHT)
     zle reset-prompt
-    [ -z $dir ] && return
-    BUFFER="cd '$dir'"
-    zle accept-line
-  else
-    local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
-    zle reset-prompt
-    [ -z $dir ] && return
-    BUFFER+=" '$dir'"
-    zle vi-end-of-line
-  fi
+    [ -z $cmd ] && return
+    zle push-input
+    BUFFER=$cmd
+    zle end-of-line
 }
-zle -N _seek_hidden_dir
-
-function _seek_file_and_open()
-{
-  local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
-  zle reset-prompt
-  [ -z $file ] && return
-  xdg-open $file
-}
-zle -N _seek_file_and_open
-
-# display and search 'ps -aux' sorted by cpu usage
-function _seek_proc_by_cpu()
-{
-  local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' \
-    | sk --reverse --no-sort --tac \
-      --header='id      user    cpu mem start time command')
-  zle reset-prompt
-  [ -z $proc ] && return
-  echo $proc
-}
-zle -N _seek_proc_by_cpu
-
-# display and search 'ps -aux' sorted by cpu usage
-function _seek_proc_by_mem()
-{
-  local proc=$(ps axuk %mem | awk '{print $2"\t"$1"\t"$4" "$3" "$9" "$10" "$11}' \
-    | sk --reverse --no-sort --tac \
-      --header='id      user    mem cpu start time command')
-  zle reset-prompt
-  [ -z $proc ] && return
-  echo $proc
-}
-zle -N _seek_proc_by_mem
-
-function _seek_env_vars()
-{
-  local env_var=$(env | sk --reverse --tac)
-  zle reset-prompt
-  [ -z $env_var ] && return
-  if [ -z $BUFFER ]; then
-    echo $env_var
-  else
-    BUFFER+=$env_var
-    zle vi-end-of-line
-  fi
-}
-zle -N _seek_env_vars
-
-function _seek_kill_process()
-{
-  local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' \
-    | sk --reverse --no-sort --tac \
-      --header='id      user    cpu mem start time command' | awk '{print $1}')
-  zle reset-prompt
-  [ -z $proc ] && return
-  sudo kill $proc
-}
-zle -N _seek_kill_process
-
-function _seek_history()
-{
-  local cmd=$(bat -pp "$HISTFILE" \
-    | sk --reverse --tac --no-sort --height=$SK_HEIGHT)
-  zle reset-prompt
-  [ -z $cmd ] && return
-  zle push-input
-  BUFFER=$cmd
-  zle vi-end-of-line
-}
-zle -N _seek_history
+zle -N __through_the_passage_of_time
 
 export mnt="$HOME/.mnt"
-function _quick_mount()
+function __one_departs_then_two_replace()
 {
-  [ ! -d $mnt ] && mkdir $mnt
-  for m in $(lsblk | tail +2 | awk -F ' ' '{print $7}'); do
-    if [[ $m == $mnt ]]; then
-      mntdev=$(findmnt $mnt | tail -1 | cut -d' ' -f2)
-      echo -n "unmount $mntdev? y/N "
-      read -r -k1 yn
-      zle reset-prompt
-      [[ $yn == 'y' ]] && BUFFER="sudo umount '$mnt'" && zle accept-line
-      return
-    fi
-  done
-  lsblk
-  local dev=$(fd . '/dev/' | sk --reverse --height=$SK_HEIGHT)
-  zle reset-prompt
-  [ -z $dev ] && return
-  BUFFER="sudo mount '$dev' $mnt"
-  zle accept-line
+    [ ! -d $mnt ] && mkdir $mnt
+    for m in $(lsblk | tail +2 | awk -F ' ' '{print $7}'); do
+        if [[ $m == $mnt ]]; then
+            mntdev=$(findmnt $mnt | tail -1 | cut -d' ' -f2)
+            echo -n "unmount $mntdev? y/N "
+            read -r -k1 yn
+            zle reset-prompt
+            [[ $yn == 'y' ]] && BUFFER="sudo umount '$mnt'" && zle accept-line
+            return
+        fi
+    done
+    lsblk
+    local dev=$(fd . '/dev/' | sk --reverse --height=$SK_HEIGHT)
+    zle reset-prompt
+    [ -z $dev ] && return
+    BUFFER="sudo mount '$dev' $mnt"
+    zle accept-line
 }
-zle -N _quick_mount
+zle -N __one_departs_then_two_replace
 
 # run updatedb before locate
 function locat()
 {
-  sudo updatedb
-  locate $1
+    sudo updatedb
+    locate $1
 }
 
 # }}}
-
 # plugins {{{
 
 source "$ZSH_BIN/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 source "$ZSH_BIN/zsh-history-substring-search.zsh"
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
 eval "$(zoxide init zsh)"
 
 # }}}
-
 # vi mode {{{
 
-# init vi mode
-set -o vi
+# # init vi mode
+# set -o vi -M viins
 
-# vi mode
-bindkey 'jk' vi-cmd-mode
-bindkey 'kj' vi-cmd-mode
-bindkey -M viins "^?" backward-delete-char # backspace fix
-bindkey -M viins "^W" backward-kill-word
-bindkey -M viins "^U" backward-kill-line
-bindkey -M viins "^[h" run-help
-bindkey -M vicmd "^[h" run-help
+# # new line cursor
+# function zle-line-init()
+# {
+#     echo -ne '\e[5 q' # beam
+# }
+# zle -N zle-line-init
 
-# initialize new line in insert mode
-function zle-line-init() {
-  # zle -K viins
-  echo -ne '\e[5 q' # beam
-}
-zle -N zle-line-init
+# # set cursor when switching keymaps
+# function zle-keymap-select()
+# {
+#     if [[ $KEYMAP == vicmd ]]; then
+#         echo -ne '\e[1 q' # block
+#     else
+#         echo -ne '\e[5 q' # beam
+#     fi
+# }
+# zle -N zle-keymap-select
 
-# set cursor when switching keymaps
-function zle-keymap-select () {
-  if [[ $KEYMAP == vicmd ]]; then
-    echo -ne '\e[1 q' # block
-  else
-    echo -ne '\e[5 q' # beam
-  fi
-}
-zle -N zle-keymap-select
+# }}}
+# key bindings {{{
+
+# # vi mode
+# bindkey 'jk' vi-cmd-mode
+# bindkey -M viins "^?" backward-delete-char
+# bindkey -M viins "^W" backward-kill-word
+# bindkey -M viins "^U" backward-kill-line
+# bindkey -M vicmd "^H" run-help
+bindkey '^[e' edit-command-line
+
+# zsh-history-substring-search
+bindkey '^P' history-substring-search-up
+bindkey '^N' history-substring-search-down
+# bindkey -M vicmd 'k' history-substring-search-up
+# bindkey -M vicmd 'j' history-substring-search-down
+
+# function key bindings
+bindkey	"^G"	__a_fine_day_to_be_a_visitor
+bindkey	"^[g"	__you_might_be_chasing_a_ghost
+bindkey	"^V"	__you_alone_determine_your_mark
+bindkey	"^[v"	__always_check_twice_moron
+bindkey	"^O"	__initiative_begets_greatness
+bindkey	"^[^E"	__nothing_new_under_the_sun
+bindkey	"^[^R"	__through_the_passage_of_time
+bindkey	"^[^K"	__the_world_was_born_from_debt
+bindkey	"^[^I"	__one_departs_then_two_replace
+bindkey	"^[^P"	__interrogate_proc_cpu
+bindkey	"^[^M"	__interrogate_proc_mem
 
 # }}}

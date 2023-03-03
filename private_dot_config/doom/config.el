@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
+(setq user-full-name "gurjal"
+      user-mail-address "gurjal@proton.me")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -24,9 +24,8 @@
 ;; (setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 
-(setq doom-font (font-spec :family "Iosevka Nerd Font Mono" :size 18)
-      doom-serif-font (font-spec :family "Iosevka Nerd Font Mono" :size 18)
-      doom-variable-pitch-font (font-spec :family "NotoSans Nerd Font" :size 18))
+(setq doom-font (font-spec :family "Iosevka Nerd Font Mono"  :size 18)
+      doom-variable-pitch-font (font-spec :family "sans" :size 14))
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -37,11 +36,11 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-henna)
+(setq doom-theme 'doom-oceanic-next)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 't)
 
 ;; cursor line highlighting
 (setq global-hl-line-modes 'nil)
@@ -83,12 +82,43 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+;; vimish folds
+(setq vimish-fold-global-mode 1)
+
+;; zen mode
+(after! writeroom-mode
+  (setq +zen-text-scale 0.5)
+  ;; Disable line numbers
+  (add-hook! 'writeroom-mode-enable-hook
+    (when (bound-and-true-p display-line-numbers-mode)
+      (setq-local +line-num--was-activate-p display-line-numbers-type)
+      (display-line-numbers-mode -1)))
+  (add-hook! 'writeroom-mode-disable-hook
+    (when (bound-and-true-p +line-num--was-activate-p)
+      (display-line-numbers-mode +line-num--was-activate-p))))
+
+;; unbind evil-snipe-mode from default 's' key
 (remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 
+;; gurjal mappings
 (map!
-        :n "C-n" #'next-error
-        :n "C-p" #'previous-error
-        :n "s"   #'avy-goto-char-2)
-
-        ;; :n "s"   #'avy-goto-char-2-below
-        ;; :n "S"   #'avy-goto-char-2-above)
+ ;; wtf is going on with tab?
+ ;; :n     "<tab>" #'c-indent-line-or-region
+ ;; lsp
+ ;; :n     "C-n"   #'next-error
+ ;; :n     "C-p"   #'previous-error
+ ;; goto
+ :n     "s"     #'avy-goto-char-2
+ ;; buffer
+ :n     "\\"    #'evil-next-buffer
+ :n     "|"     #'evil-prev-buffer
+ ;; window
+ :n     "C-h"   #'evil-window-left
+ :n     "C-j"   #'evil-window-down
+ :n     "C-k"   #'evil-window-up
+ :n     "C-l"   #'evil-window-right
+ ;; macro
+ :n     "Q"     #'call-last-kbd-macro
+ ;; vimish folds
+ :n     "z,"    #'vimish-fold-from-marks
+ )

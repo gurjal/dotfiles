@@ -1,0 +1,277 @@
+evaluate-commands %sh{
+    plugins="$kak_config/plugins"
+    mkdir -p "$plugins"
+    [ ! -e "$plugins/plug.kak" ] && \
+        git clone -q https://github.com/andreyorst/plug.kak.git "$plugins/plug.kak"
+    printf "%s\n" "source '$plugins/plug.kak/rc/plug.kak'"
+}
+
+# UI
+colorscheme ayu
+set-option global tabstop 4
+set-option global indentwidth 0
+set-option global scrolloff 0,4
+set-option global autoreload yes
+set-option -add global ui_options terminal_status_on_top=true
+set-option -add global ui_options terminal_assistant=none
+set-option -add global ui_options terminal_set_title=off
+set-face global Search +b
+set-face global TrailingSpace default,magenta
+set-face global TodoComment +bf@Information
+set-face global CursorLine "default,rgba:77777720"
+set-face global CursorColumn "default,rgba:77777720"
+
+hook global WinCreate .* %{
+	ui-line-numbers-toggle
+    add-highlighter window/search fill Normal  # dummy to throw error if enabled
+    add-highlighter -override window/search dynregex '%reg{/}' 0:Search
+    add-highlighter window/trailing-spaces regex '\h+$' 0:TrailingSpace
+    add-highlighter window/matching show-matching
+}
+
+# UI Mode Commands
+define-command ui-line-numbers-enable                                            -docstring 'enable line numbers' %{
+    add-highlighter window/line-numbers number-lines -relative -hlcursor -separator ' '
+    echo -markup "{Information}line numbers enabled"
+}
+define-command ui-line-numbers-disable                                           -docstring 'disable line numbers' %{
+    remove-highlighter window/line-numbers
+    echo -markup "{Information}line numbers disabled"
+}
+define-command -override ui-line-numbers-toggle                                  -docstring 'toggle line numbers' %{
+    try %{ ui-line-numbers-enable } catch %{ ui-line-numbers-disable }
+    trigger-user-hook ui-hl-changed
+}
+
+define-command ui-wrap-enable                                                    -docstring 'enable wrap' %{
+    add-highlighter window/wrap wrap -word -indent
+    echo -markup "{Information}soft wrap enabled"
+}
+define-command ui-wrap-disable                                                   -docstring 'disable wrap' %{
+    remove-highlighter window/wrap
+    echo -markup "{Information}soft wrap disabled"
+}
+define-command -override ui-wrap-toggle                                          -docstring 'toggle soft wrap' %{
+try %{ ui-wrap-enable } catch %{ ui-wrap-disable }
+    trigger-user-hook ui-hl-changed
+}
+
+define-command ui-todos-enable                                                   -docstring 'enable TODO comments' %{
+    add-highlighter window/todo-comments regex "\b(TODO|FIXME|XXX|NOTE)\b" 0:TodoComment
+    echo -markup "{Information}TODO comments enabled"
+}
+define-command ui-todos-disable                                                  -docstring 'disable TODO comments' %{
+    remove-highlighter window/todo-comments
+    echo -markup "{Information}TODO comments disabled"
+}
+define-command -override ui-todos-toggle                                         -docstring 'toggle TODO comments' %{
+    try %{ ui-todos-enable } catch %{ ui-todos-disable }
+    trigger-user-hook ui-hl-changed
+}
+
+define-command ui-git-diff-enable                                                -docstring 'enable git diff' %{
+    add-highlighter window/git-diff flag-lines Default git_diff_flags
+    evaluate-commands %sh{
+        cd "$(dirname "$kak_buffile")"
+        git_dir="$(git rev-parse --show-toplevel 2>/dev/null)"
+        [ -n "$git_dir" ] && echo "git update-diff"
+        [ -n "$git_dir" ] && echo "hook window -group ui-git-diff WinDisplay .* %{ git update-diff }"
+        [ -n "$git_dir" ] && echo "hook window -group ui-git-diff BufWritePost .* %{ git update-diff }"
+        [ -n "$git_dir" ] && echo "hook window -group ui-git-diff BufReload .* %{ git update-diff }"
+    }
+    echo -markup "{Information}git diff enabled"
+}
+define-command ui-git-diff-disable                                               -docstring 'disable git diff' %{
+    remove-highlighter window/git-diff
+    remove-hooks window ui-git-diff
+    echo -markup "{Information}git diff disabled"
+}
+define-command -override ui-git-diff-toggle                                      -docstring 'toggle git diff' %{
+    try %{ ui-git-diff-enable } catch %{ ui-git-diff-disable }
+    trigger-user-hook ui-hl-changed
+}
+
+define-command ui-lint-enable                                                    -docstring 'enable lint diagnostics' %{
+    # copy-pasta from rc/tools/lint.kak
+    # Assume that if the highlighter is set, then hooks also are
+    add-highlighter window/lint flag-lines default lint_flags
+    hook window -group lint-diagnostics NormalIdle .* %{
+        lint-show-current-line
+    }
+    hook window -group lint-diagnostics WinSetOption lint_flags=.* %{ info; lint-show-current-line }
+    hook window -group lint-diagnostics BufWritePost .* %{
+        try %{ lint }
+    }
+    hook window -group lint-diagnostics BufReload .* %{
+        try %{ lint }
+    }
+    echo -markup "{Information}lint diagnostics enabled"
+}
+define-command ui-lint-disable                                                   -docstring 'disable lint diagnostics' %{
+    # copy-pasta from rc/tools/lint.kak
+    remove-highlighter window/lint
+    remove-hooks window lint-diagnostics
+    echo -markup "{Information}lint diagnostics disabled"
+}
+define-command -override ui-lint-toggle                                          -docstring 'toggle lint diagnostics' %{
+    try %{ ui-lint-enable } catch %{ ui-lint-disable }
+    trigger-user-hook ui-hl-changed
+}
+
+# Tab for completion menu and indent
+hook global InsertCompletionShow .* %{
+	try %{
+		execute-keys -draft "h<a-K>\h<ret>"
+		map window insert <tab> <c-n>
+		map window insert <s-tab> <c-p>
+		hook -once -always window InsertCompletionHide .* %{
+			unmap window insert <tab> <c-n>
+			unmap window insert <s-tab> <c-p>
+}}}
+
+# General
+hook global InsertChar k %{ try %{
+  exec -draft hH <a-k>jk<ret> d
+  exec <esc>
+}}
+map global insert <a-j>   <esc>
+map global insert <a-k>   <esc>
+map global insert <a-h>   <esc>h
+map global insert <a-l>   <esc>l
+map global normal <'>     <a-.>
+map global user   q       ': q!<ret>'                                            -docstring 'quit'
+map global user   w       ': w<ret>'                                             -docstring 'write'
+map global user   <space> ': wq<ret>'                                            -docstring 'write and quit'
+map global user   c       ': comment-line<ret>'                                  -docstring 'comment line'
+map global user   i       '<esc><a-i>'                                           -docstring 'select the inner object'
+map global user   a       '<esc><a-a>'                                           -docstring 'select the whole object'
+map global insert <c-h>   '<backspace>'                                          -docstring 'backspace'
+
+# Search
+map global normal /       /(?i)
+map global normal <a-/>   <a-/>(?i)
+map global normal ?       ?(?i)
+map global normal <a-?>   <a-?>(?i)
+map global user   n       *n                                                     -docstring 'search next selection'
+map global user   <a-n>   *<a-n>                                                 -docstring 'search previous selection'
+map global view   </>     "<esc>: set-register slash ' '<ret>"                   -docstring 'clear search hightlights'
+
+# Peneira Search
+map global user   f       ': peneira-files<ret>'                                 -docstring 'search files'
+map global user   t       ': peneira-symbols<ret>'                               -docstring 'search symbols'
+map global user   </>     ': peneira-lines<ret>'                                 -docstring 'search buffer'
+
+# Selection
+def -params 1 extend-line-down %{ exec "<a-:>%arg{1}Jx" }
+def -params 1 extend-line-up %{ exec "<a-:><a-;>%arg{1}K<a-;>x" }
+map global normal X       ': extend-line-down %val{count}<ret>'
+map global normal <a-X>   ': extend-line-up %val{count}<ret>'
+
+# Buffers
+declare-user-mode buffer
+map global user   b       ': enter-user-mode buffer<ret>'                        -docstring 'buffer mode'
+map global buffer b       '<esc>'                                                -docstring 'exit buffer mode'
+map global buffer l       '<esc>: b '                                            -docstring 'list buffers'
+map global buffer d       '<esc>: db<ret>'                                       -docstring 'delete buffer'
+map global buffer k       '<esc>: db<ret>'                                       -docstring 'delete buffer'
+map global buffer n       '<esc>: bn<ret>: enter-user-mode buffer<ret>'          -docstring 'scroll next buffer'
+map global buffer p       '<esc>: bp<ret>: enter-user-mode buffer<ret>'          -docstring 'scroll previous buffer'
+map global normal <c-n>   ': bn<ret>'                                            -docstring 'next buffer'
+map global normal <c-p>   ': bp<ret>'                                            -docstring 'previous buffer'
+
+# View Mode
+map global view   v       '<esc>'                                                -docstring 'exit view mode'
+map global view   u       '<esc><c-u>V'                                          -docstring 'half page up'
+map global view   d       '<esc><c-d>V'                                          -docstring 'half page down'
+
+# Goto Char Mode
+declare-user-mode gotoch
+map global user   g     '<esc>: enter-user-mode gotoch<ret>'                     -docstring 'goto char'
+map global gotoch s     ': easy-motion-alt-f<ret>'                               -docstring 'in selection'
+map global gotoch w     '<esc>gtGbGl: easy-motion-alt-f<ret>'                    -docstring 'in window'
+map global gotoch l     'x: easy-motion-alt-f<ret>'                              -docstring 'in line'
+map global gotoch b     '<a-i>b: easy-motion-alt-f<ret>'                         -docstring 'in enclosing () block'
+map global gotoch B     '<a-i>B: easy-motion-alt-f<ret>'                         -docstring 'in enclosing {} block'
+map global gotoch r     '<a-i>r: easy-motion-alt-f<ret>'                         -docstring 'in enclosing [] block'
+map global gotoch a     '<a-i>a: easy-motion-alt-f<ret>'                         -docstring 'in enclosing <> block'
+map global gotoch q     '<a-i>q: easy-motion-alt-f<ret>'                         -docstring 'in enclosing single quoted string'
+map global gotoch Q     '<a-i>Q: easy-motion-alt-f<ret>'                         -docstring 'in enclosing double quoted string'
+map global gotoch g     '<a-i>g: easy-motion-alt-f<ret>'                         -docstring 'in enclosing grave quoted string'
+map global gotoch p     '<a-i>p: easy-motion-alt-f<ret>'                         -docstring 'in paragraph'
+map global gotoch i     '<a-i>i: easy-motion-alt-f<ret>'                         -docstring 'in current indentation block'
+map global gotoch u     '<a-i>u: easy-motion-alt-f<ret>'                         -docstring 'in argument'
+
+# Cd Mode
+declare-user-mode cd
+map global user   d       ': enter-user-mode cd<ret>'                            -docstring 'cd mode'
+map global cd     p       '<esc>: print-working-directory<ret>'                  -docstring 'parent dir'
+map global cd     b       '<esc>: change-directory-current-buffer<ret>'          -docstring 'current buffer dir'
+map global cd     f       '<esc>: find-current-buffer-directory<ret>'            -docstring 'find in current buffer dir'
+
+# UI Mode
+declare-user-mode ui
+map global user   u       ': enter-user-mode ui<ret>'                            -docstring 'ui mode'
+map global ui     l       ': ui-line-numbers-toggle<ret>'                        -docstring 'toggle line numbers'
+map global ui     w       ': ui-wrap-toggle<ret>'                                -docstring 'toggle wrap'
+map global ui     d       ': ui-git-diff-toggle<ret>'                            -docstring 'toggle git diff'
+map global ui     L       ': ui-lint-toggle<ret>'                                -docstring 'toggle lint diagnostics'
+map global ui     x       ': ui-todos-toggle<ret>'                               -docstring 'toggle todo comments'
+
+# System Clipboard
+map global user   y       "<a-|> xclip -sel clip<ret>"                           -docstring 'yank clipboard'
+map global user   p       "<a-!> xclip -o -sel clip<ret>"                        -docstring 'paste clipboard'
+
+# Filetypes
+hook global BufSetOption filetype=c    %{ set-option buffer formatcmd "astyle" }
+hook global BufSetOption filetype=cpp  %{ set-option buffer formatcmd "astyle" }
+hook global BufSetOption filetype=rust %{ set-option buffer formatcmd "rustfmt" }
+hook global WinSetOption filetype=sh   %{ set-option buffer formatcmd "shfmt" }
+
+# Cd Mode Commands
+define-command change-directory-current-buffer                                   -docstring 'cd to current buffer dir' %{
+  evaluate-commands %sh{
+    buffer_dirname=$(dirname "$kak_bufname")
+    echo "cd \"${buffer_dirname}\""
+    echo print-working-directory
+  }
+}
+
+define-command print-working-directory                                           -docstring 'print working directory' %{
+  evaluate-commands %sh{
+    echo "echo -markup {Information}$PWD"
+  }
+}
+
+declare-option -hidden str oldpwd
+
+define-command find-current-buffer-directory                                     -docstring 'edit in current buffer dir' %{
+  evaluate-commands %sh{ echo "set global oldpwd '$PWD'" }
+  change-directory-current-buffer
+  execute-keys ': peneira-files<ret>'
+  hook -group oldpwd global BufCreate .* %{
+    change-directory "%opt{oldpwd}"
+    remove-hooks global oldpwd
+  }
+  # on cancelled edit prompt
+  hook -group oldpwd global RawKey <esc> %{
+    change-directory "%opt{oldpwd}"
+    remove-hooks global oldpwd
+  }
+}
+
+# Suggested aliases
+
+#alias global cdb change-directory-current-buffer
+#alias global cdr change-directory-project-root
+#alias global ecd edit-current-buffer-directory
+#alias global pwd print-working-directory
+
+# Plugins
+plug 'andreyorst/plug.kak' noload
+plug 'gustavo-hms/luar' %{
+	plug 'gustavo-hms/peneira' %{
+		require-module peneira }}
+plug 'alexherbo2/auto-pairs.kak' %{ enable-auto-pairs }
+plug 'danr/kakoune-easymotion' %{
+	set-face global EasyMotionForeground rgb:ff5454+fb
+}

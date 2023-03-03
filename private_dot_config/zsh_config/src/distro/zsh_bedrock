@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 alias _uvoidmusl="strat -r void-musl"
 alias _svoidmusl="sudo strat -r void-musl"
 

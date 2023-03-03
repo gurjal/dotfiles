@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 auto-ls() {
 
     if [ -z $BUFFER ]; then

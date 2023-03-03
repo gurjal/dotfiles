@@ -1,9 +1,0 @@
-# nix env
-if [ -e /home/gurjal/.nix-profile/etc/profile.d/nix.sh ]; then
-    . /home/gurjal/.nix-profile/etc/profile.d/nix.sh;
-fi
-
-# autologin
-# if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
-#   exec startx
-# fi

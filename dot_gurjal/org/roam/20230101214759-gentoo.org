@@ -38,5 +38,14 @@ Device Drivers  --->
       <*> Intel 8xx/9xx/G3x/G4x/HD Graphics
          [*]   Enable preliminary support for prerelease Intel hardware by default
 #+end_example
+* Pipewire
+** Kernel
+#+begin_example
+Device Drivers  --->
+    <*> Sound card support  --->
+        <*> Advanced Linux Sound Architecture  --->
+            [*]   Sound Proc FS Support
+            [*]     Verbose procfs contents
+#+end_example
 * Hardware
 - [[id:02636d20-654e-4ed7-988f-a30160de3afc][System76 Oryx Pro (oryp9)]]

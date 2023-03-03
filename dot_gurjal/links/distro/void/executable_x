@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# errors showing up when running normal mode with args
+# man page flashed on screen briefly
+# colors fuckked
+
+# color="| bat -ppf --theme 1337 --language toml"
+
+[ -z $1 ] &&
+    cmd="xpkg -a" ||
+    cmd="xrs $@ | awk '{print $2}' | xargs -n1 xbps-uhelper getpkgname"
+win="sk --reverse -m --preview 'xq {1}'"
+
+while getopts hr:i flag; do
+    case $flag in
+    r)
+        cmd="xrs $OPTARG"
+        win="$PAGER"
+        break
+        ;;
+    i) win="$win | xargs -ro xi" ;;
+    # n) color= ;;
+    h)
+        printf "Usage: x [ options ] [ query ]
+  -i       install selected package
+  -r       read query results
+  -n       no color
+"
+        exit
+        ;;
+    esac
+done
+
+env sh -c "$cmd | $win"

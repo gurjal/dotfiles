@@ -1,0 +1,9 @@
+# nix env
+[ -e /home/gurjal/.nix-profile/etc/profile.d/nix.sh ] \
+    && . /home/gurjal/.nix-profile/etc/profile.d/nix.sh;
+
+# login
+echo && read -k1 "REPLY?startx? [Y/n] " && echo "\n"
+[[ "${REPLY}" != "n" ]] && [[ "${REPLY}" != "N" ]] \
+    && [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] \
+    && dbus-run-session -- startx

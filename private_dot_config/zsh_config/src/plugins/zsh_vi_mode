@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 # use beam shape cursor on startup
 echo -ne '\e[5 q'
 

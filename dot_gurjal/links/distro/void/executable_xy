@@ -1,0 +1,24 @@
+#!/bin/bash
+
+function usage()
+{
+    echo 'usage: xy [options] [xbps-query args]'
+    echo 'options:'
+    echo '  -g, --global    do not restrict to local repo'
+    echo '  -h, --help      xbps-query help message'
+    exit
+}
+
+if [ -z "$1" ]; then
+    usage
+else
+    if [[ "$1" == "-g" ]] || [[ "$1" == "--global" ]]; then
+        shift
+        xbps-query $@
+    else
+        xbps-query -i \
+            --repository=$XBPS_DISTDIR/hostdir/binpkgs \
+            --repository=$XBPS_DISTDIR/hostdir/binpkgs/nonfree \
+            $@
+    fi
+fi

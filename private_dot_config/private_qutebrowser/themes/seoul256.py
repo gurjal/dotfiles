@@ -196,7 +196,7 @@ c.colors.statusbar.private.fg = bg_warning
 c.colors.statusbar.private.bg = bg_lighter
 
 # Foreground color of the statusbar in command mode.
-c.colors.statusbar.command.fg = fg_default
+c.colors.statusbar.command.fg = fg_selection
 
 # Background color of the statusbar in command mode.
 c.colors.statusbar.command.bg = bg_default

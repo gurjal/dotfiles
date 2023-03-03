@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 # zsh function key bindings
 bindkey -M viins "^f" _seek_dir
 bindkey -M viins "^v" _seek_file

@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 # completion
 # fpath=($ZSH_BIN $fpath)
 autoload -Uz compinit

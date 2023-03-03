@@ -1,0 +1,4 @@
+:PROPERTIES:
+:ID:       f5e15601-9ed5-41ad-b0e4-7a2b6dfb0bda
+:END:
+#+title: video drivers
