@@ -7,8 +7,8 @@ else
     PS1=' %F{green}%m%f %F{green}${vcs_info_msg_0_}%f%F{blue}%2~%f %F{yellow}$%f '
 fi
 
-export VISUAL="kak"
-export EDITOR="kak"
+export VISUAL="nvim"
+export EDITOR="nvim"
 export KEYTIMEOUT=20
 export PAGER="bat -p"
 export MANPAGER="bat -p"

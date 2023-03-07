@@ -17,7 +17,7 @@ alias cat="bat -pp"
 alias pg="$PAGER"
 alias sk="sk -p ' ' --inline-info"
 alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
-alias v="kakc"
+alias v="$EDITOR"
 alias suv="sudo $EDITOR"
 alias cl="xclip -selection clipboard"
 alias ...="cd ../.."
@@ -122,7 +122,7 @@ function __you_alone_determine_your_mark()
             --preview 'bat -ppf --line-range :500 {}')
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER="kakc '$file'"
+        BUFFER="$EDITOR '$file'"
         zle accept-line
     else
         local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
@@ -144,7 +144,7 @@ function __always_check_twice_moron()
             --preview 'bat -ppf --line-range :500 {}')
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER="kakc '$file'"
+        BUFFER="$EDITOR '$file'"
         zle accept-line
     else
         local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
@@ -311,55 +311,55 @@ eval "$(zoxide init zsh)"
 # }}}
 # vi mode {{{
 
-# # init vi mode
-# set -o vi -M viins
+# init vi mode
+set -o vi -M viins
 
-# # new line cursor
-# function zle-line-init()
-# {
-#     echo -ne '\e[5 q' # beam
-# }
-# zle -N zle-line-init
+# new line cursor
+function zle-line-init()
+{
+    echo -ne '\e[5 q' # beam
+}
+zle -N zle-line-init
 
-# # set cursor when switching keymaps
-# function zle-keymap-select()
-# {
-#     if [[ $KEYMAP == vicmd ]]; then
-#         echo -ne '\e[1 q' # block
-#     else
-#         echo -ne '\e[5 q' # beam
-#     fi
-# }
-# zle -N zle-keymap-select
+# set cursor when switching keymaps
+function zle-keymap-select()
+{
+    if [[ $KEYMAP == vicmd ]]; then
+        echo -ne '\e[1 q' # block
+    else
+        echo -ne '\e[5 q' # beam
+    fi
+}
+zle -N zle-keymap-select
 
 # }}}
 # key bindings {{{
 
 # # vi mode
-# bindkey 'jk' vi-cmd-mode
-# bindkey -M viins "^?" backward-delete-char
-# bindkey -M viins "^W" backward-kill-word
-# bindkey -M viins "^U" backward-kill-line
-# bindkey -M vicmd "^H" run-help
+bindkey 'jk' vi-cmd-mode
+bindkey -M viins "^?" backward-delete-char
+bindkey -M viins "^W" backward-kill-word
+bindkey -M viins "^U" backward-kill-line
+bindkey -M vicmd "^H" run-help
 bindkey '^[e' edit-command-line
 
 # zsh-history-substring-search
-bindkey '^P' history-substring-search-up
-bindkey '^N' history-substring-search-down
-# bindkey -M vicmd 'k' history-substring-search-up
-# bindkey -M vicmd 'j' history-substring-search-down
+bindkey -M viins '^P' history-substring-search-up
+bindkey -M viins '^N' history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
 
 # function key bindings
-bindkey	"^G"	__a_fine_day_to_be_a_visitor
-bindkey	"^[g"	__you_might_be_chasing_a_ghost
-bindkey	"^V"	__you_alone_determine_your_mark
-bindkey	"^[v"	__always_check_twice_moron
-bindkey	"^O"	__initiative_begets_greatness
-bindkey	"^[^E"	__nothing_new_under_the_sun
-bindkey	"^[^R"	__through_the_passage_of_time
-bindkey	"^[^K"	__the_world_was_born_from_debt
-bindkey	"^[^I"	__one_departs_then_two_replace
-bindkey	"^[^P"	__interrogate_proc_cpu
-bindkey	"^[^M"	__interrogate_proc_mem
+bindkey "^F"    __a_fine_day_to_be_a_visitor
+bindkey "^[f"   __you_might_be_chasing_a_ghost
+bindkey "^V"    __you_alone_determine_your_mark
+bindkey "^[v"   __always_check_twice_moron
+bindkey "^O"    __initiative_begets_greatness
+bindkey "^[^E"  __nothing_new_under_the_sun
+bindkey "^[^R"  __through_the_passage_of_time
+bindkey "^[^K"  __the_world_was_born_from_debt
+bindkey "^[^I"  __one_departs_then_two_replace
+bindkey "^[^P"  __interrogate_proc_cpu
+bindkey "^[^M"  __interrogate_proc_mem
 
 # }}}

@@ -40,4 +40,4 @@ require("lazy").setup("plugins", {
     },
 })
 
-vim.cmd.colorscheme("ayu")
+vim.cmd.colorscheme("everforest")

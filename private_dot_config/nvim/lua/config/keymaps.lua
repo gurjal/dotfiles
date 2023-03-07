@@ -16,14 +16,14 @@ keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true }
 keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
 -- Go to
-keymap.set("n", "gh", "0", { desc = "Go to line start" })
-keymap.set("n", "gj", "G", { desc = "Go to bottom" })
-keymap.set("n", "gk", "gg", { desc = "Go to top" })
-keymap.set("n", "gl", "$", { desc = "Go to line end" })
+keymap.set({ "n", "v" }, "gh", "0", { desc = "Go to line start" })
+keymap.set({ "n", "v" }, "gj", "G", { desc = "Go to bottom" })
+keymap.set({ "n", "v" }, "gk", "gg", { desc = "Go to top" })
+keymap.set({ "n", "v" }, "gl", "$", { desc = "Go to line end" })
 
 -- buffers
-keymap.set("n", "<a-n>", "<cmd>bnext<cr>", { desc = "next buffer" })
-keymap.set("n", "<a-p>", "<cmd>bprevious<cr>", { desc = "prev buffer" })
+keymap.set("n", "L", "<cmd>bnext<cr>", { desc = "next buffer" })
+keymap.set("n", "H", "<cmd>bprevious<cr>", { desc = "prev buffer" })
 keymap.set("n", "<leader>b<cr>", "<cmd>enew<cr>", { desc = "new buffer" })
 keymap.set("n", "<leader>bd", "<cmd>bd<cr>", { desc = "kill buffer" })
 keymap.set("n", "<leader>bk", "<cmd>bd<cr>", { desc = "kill buffer" })
@@ -45,8 +45,8 @@ keymap.set("n", "<leader>wv", "<C-W>v", { desc = "split window right" })
 keymap.set("n", "<leader><tab><tab>", "<cmd>tabnew<cr>", { desc = "New Tab" })
 keymap.set("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close" })
 keymap.set("n", "<leader><tab>k", "<cmd>tabclose<cr>", { desc = "Close" })
-keymap.set("n", "<leader><tab>n", "<cmd>tabnext<cr>", { desc = "Next" })
-keymap.set("n", "<leader><tab>p", "<cmd>tabprevious<cr>", { desc = "Previous" })
+keymap.set("n", "<leader><tab>l", "<cmd>tabnext<cr>", { desc = "Next" })
+keymap.set("n", "<leader><tab>h", "<cmd>tabprevious<cr>", { desc = "Previous" })
 
 -- Clear search with <esc>
 keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
