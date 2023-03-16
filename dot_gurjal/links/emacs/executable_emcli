@@ -1,3 +1,2 @@
-#!/bin/bash
-# [[ -z $(pgrep emacs) ]] && emacs --daemon
-emacsclient -c
+#!/bin/sh
+emacsclient -c -a emacs

@@ -1,34 +1,71 @@
 #!/bin/bash
 
-# errors showing up when running normal mode with args
-# man page flashed on screen briefly
-# colors fuckked
+# errors showing up when running normal mode with args # man page flashed on screen briefly
 
-# color="| bat -ppf --theme 1337 --language toml"
+cmd=""
+# win="sk --reverse -m --preview 'xq {1}'"
+local_repo="$XBPS_DISTDIR/hostdir/binpkgs"
 
-[ -z $1 ] &&
-    cmd="xpkg -a" ||
-    cmd="xrs $@ | awk '{print $2}' | xargs -n1 xbps-uhelper getpkgname"
-win="sk --reverse -m --preview 'xq {1}'"
+function usage() {
+    echo "Usage: x [ options ] [ query ]"
+    # echo   "-i       install selected package"
+    echo   "-l       local packages"
+    # echo   "-p       print result"
+    exit
+}
 
-while getopts hr:i flag; do
+# function x-query() {
+# [ -z "$1" ] &&
+#     xpkg -a || # no initial query
+#     xrs "$1" | awk '{print $2}' | xargs -n1 xbps-uhelper getpkgname # initial query
+# }
+
+function x-local() {
+    echo "local packages:"
+    echo  "  $local_repo"
+    xpkg -R "$local_repo"
+    echo  "  $local_repo/nonfree"
+    xpkg -R "$local_repo/nonfree"
+}
+
+# function x-fuzzy() {
+#     sk --reverse -m --preview 'xq {1}'
+# }
+
+# function x-install() {
+#     xargs -ro echo
+# }
+
+# flag_i=0
+# flag_p=0
+flag_l=0
+
+[ $# -eq 0 ] && usage
+while getopts iplh flag; do
     case $flag in
-    r)
-        cmd="xrs $OPTARG"
-        win="$PAGER"
-        break
-        ;;
-    i) win="$win | xargs -ro xi" ;;
-    # n) color= ;;
-    h)
-        printf "Usage: x [ options ] [ query ]
-  -i       install selected package
-  -r       read query results
-  -n       no color
-"
-        exit
-        ;;
+    # i) flag_i=1 ;;
+    # p) flag_p=1 ;;
+    l) flag_l=1 ;;
+    h | ?) usage ;;
     esac
 done
 
-env sh -c "$cmd | $win"
+[ $flag_l -ne 0 ] && x-local
+
+# [ $# -gt 1 ] && shift
+
+# {
+#     [ $flag_l -ne 0 ] &&
+#     x-local $1 ||
+#     x-query $1
+# } | {
+#     [ $flag_p -ne 0 ] &&
+#     xargs echo &&
+#     exit ||
+#     x-fuzzy
+# } | {
+#     [ $flag_i -ne 0 ] &&
+#     x-install ||
+#     xargs echo
+# }
+
