@@ -2,9 +2,10 @@
 
 precmd() { vcs_info }
 if [[ "$USER" != "gurjal" ]]; then
-    PS1=' %F{magenta}%n@%f%F{green}%m%f %F{green}${vcs_info_msg_0_}%f%F{blue}%2~%f %F{yellow}$%f '
+    PS1=' %F{magenta}%n@%f%F{green}%m%f %F{blue}%2~%f %F{blue}${vcs_info_msg_0_}%f%F{yellow}$%f '
 else
-    PS1=' %F{green}%m%f %F{green}${vcs_info_msg_0_}%f%F{blue}%2~%f %F{yellow}$%f '
+    # PS1=' %F{cyan}%m%f %F{cyan}%2~%f %F{cyan}${vcs_info_msg_0_}%f%F{green}->%f '
+    PS1=' %F{cyan}%m%f %F{green}%2~ ${vcs_info_msg_0_}%f%F{yellow}->%f '
 fi
 
 export VISUAL="nvim"
