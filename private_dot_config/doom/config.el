@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-(setq user-full-name "gurjal"
-      user-mail-address "gurjal@proton.me")
+(setq user-full-name "John Doe"
+      user-mail-address "john@doe.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -21,11 +21,9 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-;; (setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
+;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-
-(setq doom-font (font-spec :family "Iosevka Nerd Font Mono"  :size 18)
-      doom-variable-pitch-font (font-spec :family "sans" :size 14))
+(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 18 :weight 'regular))
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -36,18 +34,16 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-oceanic-next)
+(setq doom-theme 'doom-horizon)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 't)
-
-;; cursor line highlighting
-(setq global-hl-line-modes 'nil)
+(setq display-line-numbers-type 'relative)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/.gurjal/org/")
+(setq org-roam-directory "~/.gurjal/zettelkasten")
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -108,17 +104,63 @@
  ;; :n     "C-n"   #'next-error
  ;; :n     "C-p"   #'previous-error
  ;; goto
- :n     "s"     #'avy-goto-char-2
+ :nv    "s"     #'avy-goto-char-2
+ :nv    "gh"    #'evil-beginning-of-line
+ :nv    "gj"    #'evil-goto-line
+ :nv    "gk"    #'evil-goto-first-line
+ :nv    "gl"    #'evil-end-of-line
+ ;; notes
+ :n     "-"     #'org-mark-ring-goto
+ ;; search
+ :n     "gw"   #'evil-ex-search-word-forward
+ :n     "gW"   #'evil-ex-search-word-backward
  ;; buffer
  :n     "\\"    #'evil-next-buffer
  :n     "|"     #'evil-prev-buffer
- ;; window
- :n     "C-h"   #'evil-window-left
- :n     "C-j"   #'evil-window-down
- :n     "C-k"   #'evil-window-up
- :n     "C-l"   #'evil-window-right
+ :n     "C-n"   #'evil-next-buffer
+ :n     "C-p"   #'evil-prev-buffer
  ;; macro
  :n     "Q"     #'call-last-kbd-macro
  ;; vimish folds
- :n     "z,"    #'vimish-fold-from-marks
- )
+ :n     "z,"    #'vimish-fold-from-marks)
+
+;; zettelkasten
+(setq org-roam-capture-templates
+      '(("n" "node" plain
+         "%a\n* %?"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+         :unnarrowed t)
+        ("i" "index" plain
+         "%a\n* %?"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: index\n")
+         :unnarrowed t)
+        ("p" "plain" plain
+         "%?"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+         :unnarrowed t)))
+(map! :leader
+      (:prefix-map ("z" . "zettelkasten")
+                   "t" #'org-roam-dailies-goto-today
+                   "a" #'org-roam-node-random
+                   "f" #'org-roam-node-find
+                   "F" #'org-roam-ref-find
+                   "g" #'org-roam-graph
+                   "i" #'org-roam-node-insert
+                   "n" #'org-roam-capture
+                   "r" #'org-roam-buffer-toggle
+                   "R" #'org-roam-buffer-display-dedicated
+                   "s" #'org-roam-db-sync
+                   "l" #'org-store-link
+                   (:prefix ("d" . "by date")
+                            "b" #'org-roam-dailies-goto-previous-note
+                            "d" #'org-roam-dailies-goto-date
+                            "D" #'org-roam-dailies-capture-date
+                            "f" #'org-roam-dailies-goto-next-note
+                            "m" #'org-roam-dailies-goto-tomorrow
+                            "M" #'org-roam-dailies-capture-tomorrow
+                            "n" #'org-roam-dailies-capture-today
+                            "t" #'org-roam-dailies-goto-today
+                            "T" #'org-roam-dailies-capture-today
+                            "y" #'org-roam-dailies-goto-yesterday
+                            "Y" #'org-roam-dailies-capture-yesterday
+                            "-" #'org-roam-dailies-find-directory)))
