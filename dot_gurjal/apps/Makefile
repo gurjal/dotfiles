@@ -1,16 +1,16 @@
 install:
-	ln -sf ~/.gurjal/apps/display_cam ~/.local/bin
-	ln -sf ~/.gurjal/apps/dj ~/.local/bin
-	ln -sf ~/.gurjal/apps/trashman ~/.local/bin
-	ln -sf ~/.gurjal/apps/nsxiv_rifle ~/.local/bin
-	ln -sf ~/.gurjal/apps/set_bg ~/.local/bin
-	ln -sf ~/.gurjal/apps/take_screen ~/.local/bin
-	ln -sf ~/.gurjal/apps/scribe ~/.local/bin
+	sudo cp ~/.gurjal/apps/display_cam /usr/local/bin
+	sudo cp ~/.gurjal/apps/dj /usr/local/bin
+	sudo cp ~/.gurjal/apps/trashman /usr/local/bin
+	sudo cp ~/.gurjal/apps/sxiv_rifle /usr/local/bin
+	sudo cp ~/.gurjal/apps/set_bg /usr/local/bin
+	sudo cp ~/.gurjal/apps/take_screen /usr/local/bin
+	sudo cp ~/.gurjal/apps/scribe /usr/local/bin
 uninstall:
-	rm -f ~/.local/bin/display_cam
-	rm -f ~/.local/bin/dj
-	rm -f ~/.local/bin/trashman
-	rm -f ~/.local/bin/nsxiv_rifle
-	rm -f ~/.local/bin/set_bg
-	rm -f ~/.local/bin/take_screen
-	rm -f ~/.local/bin/scribe
+	sudo rm -f /usr/local/bin/display_cam
+	sudo rm -f /usr/local/bin/dj
+	sudo rm -f /usr/local/bin/trashman
+	sudo rm -f /usr/local/bin/sxiv_rifle
+	sudo rm -f /usr/local/bin/set_bg
+	sudo rm -f /usr/local/bin/take_screen
+	sudo rm -f /usr/local/bin/scribe
