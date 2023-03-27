@@ -69,7 +69,7 @@ autoload edit-command-line
 zle -N edit-command-line
 
 # completion
-# fpath=($ZSH_BIN $fpath)
+fpath=($HOME/.config/zsh_config/src/completions/zsh-completions/src/ $fpath)
 autoload -Uz compinit
 compinit -d "$XDG_CACHE_HOME/zsh_compdump"
 # zstyle ':completion:*' auto-description 'specify: %d'
@@ -358,7 +358,7 @@ bindkey "^F"    __a_fine_day_to_be_a_visitor
 bindkey "^[f"   __you_might_be_chasing_a_ghost
 bindkey "^V"    __you_alone_determine_your_mark
 bindkey "^[v"   __always_check_twice_moron
-bindkey "^X"    __initiative_begets_greatness
+bindkey "^O"    __initiative_begets_greatness
 bindkey "^[^E"  __nothing_new_under_the_sun
 bindkey "^[^R"  __through_the_passage_of_time
 bindkey "^[^K"  __the_world_was_born_from_debt
