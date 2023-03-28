@@ -18,3 +18,6 @@ done
 file=$(echo -e $cz_list | sk --reverse)
 [[ -z $file ]] && exit
 chezmoi diff --reverse "$file"
+cmd=''
+read -r -p 'add file? [y/N] ' cmd
+[[ $cmd == "y" ]] || [[ $cmd == "Y" ]] && chezmoi add "$file"

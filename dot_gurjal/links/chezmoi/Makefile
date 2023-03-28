@@ -9,6 +9,7 @@ install:
 	ln -sf ~/.gurjal/links/chezmoi/dot_ls ~/.local/bin/.ls
 	ln -sf ~/.gurjal/links/chezmoi/dot_uls ~/.local/bin/.uls
 	ln -sf ~/.gurjal/links/chezmoi/dot_d ~/.local/bin/.d
+	ln -sf ~/.gurjal/links/chezmoi/dot_da ~/.local/bin/.da
 uninstall:
 	rm -f ~/.local/bin/cz
 	rm -f ~/.local/bin/.a
