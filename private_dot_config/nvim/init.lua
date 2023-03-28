@@ -1,5 +1,7 @@
--- options --
--------------
+-- vim:foldmethod=marker
+
+-- options {{{
+
 vim.opt.number         = true
 vim.opt.relativenumber = true
 vim.opt.cursorline     = false
@@ -53,16 +55,18 @@ vim.opt.hidden      = true
 vim.opt.list        = true
 vim.opt.lazyredraw  = false
 
--- keymap --
-------------
+-- }}}
+-- keymap {{{
+
 vim.g.mapleader     = ' '
 
 -- esc
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
+vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = "quit" })
 
 -- file
-vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = "quit" })
--- vim.keymap.set("n", "<leader>fs", "<cmd>w<cr><esc>", { desc = "save file" })
+vim.keymap.set("n", "<leader>fs", "<cmd>w<cr><esc>", { desc = "save file" })
+vim.keymap.set("n", "<leader>ff", "<cmd>LspZeroFormat<cr><esc>", { desc = "format file" })
 vim.keymap.set("n", "<leader><space>", "<cmd>wq<cr><esc>", { desc = "save and quit" })
 
 -- up/down
@@ -74,6 +78,7 @@ vim.keymap.set({ "n", "v" }, "gh", "0", { desc = "go to line start" })
 vim.keymap.set({ "n", "v" }, "gj", "G", { desc = "go to bottom" })
 vim.keymap.set({ "n", "v" }, "gk", "gg", { desc = "go to top" })
 vim.keymap.set({ "n", "v" }, "gl", "$", { desc = "go to line end" })
+vim.keymap.set({ "n", "v" }, "gm", "%", { desc = "go to matching" })
 
 -- buffers
 vim.keymap.set("n", "<C-n>", "<cmd>bnext<cr>")
@@ -124,8 +129,9 @@ vim.keymap.set("n", "<leader>l", "<cmd>:Lazy<cr>", { desc = "lazy" })
 -- vim.keymap.set("n", "<leader>xl", "<cmd>lopen<cr>", { desc = "open location list" })
 -- vim.keymap.set("n", "<leader>xq", "<cmd>copen<cr>", { desc = "open quickfix list" })
 
--- bootstrap package manager --
--------------------------------
+-- }}}
+-- bootstrap {{{
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     print("Installing 'folke/lazy.nvim'...")
@@ -133,10 +139,11 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- packages --
---------------
+-- }}}
+
 require("lazy").setup {
-    -- telescope --
+
+    -- telescope.nvim {{{
     {
         "nvim-telescope/telescope.nvim",
         branch = "0.1.x",
@@ -236,7 +243,8 @@ require("lazy").setup {
             },
         },
     },
-    -- file browser --
+    -- }}}
+    -- neo-tree.nvim {{{
     {
         "nvim-neo-tree/neo-tree.nvim",
         cmd = "Neotree",
@@ -254,7 +262,8 @@ require("lazy").setup {
             },
         },
     },
-    -- 2 char jump --
+    -- }}}
+    -- leap.nvim {{{
     {
         "ggandor/leap.nvim",
         event = "VeryLazy",
@@ -273,9 +282,11 @@ require("lazy").setup {
             highlight_unlabeled_phase_one_targets = false,
         },
     },
-    -- plugin dot repeatable (using for leap)
+    -- }}}
+    -- vim-repeat {{{
     { "tpope/vim-repeat",                            event = "VeryLazy" },
-    -- lsp boiler --
+    -- }}}
+    -- lsp-zero.nvim {{{
     {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v1.x',
@@ -294,7 +305,6 @@ require("lazy").setup {
             -- snippets
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
-
             -- { "lukas-reineke/lsp-format.nvim", config = true },
         },
         config = function()
@@ -309,7 +319,8 @@ require("lazy").setup {
             vim.diagnostic.config { virtual_text = true }
         end,
     },
-    -- syntax --
+    -- }}}
+    -- nvim-treesitter {{{
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
@@ -320,7 +331,8 @@ require("lazy").setup {
             }
         end
     },
-    -- better diagnostics list and others --
+    -- }}}
+    -- trouble.nvim {{{
     {
         "folke/trouble.nvim",
         cmd = { "TroubleToggle", "Trouble" },
@@ -330,7 +342,8 @@ require("lazy").setup {
             { "<leader>xX", "<cmd>TroubleToggle workspace_diagnostics<cr>", desc = "Workspace Diagnostics (Trouble)" },
         },
     },
-    -- todo comments --
+    -- }}}
+    -- todo-comments.nvim {{{
     {
         "folke/todo-comments.nvim",
         cmd = { "TodoTrouble", "TodoTelescope" },
@@ -345,7 +358,8 @@ require("lazy").setup {
             { "<leader>st", "<cmd>TodoTelescope<cr>",                            desc = "Todo" },
         },
     },
-    -- keymap guide --
+    -- }}}
+    -- which-key.nvim {{{
     {
         "folke/which-key.nvim",
         event = "VeryLazy",
@@ -375,7 +389,8 @@ require("lazy").setup {
             })
         end,
     },
-    -- references --
+    -- }}}
+    -- vim-illuminate {{{
     {
         "RRethy/vim-illuminate",
         event = "BufReadPost",
@@ -389,7 +404,8 @@ require("lazy").setup {
             { "[[", function() require("illuminate").goto_prev_reference(false) end, desc = "Prev Reference" },
         },
     },
-    -- git signs --
+    -- }}}
+    -- gitsigns.nvim {{{
     {
         "lewis6991/gitsigns.nvim",
         event = "BufReadPre",
@@ -425,7 +441,8 @@ require("lazy").setup {
             end,
         },
     },
-    -- comments --
+    -- }}}
+    -- mini.comment {{{
     { "JoosepAlviste/nvim-ts-context-commentstring", lazy = true },
     {
         "echasnovski/mini.comment",
@@ -441,7 +458,8 @@ require("lazy").setup {
             require("mini.comment").setup(opts)
         end,
     },
-    -- auto pairs --
+    -- }}}
+    -- mini.pairs {{{
     {
         "echasnovski/mini.pairs",
         event = "VeryLazy",
@@ -449,7 +467,8 @@ require("lazy").setup {
             require("mini.pairs").setup(opts)
         end,
     },
-    -- surround --
+    -- }}}
+    -- mini.surround {{{
     {
         "echasnovski/mini.surround",
         keys = function(plugin, keys)
@@ -482,12 +501,14 @@ require("lazy").setup {
             require("mini.surround").setup(opts)
         end,
     },
-    -- terminal --
+    -- }}}
+    -- toggleterm.nvim {{{
     {
         "akinsho/toggleterm.nvim",
         -- config = { open_mapping = [[<leader>t]], direction = "tab" }
     },
-    -- colorschemes --
+    -- }}}
+    -- colorschemes {{{
     {
         "Shatur/neovim-ayu",
         lazy = true,
@@ -508,6 +529,11 @@ require("lazy").setup {
         "catppuccin/nvim",
         lazy = true,
         name = "catppuccin",
+        config = function()
+            require("catppuccin").setup({
+                flavour = "frappe", -- latte, frappe, macchiato, mocha
+            })
+        end,
     },
     { "bluz71/vim-moonfly-colors" },
     { "bluz71/vim-nightfly-guicolors" },
@@ -541,6 +567,8 @@ require("lazy").setup {
     },
     { "drewtempelmeyer/palenight.vim" },
     { "ellisonleao/gruvbox.nvim",     name = "gruvbox", opts = { background = "dark" } },
+    -- }}}
+
 }
 
-vim.cmd.colorscheme("rose-pine")
+vim.cmd.colorscheme("catppuccin")
