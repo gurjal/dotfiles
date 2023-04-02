@@ -161,7 +161,7 @@ require("lazy").setup {
             { "<leader>gc", "<cmd>Telescope git_commits<CR>",                   desc = "commits" },
             { "<leader>gs", "<cmd>Telescope git_status<CR>",                    desc = "status" },
             -- search
-            { "<leader>sf", "<cmd>Telescope files<cr>",                         desc = "Find Files (root dir)" },
+            { "<leader>sf", "<cmd>Telescope find_files<cr>",                         desc = "Find Files (root dir)" },
             { "<leader>sa", "<cmd>Telescope autocommands<cr>",                  desc = "Auto Commands" },
             { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>",     desc = "Buffer" },
             { "<leader>sc", "<cmd>Telescope command_history<cr>",               desc = "Command History" },
@@ -571,4 +571,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("embark")
