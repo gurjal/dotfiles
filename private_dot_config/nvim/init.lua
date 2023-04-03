@@ -83,8 +83,8 @@ vim.keymap.set({ "n", "v" }, "gm", "%", { desc = "go to matching" })
 -- buffers
 vim.keymap.set("n", "<C-n>", "<cmd>bnext<cr>")
 vim.keymap.set("n", "<C-p>", "<cmd>bprevious<cr>")
-vim.keymap.set("n", "<leader>d", "<cmd>bd<cr>", { desc = "kill buffer" })
-vim.keymap.set("n", "<leader>k", "<cmd>bd<cr>", { desc = "kill buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bd<cr>", { desc = "kill buffer" })
+vim.keymap.set("n", "<leader>bk", "<cmd>bd<cr>", { desc = "kill buffer" })
 
 -- windows
 vim.keymap.set("n", "<C-h>", "<C-w>h")
@@ -107,6 +107,8 @@ vim.keymap.set("n", "<leader><tab>p", "<cmd>tabprevious<cr>", { desc = "previous
 -- search
 vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>")
 vim.keymap.set({ "n", "v" }, "gw", "*N")
+
+-- utility
 vim.keymap.set(
     "n",
     "<leader>ur",
@@ -115,9 +117,9 @@ vim.keymap.set(
 )
 
 -- add undo break-points
--- vim.keymap.set("i", ",", ",<c-g>u")
--- vim.keymap.set("i", ".", ".<c-g>u")
--- vim.keymap.set("i", ";", ";<c-g>u")
+vim.keymap.set("i", ",", ",<c-g>u")
+vim.keymap.set("i", ".", ".<c-g>u")
+vim.keymap.set("i", ";", ";<c-g>u")
 
 -- visual indenting
 vim.keymap.set("v", "<", "<gv")
@@ -125,6 +127,9 @@ vim.keymap.set("v", ">", ">gv")
 
 -- lazy
 vim.keymap.set("n", "<leader>l", "<cmd>:Lazy<cr>", { desc = "lazy" })
+
+-- mason
+vim.keymap.set("n", "<leader>m", "<cmd>:Mason<cr>", { desc = "mason" })
 
 -- vim.keymap.set("n", "<leader>xl", "<cmd>lopen<cr>", { desc = "open location list" })
 -- vim.keymap.set("n", "<leader>xq", "<cmd>copen<cr>", { desc = "open quickfix list" })
@@ -154,28 +159,27 @@ require("lazy").setup {
             { "<leader>/",  "<cmd>Telescope live_grep<cr>",                     desc = "Find in Files (Grep)" },
             { "<leader>:",  "<cmd>Telescope command_history<cr>",               desc = "Command History" },
             -- file
-            { "<leader>fr", "<cmd>Telescope oldfiles<cr>",                      desc = "Recent" },
+            { "<leader>fr", "<cmd>Telescope oldfiles<cr>",                      desc = "recent files" },
             -- buffer
-            { "<leader>b.", "<cmd>Telescope buffers<cr>",                       desc = "Buffers" },
+            { "<leader>bb", "<cmd>Telescope buffers<cr>",                       desc = "search buffers" },
             -- git
             { "<leader>gc", "<cmd>Telescope git_commits<CR>",                   desc = "commits" },
             { "<leader>gs", "<cmd>Telescope git_status<CR>",                    desc = "status" },
             -- search
-            { "<leader>sf", "<cmd>Telescope find_files<cr>",                         desc = "Find Files (root dir)" },
-            { "<leader>sa", "<cmd>Telescope autocommands<cr>",                  desc = "Auto Commands" },
-            { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>",     desc = "Buffer" },
-            { "<leader>sc", "<cmd>Telescope command_history<cr>",               desc = "Command History" },
-            { "<leader>sC", "<cmd>Telescope commands<cr>",                      desc = "Commands" },
-            { "<leader>sd", "<cmd>Telescope diagnostics<cr>",                   desc = "Diagnostics" },
-            { "<leader>sg", "<cmd>Telescope live_grep<cr>",                     desc = "Grep (root dir)" },
-            { "<leader>sh", "<cmd>Telescope help_tags<cr>",                     desc = "Help Pages" },
-            { "<leader>sH", "<cmd>Telescope highlights<cr>",                    desc = "Search Highlight Groups" },
-            { "<leader>sk", "<cmd>Telescope keymaps<cr>",                       desc = "Key Maps" },
-            { "<leader>sM", "<cmd>Telescope man_pages<cr>",                     desc = "Man Pages" },
-            { "<leader>sm", "<cmd>Telescope marks<cr>",                         desc = "Jump to Mark" },
-            { "<leader>so", "<cmd>Telescope vim_options<cr>",                   desc = "Options" },
-            { "<leader>sw", "<cmd>Telescope grep_string<cr>",                   desc = "Word (root dir)" },
-            -- ui
+            { "<leader>sf", "<cmd>Telescope find_files<cr>",                    desc = "files" },
+            { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>",     desc = "current buffer" },
+            { "<leader>sc", "<cmd>Telescope command_history<cr>",               desc = "command history" },
+            { "<leader>sC", "<cmd>Telescope commands<cr>",                      desc = "commands" },
+            { "<leader>sd", "<cmd>Telescope diagnostics<cr>",                   desc = "diagnostics" },
+            { "<leader>sg", "<cmd>Telescope live_grep<cr>",                     desc = "grep" },
+            { "<leader>sh", "<cmd>Telescope help_tags<cr>",                     desc = "help pages" },
+            { "<leader>sH", "<cmd>Telescope highlights<cr>",                    desc = "search highlight groups" },
+            { "<leader>sk", "<cmd>Telescope keymaps<cr>",                       desc = "key maps" },
+            { "<leader>sM", "<cmd>Telescope man_pages<cr>",                     desc = "man pages" },
+            { "<leader>sm", "<cmd>Telescope marks<cr>",                         desc = "jump to mark" },
+            { "<leader>so", "<cmd>Telescope vim_options<cr>",                   desc = "options" },
+            { "<leader>sw", "<cmd>Telescope grep_string<cr>",                   desc = "word" },
+            -- utility
             { "<leader>uc", "<cmd>Telescope colorscheme<cr>",                   desc = "switch colorscheme" },
             -- {
             --     "<leader>ss",
@@ -254,7 +258,7 @@ require("lazy").setup {
             "MunifTanjim/nui.nvim"
         },
         keys = {
-            { "<leader>e", "<CMD>Neotree toggle<CR>", mode = { "n" } }
+            { "<leader>e", "<CMD>Neotree toggle<CR>", mode = { "n" }, desc = 'neotree' }
         },
         opts = {
             filesystem = {
@@ -571,4 +575,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("embark")
+vim.cmd.colorscheme("tundra")
