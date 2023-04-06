@@ -23,8 +23,8 @@
 ;;
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 18 :weight 'regular))
-
+(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 18 :weight 'regular)
+      doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :size 18))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -121,7 +121,7 @@
  :n     "C-p"   #'evil-prev-buffer
  ;; macro
  :n     "Q"     #'call-last-kbd-macro
- ;; vimish folds
+ ;; folds
  :n     "z,"    #'vimish-fold-from-marks)
 
 ;; zettelkasten
@@ -139,18 +139,26 @@
          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
          :unnarrowed t)))
 (map! :leader
-      (:prefix-map ("z" . "zettelkasten")
-                   "t" #'org-roam-dailies-goto-today
-                   "a" #'org-roam-node-random
+      (:prefix-map ("v" . "visual")
+                   "s" #'scroll-lock-mode))
+(map! :leader
+      (:prefix-map ("j" . "zettelkasten")
+                   "g" #'org-roam-dailies-goto-today
                    "f" #'org-roam-node-find
                    "F" #'org-roam-ref-find
-                   "g" #'org-roam-graph
                    "i" #'org-roam-node-insert
+                   "v" #'org-roam-graph
                    "n" #'org-roam-capture
-                   "r" #'org-roam-buffer-toggle
-                   "R" #'org-roam-buffer-display-dedicated
                    "s" #'org-roam-db-sync
                    "l" #'org-store-link
+                   "b" #'org-roam-buffer-toggle
+                   "B" #'org-roam-buffer-display-dedicated
+                   "t" #'org-roam-tag-add
+                   "T" #'org-roam-tag-remove
+                   "r" #'org-roam-ref-add
+                   "R" #'org-roam-ref-remove
+                   "a" #'org-roam-alias-add
+                   "A" #'org-roam-alias-remove
                    (:prefix ("d" . "by date")
                             "b" #'org-roam-dailies-goto-previous-note
                             "d" #'org-roam-dailies-goto-date

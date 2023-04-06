@@ -1,2 +1,2 @@
 #!/bin/sh
-clyrics "$(spotify-tui pb | cut -d' ' -f2- | cut -d'-' -f1)"
+clyrics "$(spotify-tui pb | cut -d' ' -f2- | cut -d'-' -f1)" | $PAGER
