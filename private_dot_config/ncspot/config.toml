@@ -1,0 +1,18 @@
+use_nerdfont = true
+notify = true
+[keybindings]
+"q" = "back"
+"Shift+q" = "quit"
+"Space" = "playpause"
+"," = "play"
+"u" = "move up 10"
+"d" = "move down 10"
+"Ctrl+b" = "move up 26"
+"Ctrl+f" = "move down 26"
+"g" = "move top"
+"G" = "move bottom"
+"x" = "noop"
+"Shift+x" = "delete"
+"Shift+l" = "share selected"
+"v" = "focus cover"
+"e" = "focus library"
