@@ -1,7 +1,6 @@
 -- vim:foldmethod=marker
 
 -- options {{{
-
 vim.opt.number         = true
 vim.opt.relativenumber = true
 vim.opt.cursorline     = false
@@ -19,7 +18,6 @@ vim.opt.smartindent    = true
 vim.opt.ignorecase     = true
 vim.opt.smartcase      = true
 vim.opt.showmode       = false
-
 -- window
 vim.opt.cmdheight      = 1
 vim.opt.showtabline    = 1
@@ -31,18 +29,15 @@ vim.opt.titleold       = 'st'
 vim.opt.splitbelow     = false
 vim.opt.splitright     = false
 vim.opt.termguicolors  = true
-
 -- backup, undo and swap
 vim.opt.undofile       = true
 vim.opt.undodir        = vim.fn.stdpath 'cache' .. '/undo'
 vim.opt.swapfile       = false
 vim.opt.backup         = false
 vim.opt.writebackup    = true
-
 -- formatting
 -- opt.formatoptions  = 'tcrql'
 -- opt.joinspaces     = false
-
 -- util
 vim.cmd 'filetype plugin indent on'
 vim.opt.shortmess:append 'sI'
@@ -54,38 +49,31 @@ vim.opt.wildmode    = { 'list', 'longest' }
 vim.opt.hidden      = true
 vim.opt.list        = true
 vim.opt.lazyredraw  = false
-
 -- }}}
 -- keymap {{{
-
 vim.g.mapleader     = ' '
 
 -- esc
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
 vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = "quit" })
-
 -- file
 vim.keymap.set("n", "<leader>fs", "<cmd>w<cr><esc>", { desc = "save file" })
 vim.keymap.set("n", "<leader>ff", "<cmd>LspZeroFormat<cr><esc>", { desc = "format file" })
 vim.keymap.set("n", "<leader><space>", "<cmd>wq<cr><esc>", { desc = "save and quit" })
-
 -- up/down
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-
 -- go to
 vim.keymap.set({ "n", "v" }, "gh", "0", { desc = "go to line start" })
 vim.keymap.set({ "n", "v" }, "gj", "G", { desc = "go to bottom" })
 vim.keymap.set({ "n", "v" }, "gk", "gg", { desc = "go to top" })
 vim.keymap.set({ "n", "v" }, "gl", "$", { desc = "go to line end" })
 vim.keymap.set({ "n", "v" }, "gm", "%", { desc = "go to matching" })
-
 -- buffers
 vim.keymap.set("n", "<C-n>", "<cmd>bnext<cr>")
 vim.keymap.set("n", "<C-p>", "<cmd>bprevious<cr>")
 vim.keymap.set("n", "<leader>bd", "<cmd>bd<cr>", { desc = "kill buffer" })
 vim.keymap.set("n", "<leader>bk", "<cmd>bd<cr>", { desc = "kill buffer" })
-
 -- windows
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
@@ -96,58 +84,69 @@ vim.keymap.set("n", "<leader>wd", "<C-W>c", { desc = "delete window" })
 vim.keymap.set("n", "<leader>ws", "<C-W>s", { desc = "split window below" })
 vim.keymap.set("n", "<leader>wv", "<C-W>v", { desc = "split window right" })
 vim.keymap.set("n", "<leader>wo", "<C-W>o", { desc = "current window only" })
-
 -- tabs
 vim.keymap.set("n", "<leader><tab><tab>", "<cmd>tabnew<cr>", { desc = "new tab" })
 vim.keymap.set("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "close tab" })
 vim.keymap.set("n", "<leader><tab>k", "<cmd>tabclose<cr>", { desc = "close tab" })
 vim.keymap.set("n", "<leader><tab>n", "<cmd>tabnext<cr>", { desc = "next tab" })
 vim.keymap.set("n", "<leader><tab>p", "<cmd>tabprevious<cr>", { desc = "previous tab" })
-
 -- search
 vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>")
 vim.keymap.set({ "n", "v" }, "gw", "*N")
-
 -- utility
 vim.keymap.set(
     "n",
     "<leader>ur",
     "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
-    { desc = "redraw / clear hlsearch / diff update" }
+    { desc = "redraw" }
 )
-
+vim.keymap.set("n", "<leader>ul", "<cmd>:Lazy<cr>", { desc = "lazy" })
+vim.keymap.set("n", "<leader>um", "<cmd>:Mason<cr>", { desc = "mason" })
 -- add undo break-points
 vim.keymap.set("i", ",", ",<c-g>u")
 vim.keymap.set("i", ".", ".<c-g>u")
 vim.keymap.set("i", ";", ";<c-g>u")
-
 -- visual indenting
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
-
--- lazy
-vim.keymap.set("n", "<leader>l", "<cmd>:Lazy<cr>", { desc = "lazy" })
-
--- mason
-vim.keymap.set("n", "<leader>m", "<cmd>:Mason<cr>", { desc = "mason" })
-
 -- vim.keymap.set("n", "<leader>xl", "<cmd>lopen<cr>", { desc = "open location list" })
 -- vim.keymap.set("n", "<leader>xq", "<cmd>copen<cr>", { desc = "open quickfix list" })
-
 -- }}}
 -- bootstrap {{{
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     print("Installing 'folke/lazy.nvim'...")
     vim.fn.system({ "git", "clone", "https://github.com/folke/lazy.nvim.git", lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
-
 -- }}}
 
 require("lazy").setup {
 
+    -- which-key.nvim {{{
+    {
+        "folke/which-key.nvim",
+        event = "VeryLazy",
+        opts = {
+            plugins = { spelling = true },
+        },
+        config = function(_, opts)
+            local wk = require("which-key")
+            wk.setup(opts)
+            wk.register({
+                mode = { "n", "v" },
+                ["<leader><tab>"] = { name = "+tabs" },
+                ["<leader>b"] = { name = "+buffer" },
+                ["<leader>f"] = { name = "+file" },
+                ["<leader>g"] = { name = "+git" },
+                ["<leader>s"] = { name = "+search" },
+                ["<leader>u"] = { name = "+utility" },
+                ["<leader>w"] = { name = "+windows" },
+                ["<leader>x"] = { name = "+diagnostics/quickfix" },
+            })
+        end,
+    },
+    -- }}}
     -- telescope.nvim {{{
     {
         "nvim-telescope/telescope.nvim",
@@ -363,37 +362,6 @@ require("lazy").setup {
         },
     },
     -- }}}
-    -- which-key.nvim {{{
-    {
-        "folke/which-key.nvim",
-        event = "VeryLazy",
-        opts = {
-            plugins = { spelling = true },
-        },
-        config = function(_, opts)
-            local wk = require("which-key")
-            wk.setup(opts)
-            wk.register({
-                --     mode = { "n", "v" },
-                --     ["g"] = { name = "+goto" },
-                -- ["gs"] = { name = "+surround" },
-                --     ["]"] = { name = "+next" },
-                --     ["["] = { name = "+prev" },
-                -- ["<leader><tab>"] = { name = "+tabs" },
-                --     ["<leader>b"] = { name = "+buffer" },
-                --     ["<leader>c"] = { name = "+code" },
-                -- ["<leader>f"] = { name = "+file" },
-                -- ["<leader>g"] = { name = "+git" },
-                --     ["<leader>gh"] = { name = "+hunks" },
-                -- ["<leader>s"] = { name = "+search" },
-                --     ["<leader>sn"] = { name = "+noice" },
-                ["<leader>u"] = { name = "+ui" },
-                ["<leader>w"] = { name = "+windows" },
-                ["<leader>x"] = { name = "+diagnostics/quickfix" },
-            })
-        end,
-    },
-    -- }}}
     -- vim-illuminate {{{
     {
         "RRethy/vim-illuminate",
@@ -575,4 +543,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("tundra")
+vim.cmd.colorscheme("palenight")
