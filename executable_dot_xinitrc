@@ -18,29 +18,26 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
+# discrete nvidia
+if system76-power graphics | grep -q 'nvidia'; then
+  xrandr --setprovideroutputsource modesetting NVIDIA-0
+  xrandr --auto
+  xrandr --dpi 96
+fi
+
 # redshift &
-
-# xrandr --setprovideroutputsource modesetting NVIDIA-0
-# xrandr --auto
-
 light -S 100
-
 set_bg &
-
 picom &
-
 pipewire &
-
 dunst &
-
 xbanish &
-
 slstatus &
 
-# standard start #
+# start
 dbus-run-session -- dwm
 
-# or restart sig #
+# restart sig
 # while :; do
 #   ssh-agent dwm
 # done
