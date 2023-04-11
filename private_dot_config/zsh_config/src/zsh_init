@@ -112,7 +112,7 @@ setopt PROMPT_SUBST
 # }}}
 # functions {{{
 
-# grip a file with sk
+# pick file with sk
 #   if cmdline buffer is empty, open file in nvim
 #   if cmdline buffer is not empty, return path of file
 function __you_alone_determine_your_mark()
@@ -211,24 +211,28 @@ zle -N __initiative_begets_greatness
 # interrogate ps about cpu usage
 function __interrogate_proc_cpu()
 {
-    local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
-        sk --reverse --no-sort --tac \
-            --header='id      user    cpu mem start time command')
-    zle reset-prompt
-    [ -z $proc ] && return
-    echo $proc
+    # local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
+    #     sk --reverse --no-sort --tac \
+    #         --header='id      user    cpu mem start time command')
+    # zle reset-prompt
+    # [ -z $proc ] && return
+    # echo $proc
+    BUFFER=" top -o '+%CPU'"
+    zle accept-line
 }
 zle -N __interrogate_proc_cpu
 
 # interrogate ps about mem usage
 function __interrogate_proc_mem()
 {
-    local proc=$(ps axuk %mem | awk '{print $2"\t"$1"\t"$4" "$3" "$9" "$10" "$11}' |
-        sk --reverse --no-sort --tac \
-            --header='id      user    mem cpu start time command')
-    zle reset-prompt
-    [ -z $proc ] && return
-    echo $proc
+    # local proc=$(ps axuk %mem | awk '{print $2"\t"$1"\t"$4" "$3" "$9" "$10" "$11}' |
+    #     sk --reverse --no-sort --tac \
+    #         --header='id      user    mem cpu start time command')
+    # zle reset-prompt
+    # [ -z $proc ] && return
+    # echo $proc
+    BUFFER=" top -o '+%MEM'"
+    zle accept-line
 }
 zle -N __interrogate_proc_mem
 
@@ -335,24 +339,23 @@ zle -N zle-keymap-select
 # }}}
 # key bindings {{{
 
-# # vi mode
+bindkey '^[e' edit-command-line
+bindkey -M vicmd "^H" run-help
+# vi mode
 bindkey 'jk' vi-cmd-mode
+bindkey -M vicmd 'gh' beginning-of-line
+bindkey -M vicmd 'gl' end-of-line
+# emacs insert mode
 bindkey -M viins "^?" backward-delete-char
 bindkey -M viins "^W" backward-kill-word
 bindkey -M viins "^U" backward-kill-line
-bindkey -M vicmd "^H" run-help
-bindkey '^[e' edit-command-line
-
+bindkey -M viins '^A' beginning-of-line
+bindkey -M viins '^E' end-of-line
 # zsh-history-substring-search
 bindkey -M viins '^P' history-substring-search-up
 bindkey -M viins '^N' history-substring-search-down
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
-
-# emacs insert mode
-bindkey -M viins '^A' beginning-of-line
-bindkey -M viins '^E' end-of-line
-
 # function key bindings
 bindkey "^F"    __a_fine_day_to_be_a_visitor
 bindkey "^[f"   __you_might_be_chasing_a_ghost
@@ -365,5 +368,11 @@ bindkey "^[^K"  __the_world_was_born_from_debt
 bindkey "^[^N"  __one_departs_then_two_replace
 bindkey "^[^P"  __interrogate_proc_cpu
 bindkey "^[^M"  __interrogate_proc_mem
+# function key bindings cmdmode
+# bindkey -M vicmd "m" __a_fine_day_to_be_a_visitor
+# bindkey -M vicmd "M" __you_might_be_chasing_a_ghost
+# bindkey -M vicmd "v" __you_alone_determine_your_mark
+# bindkey -M vicmd "V" __always_check_twice_moron
+# bindkey -M vicmd "o" __initiative_begets_greatness
 
 # }}}

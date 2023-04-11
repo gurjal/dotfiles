@@ -2,11 +2,11 @@
 
 (setq user-full-name "shaan raya"
       user-mail-address "shaanraya@proton.me"
-      doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 15 :weight 'regular)
-      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font")
+      doom-font (font-spec :family "IosevkaTerm Nerd Font" :size 18 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "IosevkaTerm Nerd Font")
       doom-big-font-increment 2
-      doom-unicode-font  (font-spec :family "Noto Color Emoji")
-      doom-theme 'doom-tokyo-night
+      doom-unicode-font (font-spec :family "Noto Color Emoji")
+      doom-theme 'doom-old-hope
       display-line-numbers-type 'relative
       vimish-fold-global-mode 1
       confirm-kill-emacs nil
@@ -32,28 +32,40 @@
 (after! evil-escape (delete 'vterm-mode evil-escape-excluded-major-modes))
 
 ;; gurjal
-(map! :nv    "s"     #'avy-goto-char-2
+(map!
+      ;; search
+      :n     "gw"    #'evil-ex-search-word-forward
+      :n     "gW"    #'evil-ex-search-word-backward
+      ;; buffer
+      :n     "|"     #'evil-prev-buffer
+      :n     "\\"    #'evil-next-buffer
+      ;; window
+      ;; :n     "C-h"   #'evil-window-left
+      ;; :n     "C-j"   #'evil-window-down
+      ;; :n     "C-k"   #'evil-window-up
+      ;; :n     "C-l"   #'evil-window-right
+      ;; goto
+      :nv    "s"     #'avy-goto-char-2
       :nv    "gh"    #'evil-beginning-of-line
       :nv    "gj"    #'evil-goto-line
       :nv    "gk"    #'evil-goto-first-line
       :nv    "gl"    #'evil-end-of-line
-      ;; search
-      :n     "gw"   #'evil-ex-search-word-forward
-      :n     "gW"   #'evil-ex-search-word-backward
-      ;; buffer
-      :n     "C-j"   #'evil-next-buffer
-      :n     "C-k"   #'evil-prev-buffer
       ;; macro
       :n     "Q"     #'call-last-kbd-macro
       ;; folds
       :n     "z,"    #'vimish-fold-from-marks
+      ;; file
+      :leader
+      :n     "y"     #'save-buffer
+      :n     "d"     #'kill-buffer :desc "kill buffer"
+      :n     "k"     #'kill-buffer :desc "kill buffer"
       ;; toggle
       :leader :prefix "t"
       :n     "s"     #'scroll-lock-mode)
 
 ;; org templates
 (setq org-directory "~/.gurjal/org/"
-      org-roam-directory "~/.gurjal/zettelkasten"
+      org-roam-directory "~/.gurjal/org/zettelkasten"
       org-roam-capture-templates
       '(("n" "node" plain
          "%a\n* %?"
@@ -79,16 +91,18 @@
                    "i" #'org-roam-node-insert
                    "v" #'org-roam-graph
                    "n" #'org-roam-capture
+                   "r" #'org-roam-refile
                    "s" #'org-roam-db-sync
                    "l" #'org-store-link
                    "b" #'org-roam-buffer-toggle
                    "B" #'org-roam-buffer-display-dedicated
-                   "t" #'org-roam-tag-add
-                   "T" #'org-roam-tag-remove
-                   "r" #'org-roam-ref-add
-                   "R" #'org-roam-ref-remove
-                   "a" #'org-roam-alias-add
-                   "A" #'org-roam-alias-remove
+                   (:prefix ("p" . "properties")
+                            "t" #'org-roam-tag-add
+                            "T" #'org-roam-tag-remove
+                            "r" #'org-roam-ref-add
+                            "R" #'org-roam-ref-remove
+                            "a" #'org-roam-alias-add
+                            "A" #'org-roam-alias-remove)
                    (:prefix ("d" . "by date")
                             "b" #'org-roam-dailies-goto-previous-note
                             "d" #'org-roam-dailies-goto-date

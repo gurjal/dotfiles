@@ -16,3 +16,4 @@ notify = true
 "Shift+l" = "share selected"
 "v" = "focus cover"
 "e" = "focus library"
+"s" = "focus search"

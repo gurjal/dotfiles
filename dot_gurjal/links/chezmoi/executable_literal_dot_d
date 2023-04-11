@@ -17,4 +17,4 @@ for c in $cz_status; do
 done
 file=$(echo -e $cz_list | sk --reverse)
 [[ -z $file ]] && exit
-chezmoi diff --reverse "$file"
+chezmoi diff "$file"

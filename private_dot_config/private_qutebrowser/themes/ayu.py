@@ -1,4 +1,4 @@
-# title: everforest
+# title: ayu
 # author: gurjal
 # desc: qutebrowser theme
 #

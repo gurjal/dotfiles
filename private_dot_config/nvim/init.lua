@@ -19,7 +19,7 @@ vim.opt.ignorecase     = true
 vim.opt.smartcase      = true
 vim.opt.showmode       = false
 -- window
-vim.opt.cmdheight      = 1
+vim.opt.cmdheight      = 0
 vim.opt.showtabline    = 1
 vim.opt.numberwidth    = 4
 vim.opt.laststatus     = 0
@@ -51,15 +51,23 @@ vim.opt.list        = true
 vim.opt.lazyredraw  = false
 -- }}}
 -- keymap {{{
-vim.g.mapleader     = ' '
+vim.g.mapleader = ' '
 
 -- esc
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
 vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = "quit" })
 -- file
-vim.keymap.set("n", "<leader>fs", "<cmd>w<cr><esc>", { desc = "save file" })
-vim.keymap.set("n", "<leader>ff", "<cmd>LspZeroFormat<cr><esc>", { desc = "format file" })
+vim.keymap.set("n", "<leader>y", "<cmd>w<cr><esc>", { desc = "save file" })
 vim.keymap.set("n", "<leader><space>", "<cmd>wq<cr><esc>", { desc = "save and quit" })
+vim.keymap.set("n", "<leader>fs", "<cmd>w<cr><esc>", { desc = "save file" })
+vim.keymap.set("n", "<leader>fq", "<cmd>wq<cr><esc>", { desc = "save and quit" })
+-- buffers
+vim.keymap.set("n", "\\", "<cmd>bnext<cr>")
+vim.keymap.set("n", "|", "<cmd>bprevious<cr>")
+vim.keymap.set("n", "<leader>d", "<cmd>bd<cr>", { desc = "kill buffer" })
+vim.keymap.set("n", "<leader>k", "<cmd>bd<cr>", { desc = "kill buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bd<cr>", { desc = "kill buffer" })
+vim.keymap.set("n", "<leader>bk", "<cmd>bd<cr>", { desc = "kill buffer" })
 -- up/down
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -69,30 +77,28 @@ vim.keymap.set({ "n", "v" }, "gj", "G", { desc = "go to bottom" })
 vim.keymap.set({ "n", "v" }, "gk", "gg", { desc = "go to top" })
 vim.keymap.set({ "n", "v" }, "gl", "$", { desc = "go to line end" })
 vim.keymap.set({ "n", "v" }, "gm", "%", { desc = "go to matching" })
--- buffers
-vim.keymap.set("n", "<C-n>", "<cmd>bnext<cr>")
-vim.keymap.set("n", "<C-p>", "<cmd>bprevious<cr>")
-vim.keymap.set("n", "<leader>bd", "<cmd>bd<cr>", { desc = "kill buffer" })
-vim.keymap.set("n", "<leader>bk", "<cmd>bd<cr>", { desc = "kill buffer" })
 -- windows
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
 vim.keymap.set("n", "<leader>ww", "<C-W>p", { desc = "other window" })
-vim.keymap.set("n", "<leader>wd", "<C-W>c", { desc = "delete window" })
+vim.keymap.set("n", "<leader>wd", "<C-W>c", { desc = "kill window" })
+vim.keymap.set("n", "<leader>wk", "<C-W>c", { desc = "kill window" })
 vim.keymap.set("n", "<leader>ws", "<C-W>s", { desc = "split window below" })
 vim.keymap.set("n", "<leader>wv", "<C-W>v", { desc = "split window right" })
 vim.keymap.set("n", "<leader>wo", "<C-W>o", { desc = "current window only" })
 -- tabs
-vim.keymap.set("n", "<leader><tab><tab>", "<cmd>tabnew<cr>", { desc = "new tab" })
+vim.keymap.set("n", "<M-h>", "<cmd>tabprevious<cr>")
+vim.keymap.set("n", "<M-l>", "<cmd>tabnext<cr>")
+vim.keymap.set("n", "<leader><tab>n", "<cmd>tabnew<cr>", { desc = "new tab" })
 vim.keymap.set("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "close tab" })
 vim.keymap.set("n", "<leader><tab>k", "<cmd>tabclose<cr>", { desc = "close tab" })
-vim.keymap.set("n", "<leader><tab>n", "<cmd>tabnext<cr>", { desc = "next tab" })
-vim.keymap.set("n", "<leader><tab>p", "<cmd>tabprevious<cr>", { desc = "previous tab" })
 -- search
 vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>")
 vim.keymap.set({ "n", "v" }, "gw", "*N")
+-- code
+vim.keymap.set("n", "<leader>cf", "<cmd>LspZeroFormat<cr><esc>", { desc = "format file" })
 -- utility
 vim.keymap.set(
     "n",
@@ -140,6 +146,7 @@ require("lazy").setup {
                 ["<leader>f"] = { name = "+file" },
                 ["<leader>g"] = { name = "+git" },
                 ["<leader>s"] = { name = "+search" },
+                ["<leader>c"] = { name = "+code" },
                 ["<leader>u"] = { name = "+utility" },
                 ["<leader>w"] = { name = "+windows" },
                 ["<leader>x"] = { name = "+diagnostics/quickfix" },
@@ -287,7 +294,7 @@ require("lazy").setup {
     },
     -- }}}
     -- vim-repeat {{{
-    { "tpope/vim-repeat",                            event = "VeryLazy" },
+    { "tpope/vim-repeat", event = "VeryLazy" },
     -- }}}
     -- lsp-zero.nvim {{{
     {
@@ -474,10 +481,11 @@ require("lazy").setup {
         end,
     },
     -- }}}
-    -- toggleterm.nvim {{{
+    -- mini.align {{{
     {
-        "akinsho/toggleterm.nvim",
-        -- config = { open_mapping = [[<leader>t]], direction = "tab" }
+        'echasnovski/mini.align',
+        version = '*',
+        config = function () end,
     },
     -- }}}
     -- colorschemes {{{
@@ -543,4 +551,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("palenight")
+vim.cmd.colorscheme("catppuccin")
