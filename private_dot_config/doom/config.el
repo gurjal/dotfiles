@@ -6,7 +6,7 @@
       doom-variable-pitch-font (font-spec :family "IosevkaTerm Nerd Font")
       doom-big-font-increment 2
       doom-unicode-font (font-spec :family "Noto Color Emoji")
-      doom-theme 'doom-old-hope
+      doom-theme 'doom-Iosvkem
       display-line-numbers-type 'relative
       vimish-fold-global-mode 1
       confirm-kill-emacs nil
@@ -57,8 +57,8 @@
       ;; file
       :leader
       :n     "y"     #'save-buffer
-      :n     "d"     #'kill-buffer :desc "kill buffer"
-      :n     "k"     #'kill-buffer :desc "kill buffer"
+      :n     "d"     #'kill-this-buffer :desc "kill buffer"
+      :n     "k"     #'kill-this-buffer :desc "kill buffer"
       ;; toggle
       :leader :prefix "t"
       :n     "s"     #'scroll-lock-mode)
