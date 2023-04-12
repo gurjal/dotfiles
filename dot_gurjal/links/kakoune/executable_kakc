@@ -1,0 +1,4 @@
+#!/bin/sh
+[ -z "$(kak -l | grep ^kakd$)" ] &&
+kak $@ ||
+kak -c kakd $@

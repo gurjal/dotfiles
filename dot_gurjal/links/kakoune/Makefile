@@ -1,4 +1,4 @@
 install:
-	ln -sf ~/.gurjal/links/kakoune/kakclient -t ~/.local/bin
+	ln -sf ~/.gurjal/links/kakoune/kakc -t ~/.local/bin
 uninstall:
-	rm ~/.local/bin/kakclient
+	rm ~/.local/bin/kakc
