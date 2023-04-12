@@ -1,4 +1,0 @@
-Host gh
-	User git
-	HostName github.com
-	IdentityFile ~/.ssh/id_rsa

@@ -1,2 +1,0 @@
-#!/bin/bash
-[[ $PWD != $HOME ]] && chezmoi status . || chezmoi status 

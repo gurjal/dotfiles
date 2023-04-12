@@ -1,3 +1,0 @@
-#!/bin/sh
-[ -z "$(kak -l | grep ^kakd$)" ] && setsid kak -d -s kakd
-kak -c kakd

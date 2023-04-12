@@ -1,2 +1,0 @@
-optimalBlockSize: optimalBlockSize.cpp
-	g++ -o optimalBlockSize optimalBlockSize.cpp
