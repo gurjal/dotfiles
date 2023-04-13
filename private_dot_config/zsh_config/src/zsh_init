@@ -365,9 +365,9 @@ bindkey "^O"    __initiative_begets_greatness
 bindkey "^[^E"  __nothing_new_under_the_sun
 bindkey "^[^R"  __through_the_passage_of_time
 bindkey "^[^K"  __the_world_was_born_from_debt
-bindkey "^[^N"  __one_departs_then_two_replace
+bindkey "^[^M"  __one_departs_then_two_replace
 bindkey "^[^P"  __interrogate_proc_cpu
-bindkey "^[^M"  __interrogate_proc_mem
+# bindkey "^[^M"  __interrogate_proc_mem
 # function key bindings cmdmode
 # bindkey -M vicmd "m" __a_fine_day_to_be_a_visitor
 # bindkey -M vicmd "M" __you_might_be_chasing_a_ghost

@@ -1,12 +1,28 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-wilmersdorf t)
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
 (setq user-full-name "shaan raya"
       user-mail-address "shaanraya@proton.me"
       doom-font (font-spec :family "IosevkaTerm Nerd Font" :size 18 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "IosevkaTerm Nerd Font")
       doom-big-font-increment 2
       doom-unicode-font (font-spec :family "Noto Color Emoji")
-      doom-theme 'doom-Iosvkem
       display-line-numbers-type 'relative
       vimish-fold-global-mode 1
       confirm-kill-emacs nil
@@ -57,8 +73,8 @@
       ;; file
       :leader
       :n     "y"     #'save-buffer
-      :n     "d"     #'kill-this-buffer :desc "kill buffer"
-      :n     "k"     #'kill-this-buffer :desc "kill buffer"
+      :n     "d"     #'kill-this-buffer
+      :n     "k"     #'kill-this-buffer
       ;; toggle
       :leader :prefix "t"
       :n     "s"     #'scroll-lock-mode)
