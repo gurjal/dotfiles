@@ -51,7 +51,7 @@ vim.opt.list        = true
 vim.opt.lazyredraw  = false
 -- }}}
 -- keymap {{{
-vim.g.mapleader = ' '
+vim.g.mapleader     = ' '
 
 -- esc
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
@@ -294,7 +294,7 @@ require("lazy").setup {
     },
     -- }}}
     -- vim-repeat {{{
-    { "tpope/vim-repeat", event = "VeryLazy" },
+    { "tpope/vim-repeat",                            event = "VeryLazy" },
     -- }}}
     -- lsp-zero.nvim {{{
     {
@@ -485,7 +485,9 @@ require("lazy").setup {
     {
         'echasnovski/mini.align',
         version = '*',
-        config = function () end,
+        config = function()
+            require 'mini.align'.setup()
+        end,
     },
     -- }}}
     -- colorschemes {{{
