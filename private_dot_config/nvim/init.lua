@@ -51,11 +51,12 @@ vim.opt.list        = true
 vim.opt.lazyredraw  = false
 -- }}}
 -- keymap {{{
-vim.g.mapleader     = ' '
+vim.g.mapleader = ' '
 
 -- esc
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
 vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = "quit" })
+vim.keymap.set("n", "<leader>Q", "<cmd>q!<cr>", { desc = "force quit" })
 -- file
 vim.keymap.set("n", "<leader>y", "<cmd>w<cr><esc>", { desc = "save file" })
 vim.keymap.set("n", "<leader><space>", "<cmd>wq<cr><esc>", { desc = "save and quit" })
@@ -254,6 +255,63 @@ require("lazy").setup {
         },
     },
     -- }}}
+    -- nvim-treesitter {{{
+    {
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate",
+        config = function()
+            require("nvim-treesitter.configs").setup {
+                ensure_installed = { "c", "lua", "rust" },
+                highlight = { enable = true, }
+            }
+        end
+    },
+    -- }}}
+    -- lsp-zero.nvim {{{
+    {
+        'VonHeikemen/lsp-zero.nvim',
+        branch = 'v1.x',
+        dependencies = {
+            -- lsp support
+            { 'neovim/nvim-lspconfig' },
+            { 'williamboman/mason.nvim' },
+            { 'williamboman/mason-lspconfig.nvim' },
+            -- autocompletion
+            { 'hrsh7th/nvim-cmp' },
+            { 'hrsh7th/cmp-nvim-lsp' },
+            { 'hrsh7th/cmp-buffer' },
+            { 'hrsh7th/cmp-path' },
+            { 'saadparwaiz1/cmp_luasnip' },
+            { 'hrsh7th/cmp-nvim-lua' },
+            -- snippets
+            { 'L3MON4D3/LuaSnip' },
+            { 'rafamadriz/friendly-snippets' },
+            -- { "lukas-reineke/lsp-format.nvim", config = true },
+        },
+        config = function()
+            local lsp = require('lsp-zero').preset({
+                name = 'recommended',
+                set_lsp_keymaps = true,
+                manage_nvim_cmp = true,
+                suggest_lsp_servers = false,
+            })
+            lsp.nvim_workspace()
+            lsp.setup()
+            vim.diagnostic.config { virtual_text = true }
+        end,
+    },
+    -- }}}
+    -- trouble.nvim {{{
+    {
+        "folke/trouble.nvim",
+        cmd = { "TroubleToggle", "Trouble" },
+        opts = { use_diagnostic_signs = true },
+        keys = {
+            { "<leader>xx", "<cmd>TroubleToggle document_diagnostics<cr>",  desc = "Document Diagnostics (Trouble)" },
+            { "<leader>xX", "<cmd>TroubleToggle workspace_diagnostics<cr>", desc = "Workspace Diagnostics (Trouble)" },
+        },
+    },
+    -- }}}
     -- neo-tree.nvim {{{
     {
         "nvim-neo-tree/neo-tree.nvim",
@@ -294,64 +352,7 @@ require("lazy").setup {
     },
     -- }}}
     -- vim-repeat {{{
-    { "tpope/vim-repeat",                            event = "VeryLazy" },
-    -- }}}
-    -- lsp-zero.nvim {{{
-    {
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v1.x',
-        dependencies = {
-            -- lsp support
-            { 'neovim/nvim-lspconfig' },
-            { 'williamboman/mason.nvim' },
-            { 'williamboman/mason-lspconfig.nvim' },
-            -- autocompletion
-            { 'hrsh7th/nvim-cmp' },
-            { 'hrsh7th/cmp-nvim-lsp' },
-            { 'hrsh7th/cmp-buffer' },
-            { 'hrsh7th/cmp-path' },
-            { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lua' },
-            -- snippets
-            { 'L3MON4D3/LuaSnip' },
-            { 'rafamadriz/friendly-snippets' },
-            -- { "lukas-reineke/lsp-format.nvim", config = true },
-        },
-        config = function()
-            local lsp = require('lsp-zero').preset({
-                name = 'recommended',
-                set_lsp_keymaps = true,
-                manage_nvim_cmp = true,
-                suggest_lsp_servers = false,
-            })
-            lsp.nvim_workspace()
-            lsp.setup()
-            vim.diagnostic.config { virtual_text = true }
-        end,
-    },
-    -- }}}
-    -- nvim-treesitter {{{
-    {
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-        config = function()
-            require("nvim-treesitter.configs").setup {
-                ensure_installed = { "c", "lua", "rust" },
-                highlight = { enable = true, }
-            }
-        end
-    },
-    -- }}}
-    -- trouble.nvim {{{
-    {
-        "folke/trouble.nvim",
-        cmd = { "TroubleToggle", "Trouble" },
-        opts = { use_diagnostic_signs = true },
-        keys = {
-            { "<leader>xx", "<cmd>TroubleToggle document_diagnostics<cr>",  desc = "Document Diagnostics (Trouble)" },
-            { "<leader>xX", "<cmd>TroubleToggle workspace_diagnostics<cr>", desc = "Workspace Diagnostics (Trouble)" },
-        },
-    },
+    { "tpope/vim-repeat", event = "VeryLazy" },
     -- }}}
     -- todo-comments.nvim {{{
     {
@@ -370,19 +371,19 @@ require("lazy").setup {
     },
     -- }}}
     -- vim-illuminate {{{
-    {
-        "RRethy/vim-illuminate",
-        event = "BufReadPost",
-        opts = { delay = 200 },
-        config = function(_, opts)
-            require("illuminate").configure(opts)
-        end,
-        -- stylua: ignore
-        keys = {
-            { "]]", function() require("illuminate").goto_next_reference(false) end, desc = "Next Reference", },
-            { "[[", function() require("illuminate").goto_prev_reference(false) end, desc = "Prev Reference" },
-        },
-    },
+    -- {
+    --     "RRethy/vim-illuminate",
+    --     event = "BufReadPost",
+    --     opts = { delay = 200 },
+    --     config = function(_, opts)
+    --         require("illuminate").configure(opts)
+    --     end,
+    --     -- stylua: ignore
+    --     keys = {
+    --         { "]]", function() require("illuminate").goto_next_reference(false) end, desc = "Next Reference", },
+    --         { "[[", function() require("illuminate").goto_prev_reference(false) end, desc = "Prev Reference" },
+    --     },
+    -- },
     -- }}}
     -- gitsigns.nvim {{{
     {
@@ -485,9 +486,7 @@ require("lazy").setup {
     {
         'echasnovski/mini.align',
         version = '*',
-        config = function()
-            require 'mini.align'.setup()
-        end,
+        config = function () end,
     },
     -- }}}
     -- colorschemes {{{
@@ -553,4 +552,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("ayu")
