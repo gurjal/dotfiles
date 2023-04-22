@@ -22,7 +22,7 @@ vim.opt.showmode       = false
 vim.opt.cmdheight      = 0
 vim.opt.showtabline    = 1
 vim.opt.numberwidth    = 4
-vim.opt.laststatus     = 0
+vim.opt.laststatus     = 2
 vim.opt.signcolumn     = 'yes:1'
 vim.opt.title          = true
 vim.opt.titleold       = 'st'
@@ -552,4 +552,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("ayu")
+vim.cmd.colorscheme("catppuccin")
