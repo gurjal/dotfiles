@@ -27,7 +27,7 @@ fi
 
 # redshift &
 light -S 100
-set_bg &
+set-bg &
 picom &
 pipewire &
 dunst &

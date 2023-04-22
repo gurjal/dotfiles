@@ -6,7 +6,7 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-wilmersdorf t)
+  (load-theme 'doom-henna t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; Enable custom neotree theme (all-the-icons must be installed!)
@@ -72,9 +72,13 @@
       :n     "z,"    #'vimish-fold-from-marks
       ;; file
       :leader
+      ;; buffer
       :n     "y"     #'save-buffer
       :n     "d"     #'kill-this-buffer
       :n     "k"     #'kill-this-buffer
+      ;; visit window
+      :n     "v"     #'evil-window-next
+      :n     "V"     #'evil-window-prev
       ;; toggle
       :leader :prefix "t"
       :n     "s"     #'scroll-lock-mode)
