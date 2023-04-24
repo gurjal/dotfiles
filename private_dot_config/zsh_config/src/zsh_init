@@ -110,6 +110,9 @@ setopt no_case_glob
 # expand prompt substring
 setopt PROMPT_SUBST
 
+# # wildcard fix maybe??
+# setopt extended_glob
+
 # }}}
 # functions {{{
 
