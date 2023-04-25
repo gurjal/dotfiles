@@ -1,6 +1,7 @@
 #!/bin/zsh
 # vim:foldmethod=marker
 
+KEYTIMEOUT=50
 local SK_HEIGHT=20
 
 # aliases {{{
@@ -119,7 +120,7 @@ setopt PROMPT_SUBST
 # pick file with sk
 #   if cmdline buffer is empty, open file in nvim
 #   if cmdline buffer is not empty, return path of file
-function __you_alone_determine_your_mark()
+function __find_file()
 {
     if [ -z $BUFFER ]; then
         local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT \
@@ -136,12 +137,12 @@ function __you_alone_determine_your_mark()
         zle end-of-line
     fi
 }
-zle -N __you_alone_determine_your_mark
+zle -N __find_file
 
 # grip a hidden file with sk
 #   if cmdline buffer is empty, open hidden file in nvim
 #   if cmdline buffer is not empty, return path of hidden file
-function __always_check_twice_moron()
+function __find_hidden_file()
 {
     if [ -z $BUFFER ]; then
         local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT \
@@ -158,12 +159,12 @@ function __always_check_twice_moron()
         zle end-of-line
     fi
 }
-zle -N __always_check_twice_moron
+zle -N __find_hidden_file
 
 # hop to a directory with sk
 #   if cmdline buffer is empty, cd into directory
 #   if cmdline buffer is not empty, return path of directory
-function __a_fine_day_to_be_a_visitor()
+function __find_directory()
 {
     if [ -z $BUFFER ]; then
         local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
@@ -179,12 +180,12 @@ function __a_fine_day_to_be_a_visitor()
         zle end-of-line
     fi
 }
-zle -N __a_fine_day_to_be_a_visitor
+zle -N __find_directory
 
 # hop to a hidden directory with sk
 #   if cmdline buffer is empty, cd into directory
 #   if cmdline buffer is not empty, return path of directory
-function __you_might_be_chasing_a_ghost
+function __find_hidden_directory
 {
     if [ -z $BUFFER ]; then
         local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
@@ -200,7 +201,7 @@ function __you_might_be_chasing_a_ghost
         zle end-of-line
     fi
 }
-zle -N __you_might_be_chasing_a_ghost
+zle -N __find_hidden_directory
 
 # operate a file with xdg-open
 function __initiative_begets_greatness()
@@ -317,66 +318,79 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
 eval "$(zoxide init zsh)"
 
 # }}}
-# vi mode {{{
+# emacs mode {{{
 
-# init vi mode
-set -o vi -M viins
+# init emacs mode
+set -o emacs
 
-# new line cursor
-function zle-line-init()
-{
-    echo -ne '\e[6 q' # beam
-}
-zle -N zle-line-init
-
-# set cursor when switching keymaps
-function zle-keymap-select()
-{
-    if [[ $KEYMAP == vicmd ]]; then
-        echo -ne '\e[2 q' # block
-    else
-        echo -ne '\e[6 q' # beam
-    fi
-}
-zle -N zle-keymap-select
+# zsh-history-substring-search
+bindkey -M emacs '^P' history-substring-search-up
+bindkey -M emacs '^N' history-substring-search-down
+# function key bindings
+bindkey "^[g^[h" __find_file
+bindkey "^[g^[g" __find_directory
+bindkey "^[h^[g" __find_hidden_file
+bindkey "^[h^[h" __find_hidden_directory
+bindkey "^[g^[o" __initiative_begets_greatness
+bindkey "^[g^[e" __nothing_new_under_the_sun
+bindkey "^[g^[r" __through_the_passage_of_time
+bindkey "^[g^[k" __the_world_was_born_from_debt
+bindkey "^[g^[m" __one_departs_then_two_replace
+bindkey "^[g^[p" __interrogate_proc_cpu
+# bindkey "^[^M" __interrogate_proc_mem
 
 # }}}
-# key bindings {{{
+# vi mode {{{
 
-bindkey '^[e' edit-command-line
-bindkey -M vicmd "^H" run-help
-# vi mode
-bindkey 'jk' vi-cmd-mode
-bindkey -M vicmd 'gh' beginning-of-line
-bindkey -M vicmd 'gl' end-of-line
-# emacs insert mode
-bindkey -M viins "^?" backward-delete-char
-bindkey -M viins "^W" backward-kill-word
-bindkey -M viins "^U" backward-kill-line
-bindkey -M viins '^A' beginning-of-line
-bindkey -M viins '^E' end-of-line
-# zsh-history-substring-search
-bindkey -M viins '^P' history-substring-search-up
-bindkey -M viins '^N' history-substring-search-down
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
-# function key bindings
-bindkey "^F"    __a_fine_day_to_be_a_visitor
-bindkey "^[f"   __you_might_be_chasing_a_ghost
-bindkey "^V"    __you_alone_determine_your_mark
-bindkey "^[v"   __always_check_twice_moron
-bindkey "^O"    __initiative_begets_greatness
-bindkey "^[^E"  __nothing_new_under_the_sun
-bindkey "^[^R"  __through_the_passage_of_time
-bindkey "^[^K"  __the_world_was_born_from_debt
-bindkey "^[^M"  __one_departs_then_two_replace
-bindkey "^[^P"  __interrogate_proc_cpu
-# bindkey "^[^M"  __interrogate_proc_mem
-# function key bindings cmdmode
-# bindkey -M vicmd "m" __a_fine_day_to_be_a_visitor
-# bindkey -M vicmd "M" __you_might_be_chasing_a_ghost
-# bindkey -M vicmd "v" __you_alone_determine_your_mark
-# bindkey -M vicmd "V" __always_check_twice_moron
-# bindkey -M vicmd "o" __initiative_begets_greatness
+# # init vi mode
+# set -o vi -M viins
+
+# # new line cursor
+# function zle-line-init()
+# {
+#     echo -ne '\e[6 q' # beam
+# }
+# zle -N zle-line-init
+
+# # set cursor when switching keymaps
+# function zle-keymap-select()
+# {
+#     if [[ $KEYMAP == vicmd ]]; then
+#         echo -ne '\e[2 q' # block
+#     else
+#         echo -ne '\e[6 q' # beam
+#     fi
+# }
+# zle -N zle-keymap-select
+
+# bindkey '^[e' edit-command-line
+# bindkey -M vicmd "^H" run-help
+# # vi mode
+# bindkey 'jk' vi-cmd-mode
+# bindkey -M vicmd 'gh' beginning-of-line
+# bindkey -M vicmd 'gl' end-of-line
+# # emacs insert mode
+# bindkey -M viins "^?" backward-delete-char
+# bindkey -M viins "^W" backward-kill-word
+# bindkey -M viins "^U" backward-kill-line
+# bindkey -M viins '^A' beginning-of-line
+# bindkey -M viins '^E' end-of-line
+# # zsh-history-substring-search
+# bindkey -M viins '^P' history-substring-search-up
+# bindkey -M viins '^N' history-substring-search-down
+# bindkey -M vicmd 'k' history-substring-search-up
+# bindkey -M vicmd 'j' history-substring-search-down
+# # function key bindings
+# bindkey "^F"    __find_directory
+# bindkey "^[f"   __find_hidden_directory
+# bindkey "^V"    __find_file
+# bindkey "^[v"   __find_hidden_file
+# bindkey "^O"    __initiative_begets_greatness
+# bindkey "^[^E"  __nothing_new_under_the_sun
+# bindkey "^[^R"  __through_the_passage_of_time
+# bindkey "^[^K"  __the_world_was_born_from_debt
+# bindkey "^[^M"  __one_departs_then_two_replace
+# bindkey "^[^P"  __interrogate_proc_cpu
+# # bindkey "^[^M"  __interrogate_proc_mem
 
 # }}}
