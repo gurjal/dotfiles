@@ -222,7 +222,8 @@ function __interrogate_proc_cpu()
     # zle reset-prompt
     # [ -z $proc ] && return
     # echo $proc
-    BUFFER=" top -o '+%CPU'"
+    # BUFFER=" top -o '+%CPU'"
+    BUFFER=" htop --sort-key=PERCENT_CPU"
     zle accept-line
 }
 zle -N __interrogate_proc_cpu

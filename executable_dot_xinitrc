@@ -25,6 +25,9 @@ fi
 #   xrandr --dpi 96
 # fi
 
+# # syncthing start runit user service
+# [ -z "$(sv status syncthing | grep run)" ] && sv up syncthing
+
 # redshift &
 light -S 100
 set-bg &
