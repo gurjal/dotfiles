@@ -204,17 +204,17 @@ function __find_hidden_directory
 zle -N __find_hidden_directory
 
 # operate a file with xdg-open
-function __initiative_begets_greatness()
+function __open_file()
 {
     local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
     [ -z $file ] && return
     xdg-open $file
 }
-zle -N __initiative_begets_greatness
+zle -N __open_file
 
 # interrogate ps about cpu usage
-function __interrogate_proc_cpu()
+function __list_pid()
 {
     # local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
     #     sk --reverse --no-sort --tac \
@@ -226,7 +226,7 @@ function __interrogate_proc_cpu()
     BUFFER=" htop --sort-key=PERCENT_CPU"
     zle accept-line
 }
-zle -N __interrogate_proc_cpu
+zle -N __list_pid
 
 # interrogate ps about mem usage
 function __interrogate_proc_mem()
@@ -242,7 +242,7 @@ function __interrogate_proc_mem()
 }
 zle -N __interrogate_proc_mem
 
-function __nothing_new_under_the_sun()
+function __find_env()
 {
     local env_var=$(env | sk --reverse --tac)
     zle reset-prompt
@@ -254,9 +254,9 @@ function __nothing_new_under_the_sun()
         zle end-of-line
     fi
 }
-zle -N __nothing_new_under_the_sun
+zle -N __find_env
 
-function __the_world_was_born_from_debt()
+function __kill_pid()
 {
     local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
         sk --reverse --no-sort --tac --color=header:160 \
@@ -265,9 +265,9 @@ function __the_world_was_born_from_debt()
     [ -z $proc ] && return
     sudo kill $proc
 }
-zle -N __the_world_was_born_from_debt
+zle -N __kill_pid
 
-function __through_the_passage_of_time()
+function __find_hist()
 {
     local cmd=$(bat -pp "$HISTFILE" |
         sk --reverse --tac --no-sort --height=$SK_HEIGHT)
@@ -277,10 +277,10 @@ function __through_the_passage_of_time()
     BUFFER=$cmd
     zle end-of-line
 }
-zle -N __through_the_passage_of_time
+zle -N __find_hist
 
 export mnt="$HOME/.mnt"
-function __one_departs_then_two_replace()
+function __mount_drive()
 {
     [ ! -d $mnt ] && mkdir $mnt
     for m in $(lsblk | tail +2 | awk -F ' ' '{print $7}'); do
@@ -300,7 +300,7 @@ function __one_departs_then_two_replace()
     BUFFER="sudo mount '$dev' $mnt"
     zle accept-line
 }
-zle -N __one_departs_then_two_replace
+zle -N __mount_drive
 
 # run updatedb before locate
 function locat()
@@ -321,24 +321,33 @@ eval "$(zoxide init zsh)"
 # }}}
 # emacs mode {{{
 
-# init emacs mode
 set -o emacs
-
+# nav
+bindkey -M emacs "^[v^[v" __find_file
+bindkey -M emacs "^[m^[m" __find_directory
+bindkey -M emacs "^[v^[m" __find_hidden_file
+bindkey -M emacs "^[m^[v" __find_hidden_directory
+bindkey -M emacs "^[v^[o" __open_file
+bindkey -M emacs "^[m^[o" __open_file
+# env
+bindkey -M emacs "^[v^[e" __find_env
+bindkey -M emacs "^[m^[e" __find_env
+# hist
+bindkey -M emacs "^[v^[r" __find_hist
+bindkey -M emacs "^[m^[r" __find_hist
+# mount
+bindkey -M emacs "^[v^[d" __mount_drive
+bindkey -M emacs "^[m^[d" __mount_drive
+# pid
+bindkey -M emacs "^[v^[k" __kill_pid
+bindkey -M emacs "^[m^[k" __kill_pid
+bindkey -M emacs "^[v^[p" __list_pid
+bindkey -M emacs "^[m^[p" __list_pid
 # zsh-history-substring-search
 bindkey -M emacs '^P' history-substring-search-up
 bindkey -M emacs '^N' history-substring-search-down
-# function key bindings
-bindkey "^[g^[h" __find_file
-bindkey "^[g^[g" __find_directory
-bindkey "^[h^[g" __find_hidden_file
-bindkey "^[h^[h" __find_hidden_directory
-bindkey "^[g^[o" __initiative_begets_greatness
-bindkey "^[g^[e" __nothing_new_under_the_sun
-bindkey "^[g^[r" __through_the_passage_of_time
-bindkey "^[g^[k" __the_world_was_born_from_debt
-bindkey "^[g^[m" __one_departs_then_two_replace
-bindkey "^[g^[p" __interrogate_proc_cpu
-# bindkey "^[^M" __interrogate_proc_mem
+bindkey -M emacs '<Up>' history-substring-search-up
+bindkey -M emacs '<Down>' history-substring-search-down
 
 # }}}
 # vi mode {{{
@@ -386,12 +395,12 @@ bindkey "^[g^[p" __interrogate_proc_cpu
 # bindkey "^[f"   __find_hidden_directory
 # bindkey "^V"    __find_file
 # bindkey "^[v"   __find_hidden_file
-# bindkey "^O"    __initiative_begets_greatness
-# bindkey "^[^E"  __nothing_new_under_the_sun
-# bindkey "^[^R"  __through_the_passage_of_time
-# bindkey "^[^K"  __the_world_was_born_from_debt
-# bindkey "^[^M"  __one_departs_then_two_replace
-# bindkey "^[^P"  __interrogate_proc_cpu
+# bindkey "^O"    __open_file
+# bindkey "^[^E"  __find_env
+# bindkey "^[^R"  __find_hist
+# bindkey "^[^K"  __kill_pid
+# bindkey "^[^M"  __mount_drive
+# bindkey "^[^P"  __list_pid
 # # bindkey "^[^M"  __interrogate_proc_mem
 
 # }}}
