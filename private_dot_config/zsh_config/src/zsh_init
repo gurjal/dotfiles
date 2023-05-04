@@ -60,7 +60,7 @@ alias ,rv="git remote -v"
 alias ,remote="git remote"
 alias ,reset="git reset"
 alias ,restore="git restore"
-alias ,sm="git submodule"
+alias ,mod="git submodule"
 alias ,rm="git rm"
 alias ,mv="git mv"
 

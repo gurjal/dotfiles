@@ -1,6 +1,6 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-(setq doom-theme 'doom-nord-aurora
+(setq doom-theme 'doom-snazzy
       user-full-name "shaan raya" user-mail-address "shaanraya@proton.me"
       doom-font (font-spec :family "IosevkaTerm Nerd Font" :size 18 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "IosevkaTerm Nerd Font")
@@ -55,13 +55,15 @@
  ;;   folds
  :n   "z,"  #'vimish-fold-from-marks
  :leader
- ;;  window
- :n  ","  #'evil-window-next
- :n  "<"  #'evil-window-prev
- :n  "d"  #'+workspace/close-window-or-workspace
- ;;  buffer
- :n  "y"  #'save-buffer
- :n  "k"  #'kill-current-buffer
+ ;;   popup
+ :n   "`"   #'+popup/toggle
+ ;;   window
+ :n   ","   #'evil-window-next
+ :n   "<"   #'evil-window-prev
+ :n   "d"   #'+workspace/close-window-or-workspace
+ ;;   buffer
+ :n   "y"   #'save-buffer
+ :n   "k"   #'kill-current-buffer
  :leader :prefix "b"
  :n              "p"  #'+popup/toggle
  :n              "P"  #'+popup/raise
@@ -80,7 +82,7 @@
 ;; org settings
 (setq org-directory "~/.gurjal/org/" org-roam-directory "~/.gurjal/org/zettelkasten")
 ;; default fold level
-(after! org (setq org-startup-folded 'show2levels))
+;; (after! org (setq org-startup-folded 'show2levels))
 
 ;; org roam capture templates
 ;; '(("n" "node" plain
