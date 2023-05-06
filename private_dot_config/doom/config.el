@@ -15,9 +15,6 @@
 (setq-default evil-escape-key-sequence "jk" evil-escape-delay 0.2)
 (after! evil-escape (delete 'vterm-mode evil-escape-excluded-major-modes))
 
-;; tramp
-(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
-
 ;; ;; zen mode
 ;; (after! writeroom-mode
 ;;   (setq +zen-text-scale 0.5)

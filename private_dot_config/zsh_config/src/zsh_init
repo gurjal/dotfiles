@@ -323,10 +323,10 @@ eval "$(zoxide init zsh)"
 
 set -o emacs
 # nav
-bindkey -M emacs "^[v^[v" __find_file
+bindkey -M emacs "^[m^[v" __find_file
 bindkey -M emacs "^[m^[m" __find_directory
 bindkey -M emacs "^[v^[m" __find_hidden_file
-bindkey -M emacs "^[m^[v" __find_hidden_directory
+bindkey -M emacs "^[v^[v" __find_hidden_directory
 bindkey -M emacs "^[v^[o" __open_file
 bindkey -M emacs "^[m^[o" __open_file
 # env
