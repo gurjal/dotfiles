@@ -92,6 +92,11 @@ vim.keymap.set("n", "<M-l>", "<cmd>tabnext<cr>")
 vim.keymap.set("n", "<leader><tab>n", "<cmd>tabnew<cr>", { desc = "new tab" })
 vim.keymap.set("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "close tab" })
 vim.keymap.set("n", "<leader><tab>k", "<cmd>tabclose<cr>", { desc = "close tab" })
+-- lsp
+vim.keymap.set({ "n", "v" }, "<leader>cf", function() vim.lsp.buf.format() end, { desc = "format file" })
+vim.keymap.set("n", "<leader>cr", function() vim.lsp.buf.rename() end, { desc = "rename symbol" })
+vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, { desc = "code action" })
+vim.keymap.set("n", "<leader>ch", function() vim.lsp.buf.signature_help() end, { desc = "signature help" })
 -- utility
 vim.keymap.set(
     "n",
@@ -99,8 +104,8 @@ vim.keymap.set(
     "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
     { desc = "redraw" }
 )
-vim.keymap.set("n", "<leader>ul", "<cmd>:Lazy<cr>", { desc = "lazy" })
-vim.keymap.set("n", "<leader>um", "<cmd>:Mason<cr>", { desc = "mason" })
+vim.keymap.set("n", "<leader>ul", "<cmd>Lazy<cr>", { desc = "lazy" })
+vim.keymap.set("n", "<leader>um", "<cmd>Mason<cr>", { desc = "mason" })
 -- up/down
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -141,8 +146,7 @@ require("lazy").setup {
             wk.register({
                 mode = { "n", "v" },
                 ["<leader><tab>"] = { name = "+tabs" },
-                ["<leader>b"] = { name = "+buffer" },
-                ["<leader>f"] = { name = "+find" },
+                ["<leader>s"] = { name = "+search" },
                 ["<leader>g"] = { name = "+git" },
                 ["<leader>c"] = { name = "+code" },
                 ["<leader>u"] = { name = "+utility" },
@@ -169,20 +173,20 @@ require("lazy").setup {
             -- git
             { "<leader>gc", "<cmd>Telescope git_commits<CR>",               desc = "commits" },
             { "<leader>gs", "<cmd>Telescope git_status<CR>",                desc = "status" },
-            -- find
-            { "<leader>ff", "<cmd>Telescope find_files<cr>",                desc = "files" },
-            { "<leader>fb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "current buffer" },
-            { "<leader>fc", "<cmd>Telescope command_history<cr>",           desc = "command history" },
-            { "<leader>f;", "<cmd>Telescope commands<cr>",                  desc = "commands" },
-            { "<leader>fd", "<cmd>Telescope diagnostics<cr>",               desc = "diagnostics" },
-            { "<leader>fg", "<cmd>Telescope live_grep<cr>",                 desc = "grep" },
-            { "<leader>fh", "<cmd>Telescope help_tags<cr>",                 desc = "help pages" },
-            { "<leader>fH", "<cmd>Telescope highlights<cr>",                desc = "search highlight groups" },
-            { "<leader>fk", "<cmd>Telescope keymaps<cr>",                   desc = "key maps" },
-            { "<leader>fM", "<cmd>Telescope man_pages<cr>",                 desc = "man pages" },
-            { "<leader>fm", "<cmd>Telescope marks<cr>",                     desc = "jump to mark" },
-            { "<leader>fo", "<cmd>Telescope vim_options<cr>",               desc = "options" },
-            { "<leader>fw", "<cmd>Telescope grep_string<cr>",               desc = "word" },
+            -- search
+            { "<leader>sf", "<cmd>Telescope find_files<cr>",                desc = "files" },
+            { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "current buffer" },
+            { "<leader>sc", "<cmd>Telescope command_history<cr>",           desc = "command history" },
+            { "<leader>s;", "<cmd>Telescope commands<cr>",                  desc = "commands" },
+            { "<leader>sd", "<cmd>Telescope diagnostics<cr>",               desc = "diagnostics" },
+            { "<leader>sg", "<cmd>Telescope live_grep<cr>",                 desc = "grep" },
+            { "<leader>sh", "<cmd>Telescope help_tags<cr>",                 desc = "help pages" },
+            { "<leader>sH", "<cmd>Telescope highlights<cr>",                desc = "highlight groups" },
+            { "<leader>sk", "<cmd>Telescope keymaps<cr>",                   desc = "key maps" },
+            { "<leader>sM", "<cmd>Telescope man_pages<cr>",                 desc = "man pages" },
+            { "<leader>sm", "<cmd>Telescope marks<cr>",                     desc = "jump to mark" },
+            { "<leader>so", "<cmd>Telescope vim_options<cr>",               desc = "options" },
+            { "<leader>sw", "<cmd>Telescope grep_string<cr>",               desc = "word" },
             -- utility
             { "<leader>uc", "<cmd>Telescope colorscheme<cr>",               desc = "switch colorscheme" },
             -- {
@@ -296,12 +300,6 @@ require("lazy").setup {
             lsp.setup()
             vim.diagnostic.config { virtual_text = true }
         end,
-        keys = {
-            { "<leader>cf", function() vim.lsp.buf.format() end,         mode = { "n", "v" }, desc = "format file" },
-            { "<leader>cr", "<cmd>lua vim.lsp.buf.rename()<cr>",         mode = { "n" },     desc = "rename symbol" },
-            { "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>",    mode = { "n" },     desc = "code action" },
-            { "<leader>ch", "<cmd>lua vim.lsp.buf.signature_help()<cr>", mode = { "n" },     desc = "signature help" },
-        },
     },
     -- }}}
     -- trouble.nvim {{{
@@ -493,6 +491,8 @@ require("lazy").setup {
     },
     {
         "folke/tokyonight.nvim",
+        lazy = true,
+        name = "tokyonight",
         opts = { style = "night" },
     },
     {
@@ -505,13 +505,34 @@ require("lazy").setup {
             })
         end,
     },
-    { "bluz71/vim-moonfly-colors" },
-    { "bluz71/vim-nightfly-guicolors" },
-    { "embark-theme/vim",             name = "embark" },
-    { "arcticicestudio/nord-vim" },
-    { "junegunn/seoul256.vim" },
+    {
+        "bluz71/vim-moonfly-colors",
+        lazy = true,
+        name = "moonfly",
+    },
+    {
+        "bluz71/vim-nightfly-guicolors",
+        lazy = true,
+        name = "nightfly",
+    },
+    {
+        "embark-theme/vim",
+        lazy = true,
+        name = "embark"
+    },
+    {
+        "arcticicestudio/nord-vim",
+        lazy = true,
+        name = "nord",
+    },
+    {
+        "junegunn/seoul256.vim",
+        lazy = true,
+        name = "seoul256",
+    },
     {
         "rose-pine/neovim",
+        lazy = true,
         name = "rose_pine",
         opts = {
             dark_variant = "moon",
@@ -520,6 +541,7 @@ require("lazy").setup {
     },
     {
         "sainnhe/everforest",
+        lazy = true,
         config = function()
             vim.cmd([[
                 if has('termguicolors')
@@ -533,10 +555,21 @@ require("lazy").setup {
     },
     {
         "sam4llis/nvim-tundra",
+        lazy = true,
+        name = "tundra",
         opts = { background = "dark" },
     },
-    { "drewtempelmeyer/palenight.vim" },
-    { "ellisonleao/gruvbox.nvim",     name = "gruvbox", opts = { background = "dark" } },
+    {
+        "drewtempelmeyer/palenight.vim",
+        lazy = true,
+        name = "palenight",
+    },
+    {
+        "ellisonleao/gruvbox.nvim",
+        lazy = true,
+        name = "gruvbox",
+        opts = { background = "dark" }
+    },
     -- }}}
 
 }
