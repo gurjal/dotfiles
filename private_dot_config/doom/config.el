@@ -1,6 +1,6 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-(setq doom-theme 'doom-snazzy
+(setq doom-theme 'doom-rouge
       user-full-name "shaan raya" user-mail-address "shaanraya@proton.me"
       doom-font (font-spec :family "IosevkaTerm Nerd Font" :size 18 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "IosevkaTerm Nerd Font")
