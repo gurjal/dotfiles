@@ -323,10 +323,13 @@ eval "$(zoxide init zsh)"
 
 set -o emacs
 # nav
-bindkey -M emacs "^[m^[v" __find_file
-bindkey -M emacs "^[m^[m" __find_directory
-bindkey -M emacs "^[v^[m" __find_hidden_file
-bindkey -M emacs "^[v^[v" __find_hidden_directory
+bindkey -M emacs "^[h" __find_file
+bindkey -M emacs "^[g" __find_directory
+bindkey -M emacs "^[v^[h" __find_hidden_file
+bindkey -M emacs "^[m^[h" __find_hidden_file
+bindkey -M emacs "^[v^[g" __find_hidden_directory
+bindkey -M emacs "^[m^[g" __find_hidden_directory
+# xdg-open
 bindkey -M emacs "^[v^[o" __open_file
 bindkey -M emacs "^[m^[o" __open_file
 # env
@@ -346,6 +349,8 @@ bindkey -M emacs "^[m^[p" __list_pid
 # zsh-history-substring-search
 bindkey -M emacs '^P' history-substring-search-up
 bindkey -M emacs '^N' history-substring-search-down
+bindkey -M emacs '^[p' history-substring-search-up
+bindkey -M emacs '^[n' history-substring-search-down
 bindkey -M emacs '<Up>' history-substring-search-up
 bindkey -M emacs '<Down>' history-substring-search-down
 
