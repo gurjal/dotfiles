@@ -36,8 +36,8 @@ vim.opt.swapfile       = false
 vim.opt.backup         = false
 vim.opt.writebackup    = true
 -- formatting
--- opt.formatoptions  = 'tcrql'
--- opt.joinspaces     = false
+vim.opt.formatoptions  = 'cq' -- see 'fo-table'
+vim.opt.joinspaces     = false
 -- util
 vim.cmd 'filetype plugin indent on'
 vim.opt.shortmess:append 'sI'
@@ -71,7 +71,7 @@ vim.keymap.set("n", "|", "<cmd>bprevious<cr>")
 vim.keymap.set("n", "<leader>k", "<cmd>bd<cr>", { desc = "kill buffer" })
 -- windows
 vim.keymap.set("n", "<leader>d", "<C-W>c", { desc = "delete window" })
-vim.keymap.set("n", "<leader>,", "<C-W>p", { desc = "other window" })
+vim.keymap.set("n", "<leader>,", "<C-W>p", { desc = "previous window" })
 vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "focus left window" })
 vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "focus down window" })
 vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "focus up window" })
@@ -167,7 +167,7 @@ require("lazy").setup {
             { "<leader>/",  "<cmd>Telescope live_grep<cr>",                 desc = "Find in Files (Grep)" },
             { "<leader>;",  "<cmd>Telescope command_history<cr>",           desc = "Command History" },
             -- open
-            { "<leader>o",  "<cmd>Telescope oldfiles<cr>",                  desc = "recent files" },
+            { "<leader>r",  "<cmd>Telescope oldfiles<cr>",                  desc = "recent files" },
             -- buffer
             { "<leader>b",  "<cmd>Telescope buffers<cr>",                   desc = "switch buffer" },
             -- git
@@ -574,4 +574,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("gruvbox")
