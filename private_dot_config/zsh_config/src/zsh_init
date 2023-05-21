@@ -325,27 +325,27 @@ set -o emacs
 # nav
 bindkey -M emacs "^[h" __find_file
 bindkey -M emacs "^[g" __find_directory
-bindkey -M emacs "^[v^[h" __find_hidden_file
-bindkey -M emacs "^[m^[h" __find_hidden_file
-bindkey -M emacs "^[v^[g" __find_hidden_directory
-bindkey -M emacs "^[m^[g" __find_hidden_directory
+bindkey -M emacs "^[vh" __find_hidden_file
+bindkey -M emacs "^[mh" __find_hidden_file
+bindkey -M emacs "^[vg" __find_hidden_directory
+bindkey -M emacs "^[mg" __find_hidden_directory
 # xdg-open
-bindkey -M emacs "^[v^[o" __open_file
-bindkey -M emacs "^[m^[o" __open_file
+bindkey -M emacs "^[vo" __open_file
+bindkey -M emacs "^[mo" __open_file
 # env
-bindkey -M emacs "^[v^[e" __find_env
-bindkey -M emacs "^[m^[e" __find_env
+bindkey -M emacs "^[ve" __find_env
+bindkey -M emacs "^[me" __find_env
 # hist
-bindkey -M emacs "^[v^[r" __find_hist
-bindkey -M emacs "^[m^[r" __find_hist
+bindkey -M emacs "^[vr" __find_hist
+bindkey -M emacs "^[mr" __find_hist
 # mount
-bindkey -M emacs "^[v^[d" __mount_drive
-bindkey -M emacs "^[m^[d" __mount_drive
+bindkey -M emacs "^[vd" __mount_drive
+bindkey -M emacs "^[md" __mount_drive
 # pid
-bindkey -M emacs "^[v^[k" __kill_pid
-bindkey -M emacs "^[m^[k" __kill_pid
-bindkey -M emacs "^[v^[p" __list_pid
-bindkey -M emacs "^[m^[p" __list_pid
+bindkey -M emacs "^[vk" __kill_pid
+bindkey -M emacs "^[mk" __kill_pid
+bindkey -M emacs "^[vp" __list_pid
+bindkey -M emacs "^[mp" __list_pid
 # zsh-history-substring-search
 bindkey -M emacs '^P' history-substring-search-up
 bindkey -M emacs '^N' history-substring-search-down
