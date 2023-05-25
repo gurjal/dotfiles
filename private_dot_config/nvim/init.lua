@@ -51,7 +51,7 @@ vim.opt.list        = true
 vim.opt.lazyredraw  = false
 -- }}}
 -- keymap {{{
-vim.g.mapleader     = ' '
+vim.g.mapleader = ' '
 
 -- base
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
@@ -70,8 +70,11 @@ vim.keymap.set("n", "\\", "<cmd>bnext<cr>")
 vim.keymap.set("n", "|", "<cmd>bprevious<cr>")
 vim.keymap.set("n", "<leader>k", "<cmd>bd<cr>", { desc = "kill buffer" })
 -- windows
+vim.keymap.set("n", "<C-h>", "<C-W>h", { desc = "left window" })
+vim.keymap.set("n", "<C-j>", "<C-W>j", { desc = "down window" })
+vim.keymap.set("n", "<C-k>", "<C-W>k", { desc = "up window" })
+vim.keymap.set("n", "<C-l>", "<C-W>l", { desc = "right window" })
 vim.keymap.set("n", "<leader>d", "<C-W>c", { desc = "delete window" })
-vim.keymap.set("n", "<leader>,", "<C-W>p", { desc = "previous window" })
 vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "focus left window" })
 vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "focus down window" })
 vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "focus up window" })
@@ -97,6 +100,8 @@ vim.keymap.set({ "n", "v" }, "<leader>cf", function() vim.lsp.buf.format() end, 
 vim.keymap.set("n", "<leader>cr", function() vim.lsp.buf.rename() end, { desc = "rename symbol" })
 vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, { desc = "code action" })
 vim.keymap.set("n", "<leader>ch", function() vim.lsp.buf.signature_help() end, { desc = "signature help" })
+-- file
+vim.keymap.set("n", "<leader>fp", "<cmd>edit ~/.config/nvim/init.lua<cr>", { desc = "edit private config" })
 -- utility
 vim.keymap.set(
     "n",
@@ -165,10 +170,11 @@ require("lazy").setup {
             { "<leader>.",  "<cmd>Telescope find_files<cr>",                desc = "Find Files (root dir)" },
             -- { "<leader>,",  "<cmd>Telescope buffers show_all_buffers=true<cr>", desc = "Switch Buffer" },
             { "<leader>/",  "<cmd>Telescope live_grep<cr>",                 desc = "Find in Files (Grep)" },
-            { "<leader>;",  "<cmd>Telescope command_history<cr>",           desc = "Command History" },
+            { "<leader>:",  "<cmd>Telescope command_history<cr>",           desc = "Command History" },
             -- open
             { "<leader>r",  "<cmd>Telescope oldfiles<cr>",                  desc = "recent files" },
             -- buffer
+            { "<leader>,",  "<cmd>Telescope buffers<cr>",                   desc = "switch buffer" },
             { "<leader>b",  "<cmd>Telescope buffers<cr>",                   desc = "switch buffer" },
             -- git
             { "<leader>gc", "<cmd>Telescope git_commits<CR>",               desc = "commits" },
@@ -177,7 +183,7 @@ require("lazy").setup {
             { "<leader>sf", "<cmd>Telescope find_files<cr>",                desc = "files" },
             { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "current buffer" },
             { "<leader>sc", "<cmd>Telescope command_history<cr>",           desc = "command history" },
-            { "<leader>s;", "<cmd>Telescope commands<cr>",                  desc = "commands" },
+            { "<leader>s:", "<cmd>Telescope commands<cr>",                  desc = "commands" },
             { "<leader>sd", "<cmd>Telescope diagnostics<cr>",               desc = "diagnostics" },
             { "<leader>sg", "<cmd>Telescope live_grep<cr>",                 desc = "grep" },
             { "<leader>sh", "<cmd>Telescope help_tags<cr>",                 desc = "help pages" },
@@ -325,7 +331,7 @@ require("lazy").setup {
             { "[t",         function() require("todo-comments").jump_prev() end, desc = "Previous todo comment" },
             { "<leader>xt", "<cmd>TodoTrouble<cr>",                              desc = "Todo (Trouble)" },
             { "<leader>xT", "<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>",      desc = "Todo/Fix/Fixme (Trouble)" },
-            { "<leader>ft", "<cmd>TodoTelescope<cr>",                            desc = "Todo" },
+            { "<leader>ft", "<cmd>TodoTelescope<cr>",                            desc = "todo comments in file" },
         },
     },
     -- }}}
@@ -574,4 +580,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("gruvbox")
+vim.cmd.colorscheme("catppuccin")

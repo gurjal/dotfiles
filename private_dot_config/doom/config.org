@@ -197,6 +197,20 @@ align lines by char
                              "A" #'org-roam-alias-remove)))
 #+end_src
 
+** TODO org-roam buffer key
+- [ ] add roam buffer specific bindings for quit and maximise
+- [ ] change behavior when selecting backlink from buffer
+#+begin_src emacs-lisp
+(map! :niv "M-," #'(lambda ()
+                   (interactive)
+                   (org-roam-buffer-toggle)
+                   (+popup/other)))
+;; (map! :map org-mode-map
+;;       :niv "M-," #'(lambda ()
+;;                    (interactive)
+;;                    (org-roam-buffer-toggle)
+;;                    (+popup/other)))
+#+end_src
 * zen mode
 #+begin_src emacs-lisp
 ;; zen mode

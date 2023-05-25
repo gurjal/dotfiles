@@ -126,6 +126,16 @@
                              "a" #'org-roam-alias-add
                              "A" #'org-roam-alias-remove)))
 
+(map! :niv "M-," #'(lambda ()
+                   (interactive)
+                   (org-roam-buffer-toggle)
+                   (+popup/other)))
+;; (map! :map org-mode-map
+;;       :niv "M-," #'(lambda ()
+;;                    (interactive)
+;;                    (org-roam-buffer-toggle)
+;;                    (+popup/other)))
+
 ;; zen mode
 (after! writeroom-mode
   (setq +zen-text-scale 0.5)
