@@ -1,8 +1,8 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-(setq! doom-theme 'doom-challenger-deep
-       doom-font (font-spec :family "IosevkaTerm Nerd Font Mono" :weight 'normal :size 18)
-       doom-variable-pitch-font (font-spec :family "IosevkaTerm Nerd Font" :weight 'normal :size 18)
+(setq! doom-theme 'doom-palenight
+       doom-font (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal :size 18)
+       doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :weight 'normal :size 18)
        doom-unicode-font (font-spec :family "Liberation Sans" :weight 'regular :size 18)
        doom-big-font-increment 2
        display-line-numbers-type 'visual
@@ -50,8 +50,11 @@
 (map! :leader :prefix "s"
       :n "M" #'man)
 
+(after! vterm
+        (setq! vterm-shell "/bin/zsh"))
+
 (setq! avy-single-candidate-jump 't
-       avy-timeout-seconds 0.1)
+       avy-timeout-seconds 0.2)
 
 (map! :nv "s" #'evil-avy-goto-char-timer)
 

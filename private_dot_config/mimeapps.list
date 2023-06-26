@@ -1,7 +1,7 @@
 [Default Applications]
 application/octet-stream=mpv.desktop
-image/jpeg=sxiv.desktop
-image/png=sxiv.desktop
+image/jpeg=nsxiv.desktop
+image/png=nsxiv.desktop
 x-scheme-handler/http=userapp-Firefox-2FEE21.desktop
 x-scheme-handler/https=userapp-Firefox-2FEE21.desktop
 x-scheme-handler/chrome=userapp-Firefox-2FEE21.desktop
@@ -13,6 +13,7 @@ application/x-extension-shtml=userapp-Firefox-2FEE21.desktop
 application/xhtml+xml=userapp-Firefox-2FEE21.desktop
 application/x-extension-xhtml=userapp-Firefox-2FEE21.desktop
 application/x-extension-xht=userapp-Firefox-2FEE21.desktop
+image/jpg=nsxiv.desktop
 
 [Added Associations]
 x-scheme-handler/http=userapp-Firefox-2FEE21.desktop;
