@@ -94,7 +94,7 @@
                     "f"          #'org-roam-node-find
                     "F"          #'org-roam-ref-find
                     "i"          #'org-roam-node-insert
-                    "n"          #'org-roam-capture
+                    "c"          #'org-roam-capture
                     "r"          #'org-roam-refile
                     "s"          #'org-roam-db-sync
                     "l"          #'org-store-link

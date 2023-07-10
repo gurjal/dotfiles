@@ -6,7 +6,7 @@ local SK_HEIGHT=20
 
 # aliases {{{
 
-alias tm="trashman"
+# base
 alias l="ls -l --color=auto"
 alias ls="ls --color=auto"
 alias la="ls -a --color=auto"
@@ -14,26 +14,15 @@ alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
 alias diff="diff --color=auto"
-alias cat="bat -pp"
 alias pg="$PAGER"
-alias sk="sk -p ' ' --inline-info"
 alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
-alias v="$EDITOR"
-alias suv="sudo $EDITOR"
-alias cl="xclip -selection clipboard"
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
-
-# }}}
-# git {{{
-
-# Load version control information
-autoload -Uz vcs_info
-# Format the vcs_info_msg_0_ variable
-zstyle ':vcs_info:git:*' formats '(%b) '
-
+# chezmoi
+alias cz="chezmoi"
+# git
 alias ,="git"
 alias ,s="git status -sb ."
 alias ,status="git status"
@@ -63,10 +52,28 @@ alias ,restore="git restore"
 alias ,mod="git submodule"
 alias ,rm="git rm"
 alias ,mv="git mv"
+# bat
+alias cat="bat -pp"
+# skim
+alias sk="sk -p ' ' --inline-info"
+# xclip
+alias cl="xclip -selection clipboard"
+# neovim
+alias v="$EDITOR"
+alias suv="sudo $EDITOR"
+# trashman
+alias tm="trashman"
 
 # }}}
 # options {{{
 
+# Load git version control information
+autoload -Uz vcs_info
+
+# Format the vcs_info_msg_0_ variable
+zstyle ':vcs_info:git:*' formats '(%b) '
+
+# edit line in $EDITOR
 autoload edit-command-line
 zle -N edit-command-line
 
@@ -312,16 +319,22 @@ function locat()
 # }}}
 # plugins {{{
 
+# zoxide
+eval "$(zoxide init zsh)"
+
+# syntax highlighting
 source "$ZSH_BIN/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# history substring
 source "$ZSH_BIN/zsh-history-substring-search.zsh"
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
-eval "$(zoxide init zsh)"
 
 # }}}
 # emacs mode {{{
 
 set -o emacs
+
 # nav
 bindkey -M emacs "^[h" __find_file
 bindkey -M emacs "^[g" __find_directory
@@ -356,17 +369,17 @@ bindkey -M emacs '<Down>' history-substring-search-down
 
 # }}}
 # vi mode {{{
-
+#
 # # init vi mode
 # set -o vi -M viins
-
+#
 # # new line cursor
 # function zle-line-init()
 # {
 #     echo -ne '\e[6 q' # beam
 # }
 # zle -N zle-line-init
-
+#
 # # set cursor when switching keymaps
 # function zle-keymap-select()
 # {
@@ -377,7 +390,7 @@ bindkey -M emacs '<Down>' history-substring-search-down
 #     fi
 # }
 # zle -N zle-keymap-select
-
+#
 # bindkey '^[e' edit-command-line
 # bindkey -M vicmd "^H" run-help
 # # vi mode
@@ -407,5 +420,5 @@ bindkey -M emacs '<Down>' history-substring-search-down
 # bindkey "^[^M"  __mount_drive
 # bindkey "^[^P"  __list_pid
 # # bindkey "^[^M"  __interrogate_proc_mem
-
-# }}}
+#
+# # }}}
