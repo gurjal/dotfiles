@@ -11,65 +11,65 @@
        user-full-name "gurjal"
        user-mail-address "gurjal@proton.me")
 
-(setq-default evil-escape-key-sequence "jk" evil-escape-delay 0.2)
-(after! evil-escape (delete 'vterm-mode evil-escape-excluded-major-modes))
+(setq! evil-escape-key-sequence "jk"
+       evil-escape-delay 0.2
+       evil-escape-unordered-key-sequence 't)
 
-;; buffer
-(map! :n   "\\"  #'evil-next-buffer
-      :n   "|"   #'evil-prev-buffer
-      (:leader
-       :n   "y"   #'save-buffer
-       :n   "k"   #'kill-current-buffer))
+(map! :map (evil-org-mode-map
+            prog-mode-map)
+      :i "M-h" "C-g h"
+      :i "M-j" "C-g j"
+      :i "M-k" "C-g k"
+      :i "M-l" "C-g l")
 
-;; window
+(map! :n   "\\" #'evil-next-buffer
+      :n   "|" #'evil-prev-buffer
+      :leader
+      :n   "y"   #'save-buffer
+      :n   "k"   #'kill-current-buffer)
+
 (map! :n "C-h" #'evil-window-left
       :n "C-j" #'evil-window-down
       :n "C-k" #'evil-window-up
       :n "C-l" #'evil-window-right
-      (:leader
-       :n "\\" #'evil-window-next
-       :n "|"  #'evil-window-prev
-       :n "d"  #'+workspace/close-window-or-workspace))
+      :leader
+      :n "d"  #'+workspace/close-window-or-workspace
+      :prefix "w"
+      :n "o" #'doom/window-maximize-buffer)
 
-;; popups
-(map! :leader :n "\\" #'(lambda () (interactive) (+popup/toggle) (ignore-errors (+popup/other))))
-
-;;   goto
 (map! :nv "gh" #'evil-beginning-of-line
       :nv "gj" #'evil-goto-line
       :nv "gk" #'evil-goto-first-line
       :nv "gl" #'evil-end-of-line)
 
-;; macro
 (map! :n "Q" #'call-last-kbd-macro)
 
-(map! :leader :prefix "t"
-      :n "R" #'rainbow-mode)
+(map! :leader :prefix "t" :n "R" #'rainbow-mode)
 
-;; search
-(map! :leader :prefix "s"
-      :n "M" #'man)
+(map! :leader
+      :desc "Toggle popup buffer"
+      :n "SPC" #'(lambda () (interactive) (+popup/toggle) (ignore-errors (+popup/other))))
 
-(after! vterm
-        (setq! vterm-shell "/bin/zsh"))
+(map! :leader :prefix "s" :n "M" #'man)
 
-(setq! avy-single-candidate-jump 't
-       avy-timeout-seconds 0.2)
+(after! evil-escape (delete 'vterm-mode evil-escape-excluded-major-modes))
 
+(map! :g "M-t" #'+vterm/toggle
+      :g "M-T" #'+vterm/here)
+
+(setq! vterm-kill-buffer-on-exit 't)
+
+(setq! avy-single-candidate-jump 't avy-timeout-seconds 0.3)
 (map! :nv "s" #'evil-avy-goto-char-timer)
 
-(setq! evil-lion-mode nil)
+(map! :nv "gH" #'evil-lion-left
+      :nv "gL" #'evil-lion-right)
 
-(map! :n   "ga"  #'evil-lion-left
-      :n   "gA"  #'evil-lion-right)
+(map! :n "S" #'evil-surround-change
+      :v "S" #'evil-surround-edit)
 
-;;   surround
-(map! :nv  "gs"  #'evil-surround-edit)
+(map! :nv "zv" #'evil-vimish-fold-mode)
 
-;; vimish folds
-(map! :n "zv" #'evil-vimish-fold-mode)
-
-;; org settings
 (setq org-directory "~/.gurjal/org/" org-roam-directory "~/.gurjal/org/zettelkasten")
 
 ;; default fold level
@@ -77,7 +77,8 @@
   ;; Make the backlinks buffer easier to peruse by folding leaves by default.
   (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2))
 
-;; org roam with gui
+(setq! org-hide-emphasis-markers 't)
+
 (use-package! websocket
   :after org)
 (use-package! org-roam-ui
@@ -91,53 +92,47 @@
 (map! :n "-" #'org-mark-ring-goto
       :leader
       (:prefix-map ("j" . "journal")
-                    "f"          #'org-roam-node-find
-                    "F"          #'org-roam-ref-find
-                    "i"          #'org-roam-node-insert
-                    "c"          #'org-roam-capture
-                    "r"          #'org-roam-refile
-                    "s"          #'org-roam-db-sync
-                    "l"          #'org-store-link
-                    "b"          #'org-roam-buffer-toggle
-                    "B"          #'org-roam-buffer-display-dedicated
-                    "t"          #'org-roam-dailies-goto-today
-                    "T"          #'org-roam-dailies-capture-today
+                   "j" #'org-roam-dailies-goto-today
+                   "f" #'org-roam-node-find
+                   "F" #'org-roam-ref-find
+                   "i" #'org-roam-node-insert
+                   "c" #'org-roam-capture
+                   "r" #'org-roam-refile
+                   "s" #'org-roam-db-sync
+                   "l" #'org-store-link
+                   "t" #'org-roam-tag-add
+                   "T" #'org-roam-tag-remove
+                   "b" #'org-roam-buffer-toggle
+                   "B" #'org-roam-buffer-display-dedicated
                    (:prefix ("g" . "gui")
-                             "g" #'org-roam-ui-mode
-                             "f" #'org-roam-ui-follow-mode
-                             "z" #'org-roam-ui-node-zoom
-                             "l" #'org-roam-ui-node-local
-                             "a" #'org-roam-ui-add-to-local-graph
-                             "r" #'org-roam-ui-remove-from-local-graph)
-                   (:prefix ("d" . "by date   ")
-                             "d" #'org-roam-dailies-goto-date
-                             "D" #'org-roam-dailies-capture-date
-                             "m" #'org-roam-dailies-goto-tomorrow
-                             "M" #'org-roam-dailies-capture-tomorrow
-                             "t" #'org-roam-dailies-goto-today
-                             "T" #'org-roam-dailies-capture-today
-                             "y" #'org-roam-dailies-goto-yesterday
-                             "Y" #'org-roam-dailies-capture-yesterday
-                             "f" #'org-roam-dailies-goto-next-note
-                             "b" #'org-roam-dailies-goto-previous-note
-                             "-" #'org-roam-dailies-find-directory)
+                            "g" #'org-roam-ui-mode
+                            "f" #'org-roam-ui-follow-mode
+                            "z" #'org-roam-ui-node-zoom
+                            "l" #'org-roam-ui-node-local
+                            "a" #'org-roam-ui-add-to-local-graph
+                            "r" #'org-roam-ui-remove-from-local-graph)
+                   (:prefix ("d" . "dailies")
+                            "d" #'org-roam-dailies-goto-date
+                            "D" #'org-roam-dailies-capture-date
+                            "m" #'org-roam-dailies-goto-tomorrow
+                            "M" #'org-roam-dailies-capture-tomorrow
+                            "t" #'org-roam-dailies-goto-today
+                            "T" #'org-roam-dailies-capture-today
+                            "y" #'org-roam-dailies-goto-yesterday
+                            "Y" #'org-roam-dailies-capture-yesterday
+                            "f" #'org-roam-dailies-goto-next-note
+                            "b" #'org-roam-dailies-goto-previous-note
+                            "-" #'org-roam-dailies-find-directory)
                    (:prefix ("p" . "properties")
-                             "t" #'org-roam-tag-add
-                             "T" #'org-roam-tag-remove
-                             "r" #'org-roam-ref-add
-                             "R" #'org-roam-ref-remove
-                             "a" #'org-roam-alias-add
-                             "A" #'org-roam-alias-remove)))
+                            "t" #'org-roam-tag-add
+                            "T" #'org-roam-tag-remove
+                            "r" #'org-roam-ref-add
+                            "R" #'org-roam-ref-remove
+                            "a" #'org-roam-alias-add
+                            "A" #'org-roam-alias-remove)))
 
-(map! :niv "M-," #'(lambda ()
-                   (interactive)
-                   (org-roam-buffer-toggle)
-                   (+popup/other)))
-;; (map! :map org-mode-map
-;;       :niv "M-," #'(lambda ()
-;;                    (interactive)
-;;                    (org-roam-buffer-toggle)
-;;                    (+popup/other)))
+(map! :niv "M-," #'(lambda () (interactive) (org-roam-buffer-toggle) (+popup/other)))
+;; (map! :map org-mode-map :niv "M-," #'(lambda ()) (interactive) (org-roam-buffer-toggle) (+popup/other))
 
 ;; zen mode
 (after! writeroom-mode
@@ -160,7 +155,7 @@
 ;; (add-hook 'prog-mode-hook 'evil-vimish-fold-mode)
 ;; (add-hook 'text-mode-hook 'evil-vimish-fold-mode)
 ;; (setq evil-vimish-fold-target-modes '(prog-mode conf-mode text-mode))
-;; (setq global-evil-vimish-fold-mode 't)
+(setq global-evil-vimish-fold-mode 't)
 
 ;;
 ;; fucking around here on...

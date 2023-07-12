@@ -81,23 +81,6 @@ zle -N edit-command-line
 fpath=($HOME/.config/zsh_config/src/completions/zsh-completions/src/ $fpath)
 autoload -Uz compinit
 compinit -d "$XDG_CACHE_HOME/zsh_compdump"
-# zstyle ':completion:*' auto-description 'specify: %d'
-# zstyle ':completion:*' completer _expand _complete _correct _approximate
-# zstyle ':completion:*' format 'Completing %d'
-# zstyle ':completion:*' group-name ''
-# zstyle ':completion:*' menu select=2
-# eval "$(dircolors -b)"
-# zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-# zstyle ':completion:*' list-colors ''
-# zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-# zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-# zstyle ':completion:*' menu select=long
-# zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-# zstyle ':completion:*' use-compctl false
-# zstyle ':completion:*' verbose true
-
-# zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-# zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 _comp_options+=(globdots)
 
 # history
@@ -114,9 +97,6 @@ setopt auto_cd
 
 # turn off case sensitivity
 setopt no_case_glob
-
-# expand prompt substring
-setopt PROMPT_SUBST
 
 # # wildcard fix maybe??
 # setopt extended_glob
@@ -338,87 +318,49 @@ set -o emacs
 # nav
 bindkey -M emacs "^[h" __find_file
 bindkey -M emacs "^[g" __find_directory
-bindkey -M emacs "^[vh" __find_hidden_file
-bindkey -M emacs "^[mh" __find_hidden_file
-bindkey -M emacs "^[vg" __find_hidden_directory
-bindkey -M emacs "^[mg" __find_hidden_directory
+bindkey -M emacs "^[H" __find_hidden_file
+bindkey -M emacs "^[G" __find_hidden_directory
 # xdg-open
-bindkey -M emacs "^[vo" __open_file
-bindkey -M emacs "^[mo" __open_file
+bindkey -M emacs "^[o" __open_file
 # env
-bindkey -M emacs "^[ve" __find_env
-bindkey -M emacs "^[me" __find_env
+bindkey -M emacs "^[e" __find_env
 # hist
-bindkey -M emacs "^[vr" __find_hist
-bindkey -M emacs "^[mr" __find_hist
+bindkey -M emacs "^[r" __find_hist
 # mount
-bindkey -M emacs "^[vd" __mount_drive
-bindkey -M emacs "^[md" __mount_drive
+bindkey -M emacs "^[m" __mount_drive
 # pid
-bindkey -M emacs "^[vk" __kill_pid
-bindkey -M emacs "^[mk" __kill_pid
-bindkey -M emacs "^[vp" __list_pid
-bindkey -M emacs "^[mp" __list_pid
+bindkey -M emacs "^[k" __kill_pid
+bindkey -M emacs "^[p" __list_pid
 # zsh-history-substring-search
 bindkey -M emacs '^P' history-substring-search-up
 bindkey -M emacs '^N' history-substring-search-down
-bindkey -M emacs '^[p' history-substring-search-up
-bindkey -M emacs '^[n' history-substring-search-down
 bindkey -M emacs '<Up>' history-substring-search-up
 bindkey -M emacs '<Down>' history-substring-search-down
 
 # }}}
-# vi mode {{{
-#
-# # init vi mode
-# set -o vi -M viins
-#
-# # new line cursor
-# function zle-line-init()
-# {
-#     echo -ne '\e[6 q' # beam
-# }
-# zle -N zle-line-init
-#
-# # set cursor when switching keymaps
-# function zle-keymap-select()
-# {
-#     if [[ $KEYMAP == vicmd ]]; then
-#         echo -ne '\e[2 q' # block
-#     else
-#         echo -ne '\e[6 q' # beam
-#     fi
-# }
-# zle -N zle-keymap-select
-#
-# bindkey '^[e' edit-command-line
-# bindkey -M vicmd "^H" run-help
-# # vi mode
-# bindkey 'jk' vi-cmd-mode
-# bindkey -M vicmd 'gh' beginning-of-line
-# bindkey -M vicmd 'gl' end-of-line
-# # emacs insert mode
-# bindkey -M viins "^?" backward-delete-char
-# bindkey -M viins "^W" backward-kill-word
-# bindkey -M viins "^U" backward-kill-line
-# bindkey -M viins '^A' beginning-of-line
-# bindkey -M viins '^E' end-of-line
-# # zsh-history-substring-search
-# bindkey -M viins '^P' history-substring-search-up
-# bindkey -M viins '^N' history-substring-search-down
-# bindkey -M vicmd 'k' history-substring-search-up
-# bindkey -M vicmd 'j' history-substring-search-down
-# # function key bindings
-# bindkey "^F"    __find_directory
-# bindkey "^[f"   __find_hidden_directory
-# bindkey "^V"    __find_file
-# bindkey "^[v"   __find_hidden_file
-# bindkey "^O"    __open_file
-# bindkey "^[^E"  __find_env
-# bindkey "^[^R"  __find_hist
-# bindkey "^[^K"  __kill_pid
-# bindkey "^[^M"  __mount_drive
-# bindkey "^[^P"  __list_pid
-# # bindkey "^[^M"  __interrogate_proc_mem
-#
-# # }}}
+# shell side vterm {{{
+
+# passes messages from shell to vterm via properly escaped sequences
+function vterm_printf()
+{
+    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ]); then
+        # Tell tmux to pass the escape sequences through
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
+        printf "\eP\e]%s\007\e\\" "$1"
+    else
+        printf "\e]%s\e\\" "$1"
+    fi
+}
+
+# directory and prompt tracking
+function vterm_prompt_end() {
+    vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
+}
+
+# parameter expansion, command substitution and arithmetic expansion for prompts
+setopt PROMPT_SUBST
+PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+
+# }}}
