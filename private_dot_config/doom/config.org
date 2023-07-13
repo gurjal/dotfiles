@@ -143,7 +143,7 @@ in org mode ~gH~ is goto header
 (map! :nv "zv" #'evil-vimish-fold-mode)
 #+end_src
 
-* org settings
+* org mode
 ** org path
 #+begin_src emacs-lisp
 (setq org-directory "~/.gurjal/org/" org-roam-directory "~/.gurjal/org/zettelkasten")
