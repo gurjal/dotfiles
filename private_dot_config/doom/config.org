@@ -7,7 +7,7 @@
 
 * theme
 #+begin_src emacs-lisp
-(setq! doom-theme 'doom-tokyonight)
+(setq! doom-theme 'doom-tokyo-night)
 #+end_src
 
 * fonts
@@ -88,7 +88,7 @@
       :nv "gk" #'evil-goto-first-line
       :nv "gl" #'evil-end-of-line)
 #+end_src
-* bookmark set or jump
+* bookmark jump or set
 #+begin_src emacs-lisp
 (map! :leader
       :prefix "f"
@@ -131,10 +131,11 @@
 
 ** toggle key
 #+begin_src emacs-lisp
-(map! :leader
+(map! :i "M-RET" #'+vterm/toggle
+      :leader
       :n "RET" #'+vterm/toggle
       :prefix "o"
-      :n "RET" #'+vterm/toggle)
+      :n "RET" #'+vterm/here)
 #+end_src
 
 ** kill shell process when vterm buffer is closed

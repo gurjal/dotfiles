@@ -55,10 +55,10 @@ vim.g.mapleader = ' '
 
 -- base
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
-vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = "quit" })
-vim.keymap.set("n", "<leader>Q", "<cmd>q!<cr>", { desc = "force quit" })
-vim.keymap.set("n", "<leader>y", "<cmd>w<cr><esc>", { desc = "save file" })
-vim.keymap.set("n", "<leader><space>", "<cmd>wq<cr><esc>", { desc = "save and quit" })
+vim.keymap.set("n", "<leader>q", ":q<cr>", { desc = "quit" })
+vim.keymap.set("n", "<leader>Q", ":q!<cr>", { desc = "force quit" })
+vim.keymap.set("n", "<leader>y", ":w<cr><esc>", { desc = "save file" })
+vim.keymap.set("n", "<leader><space>", ":wq<cr><esc>", { desc = "save and quit" })
 -- go to
 vim.keymap.set({ "n", "v" }, "gh", "0", { desc = "go to line start" })
 vim.keymap.set({ "n", "v" }, "gj", "G", { desc = "go to bottom" })
@@ -66,9 +66,9 @@ vim.keymap.set({ "n", "v" }, "gk", "gg", { desc = "go to top" })
 vim.keymap.set({ "n", "v" }, "gl", "$", { desc = "go to line end" })
 vim.keymap.set({ "n", "v" }, "gm", "%", { desc = "go to matching" })
 -- buffers
-vim.keymap.set("n", "\\", "<cmd>bnext<cr>")
-vim.keymap.set("n", "|", "<cmd>bprevious<cr>")
-vim.keymap.set("n", "<leader>k", "<cmd>bd<cr>", { desc = "kill buffer" })
+vim.keymap.set("n", "\\", ":bnext<cr>")
+vim.keymap.set("n", "|", ":bprevious<cr>")
+vim.keymap.set("n", "<leader>k", ":bd<cr>", { desc = "kill buffer" })
 -- windows
 vim.keymap.set("n", "<C-h>", "<C-W>h", { desc = "left window" })
 vim.keymap.set("n", "<C-j>", "<C-W>j", { desc = "down window" })
@@ -90,33 +90,34 @@ vim.keymap.set("n", "<leader>ws", "<C-W>s", { desc = "split window below" })
 vim.keymap.set("n", "<leader>wv", "<C-W>v", { desc = "split window right" })
 vim.keymap.set("n", "<leader>wo", "<C-W>o", { desc = "current window only" })
 -- tabs
-vim.keymap.set("n", "<M-h>", "<cmd>tabprevious<cr>")
-vim.keymap.set("n", "<M-l>", "<cmd>tabnext<cr>")
-vim.keymap.set("n", "<leader><tab>n", "<cmd>tabnew<cr>", { desc = "new tab" })
-vim.keymap.set("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "close tab" })
-vim.keymap.set("n", "<leader><tab>k", "<cmd>tabclose<cr>", { desc = "close tab" })
+vim.keymap.set("n", "<M-h>", ":tabprevious<cr>")
+vim.keymap.set("n", "<M-l>", ":tabnext<cr>")
+vim.keymap.set("n", "<leader><tab>n", ":tabnew<cr>", { desc = "new tab" })
+vim.keymap.set("n", "<leader><tab>d", ":tabclose<cr>", { desc = "close tab" })
+vim.keymap.set("n", "<leader><tab>k", ":tabclose<cr>", { desc = "close tab" })
 -- lsp
 vim.keymap.set({ "n", "v" }, "<leader>cf", function() vim.lsp.buf.format() end, { desc = "format file" })
 vim.keymap.set("n", "<leader>cr", function() vim.lsp.buf.rename() end, { desc = "rename symbol" })
 vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, { desc = "code action" })
 vim.keymap.set("n", "<leader>ch", function() vim.lsp.buf.signature_help() end, { desc = "signature help" })
 -- file
-vim.keymap.set("n", "<leader>fp", "<cmd>edit ~/.config/nvim/init.lua<cr>", { desc = "edit private config" })
+vim.keymap.set("n", "<leader>fp", ":edit ~/.config/nvim/init.lua<cr>", { desc = "edit private config" })
 -- utility
 vim.keymap.set(
     "n",
     "<leader>ur",
-    "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
+    ":nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
     { desc = "redraw" }
 )
-vim.keymap.set("n", "<leader>ul", "<cmd>Lazy<cr>", { desc = "lazy" })
-vim.keymap.set("n", "<leader>um", "<cmd>Mason<cr>", { desc = "mason" })
+vim.keymap.set("n", "<leader>ul", ":Lazy<cr>", { desc = "lazy" })
+vim.keymap.set("n", "<leader>um", ":Mason<cr>", { desc = "mason" })
+-- toggle
+vim.keymap.set("n", "<leader>tl", ":set nu! rnu!<cr>", { desc = "toggle linenumbers" })
 -- up/down
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 -- search
-vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>")
-vim.keymap.set({ "n", "v" }, "gw", "*N")
+vim.keymap.set({ "i", "n" }, "<esc>", ":noh<cr><esc>")
 -- add undo break-points
 vim.keymap.set("i", ",", ",<c-g>u")
 vim.keymap.set("i", ".", ".<c-g>u")
@@ -124,8 +125,8 @@ vim.keymap.set("i", ";", ";<c-g>u")
 -- visual indenting
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
--- vim.keymap.set("n", "<leader>xl", "<cmd>lopen<cr>", { desc = "open location list" })
--- vim.keymap.set("n", "<leader>xq", "<cmd>copen<cr>", { desc = "open quickfix list" })
+-- vim.keymap.set("n", "<leader>xl", ":lopen<cr>", { desc = "open location list" })
+-- vim.keymap.set("n", "<leader>xq", ":copen<cr>", { desc = "open quickfix list" })
 -- }}}
 -- bootstrap {{{
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -167,34 +168,34 @@ require("lazy").setup {
         branch = "0.1.x",
         dependencies = "nvim-lua/plenary.nvim",
         keys = {
-            { "<leader>.",  "<cmd>Telescope find_files<cr>",                desc = "Find Files (root dir)" },
-            -- { "<leader>,",  "<cmd>Telescope buffers show_all_buffers=true<cr>", desc = "Switch Buffer" },
-            { "<leader>/",  "<cmd>Telescope live_grep<cr>",                 desc = "Find in Files (Grep)" },
-            { "<leader>:",  "<cmd>Telescope command_history<cr>",           desc = "Command History" },
+            { "<leader>.",  ":Telescope find_files<cr>",                desc = "Find Files (root dir)" },
+            -- { "<leader>,",  ":Telescope buffers show_all_buffers=true<cr>", desc = "Switch Buffer" },
+            { "<leader>/",  ":Telescope live_grep<cr>",                 desc = "Find in Files (Grep)" },
+            { "<leader>:",  ":Telescope command_history<cr>",           desc = "Command History" },
             -- open
-            { "<leader>r",  "<cmd>Telescope oldfiles<cr>",                  desc = "recent files" },
+            { "<leader>r",  ":Telescope oldfiles<cr>",                  desc = "recent files" },
             -- buffer
-            { "<leader>,",  "<cmd>Telescope buffers<cr>",                   desc = "switch buffer" },
-            { "<leader>b",  "<cmd>Telescope buffers<cr>",                   desc = "switch buffer" },
+            { "<leader>,",  ":Telescope buffers<cr>",                   desc = "switch buffer" },
+            { "<leader>b",  ":Telescope buffers<cr>",                   desc = "switch buffer" },
             -- git
-            { "<leader>gc", "<cmd>Telescope git_commits<CR>",               desc = "commits" },
-            { "<leader>gs", "<cmd>Telescope git_status<CR>",                desc = "status" },
+            { "<leader>gc", ":Telescope git_commits<CR>",               desc = "commits" },
+            { "<leader>gs", ":Telescope git_status<CR>",                desc = "status" },
             -- search
-            { "<leader>sf", "<cmd>Telescope find_files<cr>",                desc = "files" },
-            { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "current buffer" },
-            { "<leader>sc", "<cmd>Telescope command_history<cr>",           desc = "command history" },
-            { "<leader>s:", "<cmd>Telescope commands<cr>",                  desc = "commands" },
-            { "<leader>sd", "<cmd>Telescope diagnostics<cr>",               desc = "diagnostics" },
-            { "<leader>sg", "<cmd>Telescope live_grep<cr>",                 desc = "grep" },
-            { "<leader>sh", "<cmd>Telescope help_tags<cr>",                 desc = "help pages" },
-            { "<leader>sH", "<cmd>Telescope highlights<cr>",                desc = "highlight groups" },
-            { "<leader>sk", "<cmd>Telescope keymaps<cr>",                   desc = "key maps" },
-            { "<leader>sM", "<cmd>Telescope man_pages<cr>",                 desc = "man pages" },
-            { "<leader>sm", "<cmd>Telescope marks<cr>",                     desc = "jump to mark" },
-            { "<leader>so", "<cmd>Telescope vim_options<cr>",               desc = "options" },
-            { "<leader>sw", "<cmd>Telescope grep_string<cr>",               desc = "word" },
+            { "<leader>sf", ":Telescope find_files<cr>",                desc = "files" },
+            { "<leader>sb", ":Telescope current_buffer_fuzzy_find<cr>", desc = "current buffer" },
+            { "<leader>sc", ":Telescope command_history<cr>",           desc = "command history" },
+            { "<leader>s:", ":Telescope commands<cr>",                  desc = "commands" },
+            { "<leader>sd", ":Telescope diagnostics<cr>",               desc = "diagnostics" },
+            { "<leader>sg", ":Telescope live_grep<cr>",                 desc = "grep" },
+            { "<leader>sh", ":Telescope help_tags<cr>",                 desc = "help pages" },
+            { "<leader>sH", ":Telescope highlights<cr>",                desc = "highlight groups" },
+            { "<leader>sk", ":Telescope keymaps<cr>",                   desc = "key maps" },
+            { "<leader>sM", ":Telescope man_pages<cr>",                 desc = "man pages" },
+            { "<leader>sm", ":Telescope marks<cr>",                     desc = "jump to mark" },
+            { "<leader>so", ":Telescope vim_options<cr>",               desc = "options" },
+            { "<leader>sw", ":Telescope grep_string<cr>",               desc = "word" },
             -- utility
-            { "<leader>uc", "<cmd>Telescope colorscheme<cr>",               desc = "switch colorscheme" },
+            { "<leader>uc", ":Telescope colorscheme<cr>",               desc = "switch colorscheme" },
             -- {
             --     "<leader>ss",
             --     Util.telescope("lsp_document_symbols", {
@@ -314,8 +315,8 @@ require("lazy").setup {
         cmd = { "TroubleToggle", "Trouble" },
         opts = { use_diagnostic_signs = true },
         keys = {
-            { "<leader>xx", "<cmd>TroubleToggle document_diagnostics<cr>",  desc = "Document Diagnostics (Trouble)" },
-            { "<leader>xX", "<cmd>TroubleToggle workspace_diagnostics<cr>", desc = "Workspace Diagnostics (Trouble)" },
+            { "<leader>xx", ":TroubleToggle document_diagnostics<cr>",  desc = "Document Diagnostics (Trouble)" },
+            { "<leader>xX", ":TroubleToggle workspace_diagnostics<cr>", desc = "Workspace Diagnostics (Trouble)" },
         },
     },
     -- }}}
@@ -329,9 +330,9 @@ require("lazy").setup {
         keys = {
             { "]t",         function() require("todo-comments").jump_next() end, desc = "Next todo comment" },
             { "[t",         function() require("todo-comments").jump_prev() end, desc = "Previous todo comment" },
-            { "<leader>xt", "<cmd>TodoTrouble<cr>",                              desc = "Todo (Trouble)" },
-            { "<leader>xT", "<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>",      desc = "Todo/Fix/Fixme (Trouble)" },
-            { "<leader>ft", "<cmd>TodoTelescope<cr>",                            desc = "todo comments in file" },
+            { "<leader>xt", ":TodoTrouble<cr>",                              desc = "Todo (Trouble)" },
+            { "<leader>xT", ":TodoTrouble keywords=TODO,FIX,FIXME<cr>",      desc = "Todo/Fix/Fixme (Trouble)" },
+            { "<leader>ft", ":TodoTelescope<cr>",                            desc = "todo comments in file" },
         },
     },
     -- }}}
@@ -345,7 +346,7 @@ require("lazy").setup {
             "MunifTanjim/nui.nvim"
         },
         keys = {
-            { "<leader>e", "<CMD>Neotree toggle<CR>", mode = { "n" }, desc = 'neotree' }
+            { "<leader>e", ":Neotree toggle<CR>", mode = { "n" }, desc = 'neotree' }
         },
         opts = {
             filesystem = {
@@ -580,4 +581,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("moonfly")
