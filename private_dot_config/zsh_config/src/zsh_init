@@ -70,6 +70,10 @@ alias tm="trashman"
 # Load git version control information
 autoload -Uz vcs_info
 
+# parameter expansion, command substitution and arithmetic expansion for prompts
+# needed for git repo and vterm prompt tracking
+setopt PROMPT_SUBST
+
 # Format the vcs_info_msg_0_ variable
 zstyle ':vcs_info:git:*' formats '(%b) '
 
@@ -318,8 +322,8 @@ set -o emacs
 # nav
 bindkey -M emacs "^[h" __find_file
 bindkey -M emacs "^[g" __find_directory
-bindkey -M emacs "^[H" __find_hidden_file
-bindkey -M emacs "^[G" __find_hidden_directory
+bindkey -M emacs "^[^h" __find_hidden_file
+bindkey -M emacs "^[^g" __find_hidden_directory
 # xdg-open
 bindkey -M emacs "^[o" __open_file
 # env
@@ -359,8 +363,6 @@ function vterm_prompt_end() {
     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
 }
 
-# parameter expansion, command substitution and arithmetic expansion for prompts
-setopt PROMPT_SUBST
 PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
 
 # }}}

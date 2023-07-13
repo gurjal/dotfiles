@@ -1,15 +1,19 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-(setq! doom-theme 'doom-palenight
-       doom-font (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal :size 18)
+(setq! doom-theme 'doom-tokyonight)
+
+(setq! doom-font (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal :size 18)
        doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :weight 'normal :size 18)
        doom-unicode-font (font-spec :family "Liberation Sans" :weight 'regular :size 18)
-       doom-big-font-increment 2
-       display-line-numbers-type 'visual
-       ;; confirm-kill-processes nil
-       confirm-kill-emacs nil
-       user-full-name "gurjal"
+       doom-big-font-increment 2)
+
+(setq! user-full-name "gurjal"
        user-mail-address "gurjal@proton.me")
+
+(setq! display-line-numbers-type 'visual)
+
+(setq! confirm-kill-processes nil
+       confirm-kill-emacs nil)
 
 (setq! evil-escape-key-sequence "jk"
        evil-escape-delay 0.2
@@ -21,6 +25,10 @@
       :i "M-j" "C-g j"
       :i "M-k" "C-g k"
       :i "M-l" "C-g l")
+
+(map! :leader :prefix "f"
+      :n "f" #'+default/find-file-under-here
+      :n "F" #'find-file)
 
 (map! :n   "\\" #'evil-next-buffer
       :n   "|" #'evil-prev-buffer
@@ -42,20 +50,26 @@
       :nv "gk" #'evil-goto-first-line
       :nv "gl" #'evil-end-of-line)
 
+(map! :leader
+      :prefix "f"
+      :n "m" #'bookmark-jump)
+
 (map! :n "Q" #'call-last-kbd-macro)
 
 (map! :leader :prefix "t" :n "R" #'rainbow-mode)
 
 (map! :leader
       :desc "Toggle popup buffer"
-      :n "SPC" #'(lambda () (interactive) (+popup/toggle) (ignore-errors (+popup/other))))
+      :n "r" #'(lambda () (interactive) (+popup/toggle) (ignore-errors (+popup/other))))
 
 (map! :leader :prefix "s" :n "M" #'man)
 
 (after! evil-escape (delete 'vterm-mode evil-escape-excluded-major-modes))
 
-(map! :g "M-t" #'+vterm/toggle
-      :g "M-T" #'+vterm/here)
+(map! :leader
+      :n "RET" #'+vterm/toggle
+      :prefix "o"
+      :n "RET" #'+vterm/toggle)
 
 (setq! vterm-kill-buffer-on-exit 't)
 
@@ -65,8 +79,9 @@
 (map! :nv "gH" #'evil-lion-left
       :nv "gL" #'evil-lion-right)
 
-(map! :n "S" #'evil-surround-change
-      :v "S" #'evil-surround-edit)
+(map! :prefix "g"
+      :n "s" #'evil-surround-change
+      :v "s" #'evil-surround-edit)
 
 (map! :nv "zv" #'evil-vimish-fold-mode)
 
@@ -89,7 +104,8 @@
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 
-(map! :n "-" #'org-mark-ring-goto
+(map! :map org-mode-map
+      :n "-" #'org-mark-ring-goto
       :leader
       (:prefix-map ("j" . "journal")
                    "j" #'org-roam-dailies-goto-today
@@ -97,13 +113,13 @@
                    "F" #'org-roam-ref-find
                    "i" #'org-roam-node-insert
                    "c" #'org-roam-capture
-                   "r" #'org-roam-refile
+                   "m" #'org-roam-refile
                    "s" #'org-roam-db-sync
                    "l" #'org-store-link
                    "t" #'org-roam-tag-add
                    "T" #'org-roam-tag-remove
-                   "b" #'org-roam-buffer-toggle
-                   "B" #'org-roam-buffer-display-dedicated
+                   "r" #'org-roam-buffer-toggle
+                   "R" #'org-roam-buffer-display-dedicated
                    (:prefix ("g" . "gui")
                             "g" #'org-roam-ui-mode
                             "f" #'org-roam-ui-follow-mode
@@ -131,7 +147,7 @@
                             "a" #'org-roam-alias-add
                             "A" #'org-roam-alias-remove)))
 
-(map! :niv "M-," #'(lambda () (interactive) (org-roam-buffer-toggle) (+popup/other)))
+(map! :n "M-r" #'(lambda () (interactive) (org-roam-buffer-toggle) (+popup/other)))
 ;; (map! :map org-mode-map :niv "M-," #'(lambda ()) (interactive) (org-roam-buffer-toggle) (+popup/other))
 
 ;; zen mode
