@@ -7,7 +7,7 @@
 
 * theme
 #+begin_src emacs-lisp
-(setq! doom-theme 'doom-tokyo-night)
+(setq! doom-theme 'doom-one)
 #+end_src
 
 * fonts
@@ -177,21 +177,50 @@ in org mode ~gH~ is goto header
 #+end_src
 
 * org mode
-** org path
+** org paths
 #+begin_src emacs-lisp
 (setq org-directory "~/.gurjal/org/" org-roam-directory "~/.gurjal/org/zettelkasten")
 #+end_src
 
-** fold level
+** folds
+*** initial fold level
 #+begin_src emacs-lisp
 ;; default fold level
 (after! org (setq org-startup-folded 'show2levels)
   ;; Make the backlinks buffer easier to peruse by folding leaves by default.
   (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2))
 #+end_src
-** hide emphasis markers
+
+*** fold numbers
+#+begin_src emacs-lisp
+(org-num-mode 't)
+#+end_src
+
+** font emphasis
+*** hide markers
 #+begin_src emacs-lisp
 (setq! org-hide-emphasis-markers 't)
+#+end_src
+
+*** toggle markers
+#+begin_src emacs-lisp
+(map! :leader
+      :prefix "t"
+      :n "e" #'(lambda ()
+                 (interactive)
+                 (if org-hide-emphasis-markers
+                     (progn (setq! org-hide-emphasis-markers nil)
+                            (message "org emphasis markers are hidden"))
+                   (progn (setq! org-hide-emphasis-markers 't)
+                          (message "org emphasis markers are visible")))
+                 (revert-buffer)))
+#+end_src
+
+*** emphasize font
+#+begin_src emacs-lisp
+(map! :leader
+      :prefix "j"
+      :v "e" #'org-emphasize)
 #+end_src
 
 ** org-roam-ui
@@ -305,16 +334,17 @@ in org mode ~gH~ is goto header
        ;;hydra
        ;;indent-guides     ; highlighted indent columns
        ligatures         ; ligatures and symbols to make your code pretty again
-       minimap           ; show a map of the code on the side
+       ;;minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
-       ;;nav-flash         ; blink cursor line after big motions
+       nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup             ; tame sudden yet inevitable temporary windows
         +all
         +defaults)
        ;;tabs              ; a tab bar for Emacs
-       ;;treemacs          ; a project drawer, like neotree but cooler
+       (treemacs          ; a project drawer, like neotree but cooler
+        +lsp)
        ;;unicode           ; extended unicode support for various languages
        (vc-gutter         ; vcs diff in the fringe
         +diff-hl
