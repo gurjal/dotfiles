@@ -183,17 +183,13 @@ in org mode ~gH~ is goto header
 #+end_src
 
 ** folds
-*** initial fold level
 #+begin_src emacs-lisp
-;; default fold level
-(after! org (setq org-startup-folded 'show2levels)
+(after! org
+  (setq! org-startup-folded 't
+         org-startup-numerated 't
+         org-num-max-level 2)
   ;; Make the backlinks buffer easier to peruse by folding leaves by default.
   (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2))
-#+end_src
-
-*** fold numbers
-#+begin_src emacs-lisp
-(org-num-mode 't)
 #+end_src
 
 ** font emphasis
@@ -223,6 +219,12 @@ in org mode ~gH~ is goto header
       :v "e" #'org-emphasize)
 #+end_src
 
+** link hints
+#+begin_src emacs-lisp
+(map! :map org-mode-map
+      :leader
+      :n "l" #'link-hint-open-link)
+#+end_src
 ** org-roam-ui
 #+begin_src emacs-lisp
 (use-package! websocket
@@ -238,8 +240,7 @@ in org mode ~gH~ is goto header
 
 ** org roam keymap
 #+begin_src emacs-lisp
-(map! :map org-mode-map
-      :n "-" #'org-mark-ring-goto
+(map! :n "-" #'org-mark-ring-goto
       :leader
       (:prefix-map ("j" . "journal")
                    "j" #'org-roam-dailies-goto-today
