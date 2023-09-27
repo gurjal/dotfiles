@@ -7,8 +7,13 @@ export XDG_DATA_HOME="$HOME/.local/share/"
 export XDG_STATE_HOME="$HOME/.local/state/"
 # zsh
 export ZSH_BIN="$XDG_CONFIG_HOME/zsh_config/bin"
+# bash
 export INPUTRC="$XDG_CONFIG_HOME/inputrc"
+# less
 export LESSHISTFILE="$XDG_CACHE_HOME/lesshst"
+# flatpak
+XDG_DATA_DIRS="$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share"
+export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/flatpak/exports/share"
 # doom
 export DOOMDIR="$XDG_CONFIG_HOME/doom/"
 # go
@@ -22,7 +27,11 @@ export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 # void
 export XBPS_DISTDIR="$HOME/Source/void-packages/"
 export SVDIR="$HOME/.local/service/"
-# path
-PATH="$CARGO_HOME/bin/:$GOPATH/bin/:$PATH"
+# go path
+PATH="$GOPATH/bin/:$PATH"
+# rust path
+PATH="$CARGO_HOME/bin/:$PATH"
+# emacs path
 PATH="$PATH:$XDG_CONFIG_HOME/emacs/bin/"
+# local path
 export PATH="$HOME/.local/bin/:$PATH"

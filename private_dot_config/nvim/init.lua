@@ -1,5 +1,10 @@
 -- vim:foldmethod=marker
 
+-- TODO: find way to use bash formatter for zsh files
+
+-- load lua modules {{{
+vim.loader.enable()
+-- }}}
 -- options {{{
 vim.opt.number         = true
 vim.opt.relativenumber = true
@@ -18,7 +23,7 @@ vim.opt.smartindent    = true
 vim.opt.ignorecase     = true
 vim.opt.smartcase      = true
 vim.opt.showmode       = false
--- window
+-- window {{{
 vim.opt.cmdheight      = 0
 vim.opt.showtabline    = 1
 vim.opt.numberwidth    = 4
@@ -29,16 +34,19 @@ vim.opt.titleold       = 'st'
 vim.opt.splitbelow     = false
 vim.opt.splitright     = false
 vim.opt.termguicolors  = true
--- backup, undo and swap
+-- }}}
+-- backup, undo and swap {{{
 vim.opt.undofile       = true
 vim.opt.undodir        = vim.fn.stdpath 'cache' .. '/undo'
 vim.opt.swapfile       = false
 vim.opt.backup         = false
 vim.opt.writebackup    = true
--- formatting
-vim.opt.formatoptions  = 'cq' -- see 'fo-table'
+-- }}}
+-- formatting {{{
+vim.opt.formatoptions  = 'jtcroql' -- see 'fo-table'
 vim.opt.joinspaces     = false
--- util
+-- }}}
+-- util {{{
 vim.cmd 'filetype plugin indent on'
 vim.opt.shortmess:append 'sI'
 vim.opt.timeoutlen  = 500
@@ -50,26 +58,27 @@ vim.opt.hidden      = true
 vim.opt.list        = true
 vim.opt.lazyredraw  = false
 -- }}}
+-- }}}
 -- keymap {{{
-vim.g.mapleader = ' '
-
--- base
+vim.g.mapleader     = ' '
 vim.keymap.set("i", "jk", "<esc>", { silent = true })
 vim.keymap.set("n", "<leader>q", ":q<cr>", { desc = "quit" })
 vim.keymap.set("n", "<leader>Q", ":q!<cr>", { desc = "force quit" })
 vim.keymap.set("n", "<leader>y", ":w<cr><esc>", { desc = "save file" })
-vim.keymap.set("n", "<leader><space>", ":wq<cr><esc>", { desc = "save and quit" })
--- go to
+vim.keymap.set("n", "<leader><leader>", ":wq<cr><esc>", { desc = "save and quit" })
+-- go to {{{
 vim.keymap.set({ "n", "v" }, "gh", "0", { desc = "go to line start" })
 vim.keymap.set({ "n", "v" }, "gj", "G", { desc = "go to bottom" })
 vim.keymap.set({ "n", "v" }, "gk", "gg", { desc = "go to top" })
 vim.keymap.set({ "n", "v" }, "gl", "$", { desc = "go to line end" })
-vim.keymap.set({ "n", "v" }, "gm", "%", { desc = "go to matching" })
--- buffers
+-- vim.keymap.set({ "n", "v" }, "gm", "%", { desc = "go to matching bracket" })
+-- }}}
+-- buffers {{{
 vim.keymap.set("n", "\\", ":bnext<cr>")
 vim.keymap.set("n", "|", ":bprevious<cr>")
 vim.keymap.set("n", "<leader>k", ":bd<cr>", { desc = "kill buffer" })
--- windows
+-- }}}
+-- windows {{{
 vim.keymap.set("n", "<C-h>", "<C-W>h", { desc = "left window" })
 vim.keymap.set("n", "<C-j>", "<C-W>j", { desc = "down window" })
 vim.keymap.set("n", "<C-k>", "<C-W>k", { desc = "up window" })
@@ -83,50 +92,92 @@ vim.keymap.set("n", "<leader>wH", "<C-w>H", { desc = "move window left" })
 vim.keymap.set("n", "<leader>wJ", "<C-w>J", { desc = "move window down" })
 vim.keymap.set("n", "<leader>wK", "<C-w>K", { desc = "move window up" })
 vim.keymap.set("n", "<leader>wL", "<C-w>L", { desc = "move window right" })
+vim.keymap.set("n", "<leader>wwh", "<C-w><", { desc = "decrease window width" })
+vim.keymap.set("n", "<leader>wwj", "<C-w>-", { desc = "decrease window height" })
+vim.keymap.set("n", "<leader>wwk", "<C-w>+", { desc = "increase window height" })
+vim.keymap.set("n", "<leader>wwl", "<C-w>>", { desc = "increase window width" })
+vim.keymap.set("n", "<leader>wwo", "<C-w>=", { desc = "reset window size" })
 vim.keymap.set("n", "<leader>wr", "<C-w>r", { desc = "rotate windows forward" })
 vim.keymap.set("n", "<leader>wR", "<C-w>R", { desc = "rotate windows backward" })
 vim.keymap.set("n", "<leader>wd", "<C-W>c", { desc = "delete window" })
 vim.keymap.set("n", "<leader>ws", "<C-W>s", { desc = "split window below" })
 vim.keymap.set("n", "<leader>wv", "<C-W>v", { desc = "split window right" })
 vim.keymap.set("n", "<leader>wo", "<C-W>o", { desc = "current window only" })
--- tabs
+-- }}}
+-- tabs {{{
 vim.keymap.set("n", "<M-h>", ":tabprevious<cr>")
 vim.keymap.set("n", "<M-l>", ":tabnext<cr>")
 vim.keymap.set("n", "<leader><tab>n", ":tabnew<cr>", { desc = "new tab" })
 vim.keymap.set("n", "<leader><tab>d", ":tabclose<cr>", { desc = "close tab" })
 vim.keymap.set("n", "<leader><tab>k", ":tabclose<cr>", { desc = "close tab" })
--- lsp
+-- }}}
+-- lsp {{{
 vim.keymap.set({ "n", "v" }, "<leader>cf", function() vim.lsp.buf.format() end, { desc = "format file" })
 vim.keymap.set("n", "<leader>cr", function() vim.lsp.buf.rename() end, { desc = "rename symbol" })
 vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, { desc = "code action" })
 vim.keymap.set("n", "<leader>ch", function() vim.lsp.buf.signature_help() end, { desc = "signature help" })
--- file
+vim.keymap.set("n", "<leader>cl", ":LspStop<cr>", { desc = "stop lsp" })
+vim.keymap.set("n", "<leader>cL", ":LspStart<cr>", { desc = "start lsp" })
+-- }}}
+-- file {{{
 vim.keymap.set("n", "<leader>fp", ":edit ~/.config/nvim/init.lua<cr>", { desc = "edit private config" })
--- utility
+-- }}}
+-- folds {{{
+vim.keymap.set("n", "<leader>o", "za", { desc = "toggle current fold" })
+vim.keymap.set("n", "<leader>O", function()
+    if vim.o.foldlevel == 255 then
+        vim.o.foldlevel = 0
+    else
+        vim.o.foldlevel = 255
+    end
+end, { desc = "toggle all folds" })
+-- }}}
+-- quick macro {{{
+local recording_macro = false
+vim.keymap.set("n", "q", function()
+    if not recording_macro then
+        -- vim.cmd.normal("q")
+        -- vim.cmd.normal("q")
+        require("notify")("macro recording...")
+        recording_macro = true
+    else
+        -- vim.cmd.normal("q")
+        require("notify")("macro saved")
+        recording_macro = false
+    end
+end)
+-- }}}
+-- toggle {{{
+vim.keymap.set("n", "<leader>tl", ":set nu! rnu!<cr>", { desc = "toggle linenumbers" })
+-- }}}
+-- search {{{
+vim.keymap.set("n", "<esc>", ":noh<cr><esc>")
+-- }}}
+-- utility {{{
 vim.keymap.set(
     "n",
     "<leader>ur",
     ":nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
-    { desc = "redraw" }
+    { desc = "reset gui highlights" }
 )
 vim.keymap.set("n", "<leader>ul", ":Lazy<cr>", { desc = "lazy" })
 vim.keymap.set("n", "<leader>um", ":Mason<cr>", { desc = "mason" })
--- toggle
-vim.keymap.set("n", "<leader>tl", ":set nu! rnu!<cr>", { desc = "toggle linenumbers" })
--- up/down
+-- }}}
+-- up/down {{{
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
--- search
-vim.keymap.set({ "i", "n" }, "<esc>", ":noh<cr><esc>")
--- add undo break-points
+-- }}}
+-- add undo break-points {{{
 vim.keymap.set("i", ",", ",<c-g>u")
 vim.keymap.set("i", ".", ".<c-g>u")
 vim.keymap.set("i", ";", ";<c-g>u")
--- visual indenting
+-- }}}
+-- visual indenting {{{
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 -- vim.keymap.set("n", "<leader>xl", ":lopen<cr>", { desc = "open location list" })
 -- vim.keymap.set("n", "<leader>xq", ":copen<cr>", { desc = "open quickfix list" })
+-- }}}
 -- }}}
 -- bootstrap {{{
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -136,9 +187,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 -- }}}
-
 require("lazy").setup {
-
     -- which-key.nvim {{{
     {
         "folke/which-key.nvim",
@@ -152,12 +201,14 @@ require("lazy").setup {
             wk.register({
                 mode = { "n", "v" },
                 ["<leader><tab>"] = { name = "+tabs" },
+                ["<leader>f"] = { name = "+find" },
                 ["<leader>s"] = { name = "+search" },
                 ["<leader>g"] = { name = "+git" },
                 ["<leader>c"] = { name = "+code" },
                 ["<leader>u"] = { name = "+utility" },
                 ["<leader>w"] = { name = "+windows" },
                 ["<leader>x"] = { name = "+diagnostics/quickfix" },
+                ["<leader>gs"] = { name = "+surround" },
             })
         end,
     },
@@ -180,20 +231,22 @@ require("lazy").setup {
             -- git
             { "<leader>gc", ":Telescope git_commits<CR>",               desc = "commits" },
             { "<leader>gs", ":Telescope git_status<CR>",                desc = "status" },
+            -- find
+            { "<leader>fw", ":Telescope grep_string<cr>",               desc = "find current word" },
             -- search
             { "<leader>sf", ":Telescope find_files<cr>",                desc = "files" },
             { "<leader>sb", ":Telescope current_buffer_fuzzy_find<cr>", desc = "current buffer" },
             { "<leader>sc", ":Telescope command_history<cr>",           desc = "command history" },
             { "<leader>s:", ":Telescope commands<cr>",                  desc = "commands" },
-            { "<leader>sd", ":Telescope diagnostics<cr>",               desc = "diagnostics" },
             { "<leader>sg", ":Telescope live_grep<cr>",                 desc = "grep" },
             { "<leader>sh", ":Telescope help_tags<cr>",                 desc = "help pages" },
             { "<leader>sH", ":Telescope highlights<cr>",                desc = "highlight groups" },
             { "<leader>sk", ":Telescope keymaps<cr>",                   desc = "key maps" },
             { "<leader>sM", ":Telescope man_pages<cr>",                 desc = "man pages" },
             { "<leader>sm", ":Telescope marks<cr>",                     desc = "jump to mark" },
-            { "<leader>so", ":Telescope vim_options<cr>",               desc = "options" },
-            { "<leader>sw", ":Telescope grep_string<cr>",               desc = "word" },
+            { "<leader>sv", ":Telescope vim_options<cr>",               desc = "options" },
+            -- lsp
+            { "<leader>cd", ":Telescope diagnostics<cr>",               desc = "diagnostics" },
             -- utility
             { "<leader>uc", ":Telescope colorscheme<cr>",               desc = "switch colorscheme" },
             -- {
@@ -226,9 +279,7 @@ require("lazy").setup {
                 selection_caret = " ",
                 mappings = {
                     n = {
-                        ["q"] = function(...)
-                            require("telescope.actions").close(...)
-                        end,
+                        ["q"] = function(...) require("telescope.actions").close(...) end,
                     },
                     -- i = {
                     --     ["<c-t>"] = function(...)
@@ -279,6 +330,9 @@ require("lazy").setup {
     {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v1.x',
+        keys = {
+            { "<leader>cs",  ":LspInfo<cr>", desc = "lsp info" },
+        },
         dependencies = {
             -- lsp support
             { 'neovim/nvim-lspconfig' },
@@ -323,16 +377,15 @@ require("lazy").setup {
     -- todo-comments.nvim {{{
     {
         "folke/todo-comments.nvim",
-        cmd = { "TodoTrouble", "TodoTelescope" },
         event = "BufReadPost",
         config = true,
         -- stylua: ignore
         keys = {
             { "]t",         function() require("todo-comments").jump_next() end, desc = "Next todo comment" },
             { "[t",         function() require("todo-comments").jump_prev() end, desc = "Previous todo comment" },
-            { "<leader>xt", ":TodoTrouble<cr>",                              desc = "Todo (Trouble)" },
-            { "<leader>xT", ":TodoTrouble keywords=TODO,FIX,FIXME<cr>",      desc = "Todo/Fix/Fixme (Trouble)" },
-            { "<leader>ft", ":TodoTelescope<cr>",                            desc = "todo comments in file" },
+            { "<leader>xt", ":TodoTrouble<cr>",                                  desc = "Todo (Trouble)" },
+            { "<leader>xT", ":TodoTrouble keywords=TODO,FIX,FIXME<cr>",          desc = "Todo/Fix/Fixme (Trouble)" },
+            { "<leader>ft", ":TodoTelescope<cr>",                                desc = "todo comments in file" },
         },
     },
     -- }}}
@@ -342,15 +395,15 @@ require("lazy").setup {
         cmd = "Neotree",
         dependencies = {
             "nvim-lua/plenary.nvim",
-            "kyazdani42/nvim-web-devicons",
-            "MunifTanjim/nui.nvim"
         },
         keys = {
             { "<leader>e", ":Neotree toggle<CR>", mode = { "n" }, desc = 'neotree' }
         },
         opts = {
             filesystem = {
-                follow_current_file = true,
+                follow_current_file = {
+                    enabled = true,
+                },
             },
         },
     },
@@ -393,11 +446,9 @@ require("lazy").setup {
             },
             on_attach = function(buffer)
                 local gs = package.loaded.gitsigns
-
                 local function map(mode, l, r, desc)
                     vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc })
                 end
-
                 -- stylua: ignore start
                 map("n", "]h", gs.next_hunk, "Next Hunk")
                 map("n", "[h", gs.prev_hunk, "Prev Hunk")
@@ -470,17 +521,105 @@ require("lazy").setup {
             },
         },
         config = function(_, opts)
-            -- use gz mappings instead of s to prevent conflict with leap
             require("mini.surround").setup(opts)
         end,
     },
     -- }}}
-    -- mini.align {{{
+    -- noice.nvim {{{
+    { "MunifTanjim/nui.nvim",   lazy = true },
     {
-        'echasnovski/mini.align',
-        version = '*',
-        config = function()
-        end,
+        "rcarriga/nvim-notify",
+        lazy = true,
+        opts = {
+            render = "wrapped-compact",
+            timeout = 3000,
+            max_height = function() return math.floor(vim.o.lines * 0.75) end,
+            max_width = function() return math.floor(vim.o.columns * 0.75) end,
+        },
+    },
+    {
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        keys = {
+            {
+                "<leader>n",
+                function() require("notify").dismiss({ silent = true, pending = true }) end,
+                desc = "dismiss all notifications",
+            },
+            {
+                "<leader>uh",
+                ":Notifications<cr>",
+                desc = "notifications history"
+            },
+        },
+        opts = {
+            -- cmdline = { view = "cmdline", },
+            lsp = {
+                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+                override = {
+                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                    ["vim.lsp.util.stylize_markdown"] = true,
+                    ["cmp.entry.get_documentation"] = true,
+                },
+            },
+            -- you can enable a preset for easier configuration
+            presets = {
+                bottom_search = true,         -- use a classic bottom cmdline for search
+                command_palette = true,       -- position the cmdline and popupmenu together
+                long_message_to_split = true, -- long messages will be sent to a split
+                inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+                lsp_doc_border = false,       -- add a border to hover docs and signature help
+            },
+        },
+        config = function(_, opts) require("noice").setup(opts) end,
+    },
+    -- }}}
+    -- lualine {{{
+    { 'nvim-tree/nvim-web-devicons', lazy = true },
+    {
+        "nvim-lualine/lualine.nvim",
+        event = "VeryLazy",
+        opts = {
+            options = {
+                theme = "auto",
+                icons_enabled = true,
+                globalstatus = true,
+                -- disabled_filetypes = { statusline = { "dashboard", "alpha" } },
+                section_separators = '',
+                component_separators = '',
+            },
+            sections = {
+                lualine_a = { 'mode', separator = nil },
+                lualine_b = { 'branch', separator = nil },
+                lualine_c = {
+                    'diagnostics',
+                    { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+                    { "filename", path = 1, symbols = { modified = "  ", readonly = "", unnamed = "" } },
+                },
+                lualine_x = {
+                    {
+                        function() return require("noice").api.status.command.get() end,
+                        cond = function() return package.loaded["noice"] and require("noice").api.status.command.has() end,
+                    },
+                    {
+                        function() return require("noice").api.status.mode.get() end,
+                        cond = function() return package.loaded["noice"] and require("noice").api.status.mode.has() end,
+                    },
+                    {
+                        function() return "  " .. require("dap").status() end,
+                        cond = function() return package.loaded["dap"] and require("dap").status() ~= "" end,
+                    },
+                    { require("lazy.status").updates, cond = require("lazy.status").has_updates },
+                    "diff",
+                },
+                lualine_y = {
+                    { "progress", separator = " ",                  padding = { left = 1, right = 0 } },
+                    { "location", padding = { left = 0, right = 1 } },
+                },
+                lualine_z = { 'location', separator = nil }
+            },
+            extensions = { "neo-tree", "lazy" },
+        },
     },
     -- }}}
     -- colorschemes {{{
@@ -578,7 +717,6 @@ require("lazy").setup {
         opts = { background = "dark" }
     },
     -- }}}
-
 }
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("nord")

@@ -1,5 +1,4 @@
 ;;; init.el -*- lexical-binding: t; -*-
-
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
        ;;chinese

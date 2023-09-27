@@ -34,6 +34,9 @@ fi
 # # start pipewire for non-systemd setups
 # pipewire &
 
+# power management settings
+powertop --auto-tune
+
 # redshift &
 light -S 100
 set-bg &

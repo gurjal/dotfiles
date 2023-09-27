@@ -20,14 +20,17 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
+
 # chezmoi
 alias cz="chezmoi"
+
 # git
 alias ,="git"
 alias ,s="git status -sb ."
 alias ,status="git status"
 alias ,clone="git clone"
 alias ,l="git log --oneline --graph --decorate -10"
+alias ,la="git log --oneline --graph --decorate --all"
 alias ,lo="git log --oneline --graph --decorate"
 alias ,log="git log"
 alias ,ls="git ls-files -tco"
@@ -45,22 +48,28 @@ alias ,rebase="git rebase"
 alias ,apply="git apply"
 alias ,d="git diff | $PAGER"
 alias ,diff="git diff"
-alias ,rv="git remote -v"
+alias ,rem="git remote -v"
 alias ,remote="git remote"
 alias ,reset="git reset"
 alias ,restore="git restore"
 alias ,mod="git submodule"
+alias ,tag="git tag -n --sort=-version:refname"
 alias ,rm="git rm"
 alias ,mv="git mv"
+
 # bat
 alias cat="bat -pp"
+
 # skim
 alias sk="sk -p ' ' --inline-info"
+
 # xclip
 alias cl="xclip -selection clipboard"
+
 # neovim
 alias v="$EDITOR"
 alias suv="sudo $EDITOR"
+
 # trashman
 alias tm="trashman"
 
@@ -118,13 +127,13 @@ function __find_file()
             --preview 'bat -ppf --line-range :500 {}')
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER="$EDITOR '$file'"
+        BUFFER="$EDITOR \"$file\""
         zle accept-line
     else
         local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER+=" '$file'"
+        BUFFER+=" \"$file\""
         zle end-of-line
     fi
 }
@@ -140,13 +149,13 @@ function __find_hidden_file()
             --preview 'bat -ppf --line-range :500 {}')
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER="$EDITOR '$file'"
+        BUFFER="$EDITOR \"$file\""
         zle accept-line
     else
         local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER+=" '$file'"
+        BUFFER+=" \"$file\""
         zle end-of-line
     fi
 }
@@ -161,13 +170,13 @@ function __find_directory()
         local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER="cd '$dir'"
+        BUFFER="cd \"$dir\""
         zle accept-line
     else
         local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER+=" '$dir'"
+        BUFFER+=" \"$dir\""
         zle end-of-line
     fi
 }
@@ -182,13 +191,13 @@ function __find_hidden_directory
         local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER="cd '$dir'"
+        BUFFER="cd \"$dir\""
         zle accept-line
     else
         local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER+=" '$dir'"
+        BUFFER+=" \"$dir\""
         zle end-of-line
     fi
 }
