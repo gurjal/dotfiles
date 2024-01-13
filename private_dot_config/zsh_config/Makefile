@@ -1,5 +1,6 @@
-cleanbuild:
+install:
 	make clean build
+
 build:
 	zsh -c "zcompile src/zsh_init" && mv src/*.zwc bin
 	zsh -c "zcompile src/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh" \
