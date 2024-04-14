@@ -212,17 +212,17 @@
 
 * fonts
 #+begin_src emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal :size 18)
-       doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :weight 'normal :size 18)
-       doom-unicode-font (font-spec :family "Liberation Sans" :weight 'regular :size 18)
-       doom-big-font-increment 2)
+; (setq! doom-font (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal :size 18)
+;       doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :weight 'normal :size 18)
+;       doom-unicode-font (font-spec :family "Liberation Sans" :weight 'regular :size 18)
+;       doom-big-font-increment 2)
 #+end_src
 
 * themes
 ** configuration
 #+begin_src emacs-lisp
 (use-package doom-themes
-  :ensure t :config
+  :config
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
@@ -237,7 +237,7 @@
 #+end_src
 ** set default theme
 #+begin_src emacs-lisp
-(load-theme 'doom-ayu-mirage t)
+(load-theme 'doom-monokai-pro t)
 #+end_src
 
 * exit quietly
@@ -303,11 +303,16 @@
       :leader
       :desc "toggle vterm popup" :ni "e"   #'+vterm/toggle
       :desc "open vterm window"  :ni "oe"  #'+vterm/here)
+;; replaces edit file keybind in gurjal zsh config
+(map! :after vterm
+      :map vterm-mode-map
+      :desc "find file" :ni "M-h" #'+vertico/find-file-in)
 #+end_src
 
 * popup key
 #+begin_src emacs-lisp
-(map! :leader
+(map! :desc "toggle popup" :i "M-r" #'(lambda () (interactive) (+popup/toggle) (ignore-errors (+popup/other)))
+      :leader
       :desc "toggle popup" :n "r" #'(lambda () (interactive) (+popup/toggle) (ignore-errors (+popup/other)))
       :desc "raise popup"  :n "R" #'+popup/raise)
 #+end_src
@@ -315,7 +320,9 @@
 * find key
 #+begin_src emacs-lisp
 (map! :leader
+      ;; :desc "find file" :n "SPC" #'+vertico/find-file-in
       :prefix "f"
+      :desc "grep cwd" :n "/" #'+default/search-cwd
       :desc "toggle fold" :n "o" #'evil-toggle-fold
       :desc "find files from cwd" :n "f" #'+default/find-file-under-here)
 #+end_src
@@ -330,7 +337,9 @@
       :desc "switch buffer" :n "," #'+vertico/switch-workspace-buffer
       :desc "save buffer"   :n "y" #'save-buffer
       :prefix "b"
-      :desc "kill buffer"   :n "k" #'kill-current-buffer)
+      :desc "ibuffer workspace" :n "i" #'+ibuffer/open-for-current-workspace
+      :desc "ibuffer"           :n "I" #'ibuffer
+      :desc "kill buffer"       :n "k" #'kill-current-buffer)
 #+end_src
 
 * window key
@@ -418,7 +427,7 @@
 ;; (map! :n "Q" #'call-last-kbd-macro)
 #+end_src
 
-* vertico
+* vertico completion
 
 /provides the vertical completion user interface
 part of the doom completion suite/
@@ -463,10 +472,11 @@ in org mode ~gH~ is goto header
 * org mode
 ** org paths
 #+begin_src emacs-lisp
-(setq org-directory "~/.gurjal/org/" org-roam-directory "~/.gurjal/org/zettelkasten")
+(setq! org-directory "~/.gurjal/org/"
+       org-roam-directory "~/.gurjal/org/zettelkasten")
 #+end_src
 
-** folds
+** fold options
 #+begin_src emacs-lisp
 (after! org
   (setq! org-startup-folded 't
@@ -517,10 +527,10 @@ in org mode ~gH~ is goto header
 (use-package! org-roam-ui
   :after websocket
   :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
+  (setq! org-roam-ui-sync-theme t
+         org-roam-ui-follow t
+         org-roam-ui-update-on-save t
+         org-roam-ui-open-on-start t))
 #+end_src
 
 ** org roam keymap
@@ -572,7 +582,15 @@ in org mode ~gH~ is goto header
 - [ ] add roam buffer specific bindings for quit and maximise
 - [ ] change behavior when selecting backlink from buffer
 #+begin_src emacs-lisp
-(map! :n "M-r" #'(lambda () (interactive) (org-roam-buffer-toggle) (+popup/other)))
+(defun +gurjal/toggle-roam-buffer ()
+ (interactive)
+ (org-roam-buffer-toggle)
+ (+popup/other))
+(map! :after org-roam
+      :map org-roam-mode-map
+      :desc "toggle roam buffer" :i "M-r" #'+gurjal/toggle-roam-buffer
+      :leader
+      :desc "toggle roam buffer" :n "r" #'+gurjal/toggle-roam-buffer)
 ;; (map! :map org-mode-map :niv "M-," #'(lambda ()) (interactive) (org-roam-buffer-toggle) (+popup/other))
 #+end_src
 

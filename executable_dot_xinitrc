@@ -28,14 +28,14 @@ fi
 # # syncthing start runit user service
 # [ -z "$(sv status syncthing | grep run)" ] && sv up syncthing
 
-# # emacs daemon start if not already running
-# [ -z "$(ps aux | grep emacs --daemon | grep -v grep)" ] && emacs --daemon &
-
 # # start pipewire for non-systemd setups
 # pipewire &
 
 # power management settings
 powertop --auto-tune
+
+# # emacs daemon start if not already running
+# [ -z "$(ps aux | grep emacs --daemon | grep -v grep)" ] && emacs --daemon &
 
 # redshift &
 light -S 100

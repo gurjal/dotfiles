@@ -127,7 +127,7 @@ function __find_file()
     then
         local file=$(fd -E .git -t f\
             | sk --height=$SK_HEIGHT --preview 'bat -ppf --line-range :500 {}'\
-                --bind=alt-h:abort\
+                --bind=alt-h:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $file ] && return
@@ -136,7 +136,7 @@ function __find_file()
     else
         local file=$(fd -E .git -t f\
             | sk --height=$SK_HEIGHT\
-                --bind=alt-h:abort\
+                --bind=alt-h:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $file ] && return
@@ -156,7 +156,7 @@ function __find_hidden_file()
         local file=$(fd -E .git -t f -H\
             | rg "^\."\
             | sk --height=$SK_HEIGHT --preview 'bat -ppf --line-range :500 {}'\
-                --bind=alt-h:abort\
+                --bind=alt-h:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $file ] && return
@@ -166,7 +166,7 @@ function __find_hidden_file()
         local file=$(fd -E .git -t f -H\
             | rg "^\."\
             | sk --height=$SK_HEIGHT\
-                --bind=alt-h:abort\
+                --bind=alt-h:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $file ] && return
@@ -185,7 +185,7 @@ function __find_directory()
     then
         local dir=$(fd -t d\
             | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort\
+                --bind=alt-g:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $dir ] && return
@@ -194,7 +194,7 @@ function __find_directory()
     else
         local dir=$(fd -t d\
             | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort\
+                --bind=alt-g:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $dir ] && return
@@ -214,7 +214,7 @@ function __find_hidden_directory
         local dir=$(fd -t d -H\
             | rg "^\."\
             | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort\
+                --bind=alt-g:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $dir ] && return
@@ -224,7 +224,7 @@ function __find_hidden_directory
         local dir=$(fd -t d -H\
             | rg "^\."\
             | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort\
+                --bind=alt-g:abort --multi\
             | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
         zle reset-prompt
         [ -z $dir ] && return
@@ -280,7 +280,7 @@ function __find_env()
 {
     # local env_var=$(env | sk --reverse --tac)
     local env_var=$(env\
-        | sk --tac)
+        | sk --tac --multi)
             # --bind=ctrl-e:abort)
     zle reset-prompt
     [ -z $env_var ] && return
@@ -299,7 +299,7 @@ function __kill_pid()
     #     sk --reverse --no-sort --tac --color=header:160\
     #         --header="id      user    cpu mem start time command" | awk '{print $1}')
     local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |\
-        sk --no-sort --tac --color=header:160\
+        sk --no-sort --tac --color=header:160 --multi\
             --header="id      user    cpu mem start time command" | awk '{print $1}')
     zle reset-prompt
     [ -z $proc ] && return
@@ -385,7 +385,7 @@ bindkey -M emacs "^[g" __find_directory
 bindkey -M emacs "^[^h" __find_hidden_file
 bindkey -M emacs "^[^g" __find_hidden_directory
 # xdg-open
-bindkey -M emacs "^[^o" __open_file
+bindkey -M emacs "^[o" __open_file
 # env
 bindkey -M emacs "^[^e" __find_env
 # hist

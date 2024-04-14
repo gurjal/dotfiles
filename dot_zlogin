@@ -3,7 +3,12 @@
 #     && . /home/gurjal/.nix-profile/etc/profile.d/nix.sh;
 
 # login
-echo && read -k1 "REPLY?startx? [Y/n] " && echo "\n"
-[[ "${REPLY}" != "n" ]] && [[ "${REPLY}" != "N" ]] \
-    && [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] \
-    && startx
+# echo && read -k1 "REPLY?startx? [Y/n] " && echo "\n"
+# [[ "${REPLY}" != "n" ]] && [[ "${REPLY}" != "N" ]] \
+#     && [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ] \
+#     && startx
+
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+    echo && read -k1 "REPLY?startx? [Y/n] " && echo "\n"
+    [[ "${REPLY}" != "n" ]] && [[ "${REPLY}" != "N" ]] && startx
+fi
