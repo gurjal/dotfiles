@@ -4,7 +4,8 @@ PS1=' %F{red}%m%f %F{green}%2~ ${vcs_info_msg_0_}%f%F{yellow}$%f '
 export VISUAL="nvim"
 export EDITOR="nvim"
 export KEYTIMEOUT=20
-export PAGER="moar"
-# export MANPAGER="moar"
-export BROWSER="qutebrower"
+# export PAGER="bat -p"
+export PAGER="moar -quit-if-one-screen"
+export MANPAGER="bat -p"
+export BROWSER="firefox"
 source "$ZSH_BIN/zsh_init"
