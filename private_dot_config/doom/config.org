@@ -7,24 +7,23 @@
 
 * theme
 #+begin_src emacs-lisp
-(setq! doom-theme 'doom-nord)
+(setq! doom-theme 'doom-rose-pine-moon)
 #+end_src
 
 * fonts
 #+begin_src emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal :size 18)
-       doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :weight 'normal :size 18)
-       doom-unicode-font (font-spec :family "Liberation Sans" :weight 'regular :size 18)
+(setq! doom-font                (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal  :size 18)
+       doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font"      :weight 'normal  :size 18)
+       doom-unicode-font        (font-spec :family "Liberation Sans"        :weight 'regular :size 18)
        doom-big-font-increment 2)
 #+end_src
 
-* username
-#+begin_src emacs-lisp
-(setq! user-full-name "gurjal"
-       user-mail-address "gurjal@proton.me")
-#+end_src
-
 * line numbers
+t            normal line numbers
+'relative    relative line numbers
+'visual      relative line numbers in screen space
+nil          no line numbers
+
 #+begin_src emacs-lisp
 (setq! display-line-numbers-type 'visual)
 #+end_src
@@ -32,66 +31,104 @@
 * confirm kill?
 #+begin_src emacs-lisp
 (setq! confirm-kill-processes nil
-       confirm-kill-emacs nil)
+       confirm-kill-emacs     nil)
 #+end_src
 
 * esc sequence
 ** jk
 #+begin_src emacs-lisp
-(setq! evil-escape-key-sequence "jk"
-       evil-escape-delay 0.2
+(setq! evil-escape-key-sequence           "jk"
+       evil-escape-delay                  0.2
        evil-escape-unordered-key-sequence 't)
 #+end_src
 
 ** alt
 #+begin_src emacs-lisp
-(map! :map (evil-org-mode-map
-            prog-mode-map)
-      :i "M-h" "C-g h"
-      :i "M-j" "C-g j"
-      :i "M-k" "C-g k"
-      :i "M-l" "C-g l")
+(map! :after evil-org
+      :map (evil-org-mode-map prog-mode-map)
+      :i "M-h" (cmd! (evil-escape) (evil-backward-char))
+      :i "M-j" (cmd! (evil-escape) (evil-backward-char))
+      :i "M-k" (cmd! (evil-escape) (evil-backward-char))
+      :i "M-l" (cmd! (evil-escape) (evil-backward-char)))
+#+end_src
+
+* which-key
+** Scroll through overflow keys
+#+begin_src emacs-lisp
+(setq! which-key-use-C-h-commands 't)
 #+end_src
 
 * find file
 #+begin_src emacs-lisp
 (map! :leader :prefix "f"
-      :n "f" #'+default/find-file-under-here
-      :n "F" #'find-file)
+      "f" #'+default/find-file-under-here
+      "F" #'find-file)
 #+end_src
 
 * buffer keys
 #+begin_src emacs-lisp
-(map! :n   "\\" #'evil-next-buffer
-      :n   "|" #'evil-prev-buffer
+(map! :ni "M-]" #'evil-next-buffer
+      :ni "M-[" #'evil-prev-buffer
       :leader
-      :n   "y"   #'save-buffer
-      :n   "k"   #'kill-current-buffer)
+      :desc "Save"        "y" #'save-buffer
+      :desc "Kill buffer" "k" #'kill-current-buffer)
 #+end_src
 
 * window keys
 #+begin_src emacs-lisp
-(map! :n "C-h" #'evil-window-left
-      :n "C-j" #'evil-window-down
-      :n "C-k" #'evil-window-up
-      :n "C-l" #'evil-window-right
+(map! :ni "M-," #'evil-window-mru
       :leader
-      :n "d"  #'+workspace/close-window-or-workspace
+      :desc "Close window" "d" #'+workspace/close-window-or-workspace
       :prefix "w"
-      :n "o" #'doom/window-maximize-buffer)
+      :desc "Maximize buffer" "o" #'doom/window-maximize-buffer)
 #+end_src
+
+# #+begin_src emacs-lisp
+# (map! :n "C-h" #'evil-window-left
+#       :n "C-j" #'evil-window-down
+#       :n "C-k" #'evil-window-up
+#       :n "C-l" #'evil-window-right
+#       :leader
+#       :n "d"  #'+workspace/close-window-or-workspace
+#       :prefix "w"
+#       :n "o" #'doom/window-maximize-buffer)
+# #+end_src
 
 * goto keys
 #+begin_src emacs-lisp
-(map! :nv "gh" #'evil-beginning-of-line
-      :nv "gj" #'evil-goto-line
-      :nv "gk" #'evil-goto-first-line
-      :nv "gl" #'evil-end-of-line)
+(map! :prefix "g"
+      :desc "Go to line start" :nv "h" #'evil-beginning-of-line
+      :desc "Go to line end"   :nv "l" #'evil-end-of-line)
 #+end_src
-* bookmark jump or set
+
+* popup buffer
 #+begin_src emacs-lisp
 (map! :leader
-      :prefix "f"
+      :desc "Toggle popup buffer" :n "r" (cmd! (+popup/toggle) (ignore-errors (+popup/other)))
+      :desc "Raise popup buffer"  :n "R" #'+popup/raise)
+#+end_src
+
+* scroll lock mode
+#+begin_src emacs-lisp
+(map! :n "M-u" (cmd! (scroll-lock-mode 1) (evil-scroll-up 0))
+      :n "M-d" (cmd! (scroll-lock-mode 1) (evil-scroll-down 0))
+      :n "<f5>" #'scroll-lock-mode
+      :leader :prefix "t"
+      :desc "Scroll lock" :n "s" #'scroll-lock-mode)
+
+(map! :map scroll-lock-mode-map
+      :n "e" (cmd! (evil-collection-scroll-lock-next-line 1))
+      :n "y" (cmd! (evil-collection-scroll-lock-previous-line 1))
+      :n "d" (cmd! (evil-scroll-down 0))
+      :n "u" (cmd! (evil-scroll-up 0))
+      :n "j" (cmd! (scroll-lock-mode 0) (evil-next-line 1))
+      :n "k" (cmd! (scroll-lock-mode 0) (evil-previous-line 1))
+      :n "<esc>" #'scroll-lock-mode)
+#+end_src
+
+* bookmark jump or set
+#+begin_src emacs-lisp
+(map! :leader :prefix "f"
       :n "m" #'bookmark-jump)
 #+end_src
 
@@ -102,52 +139,69 @@
 
 * rainbow mode
 
-/preview hex colors/
+preview hex colors
 
 #+begin_src emacs-lisp
-(map! :leader :prefix "t" :n "R" #'rainbow-mode)
-#+end_src
-
-* toggle popup buffer
-#+begin_src emacs-lisp
-(map! :leader
-      (:desc "Toggle popup buffer" :n "r" #'(lambda () (interactive)
-                                              (+popup/toggle)
-                                              (ignore-errors (+popup/other)))
-      :desc "Raise popup buffer" :n "R" #'+popup/raise))
+(map! :leader :prefix "t"
+      :n "R" #'rainbow-mode)
 #+end_src
 
 * search man pages
+Swapping 'where-is' and 'man' bindings so I dont need need to hold shift to access man pages
 #+begin_src emacs-lisp
-(map! :leader :prefix "s" :n "M" #'man)
+(map! :leader :prefix "h"
+      :n "w" #'+default/man-or-woman
+      :n "W" #'where-is)
+#+end_src
+
+* dired
+
+directory editor
+
+** jump to dired buffer for current directory
+#+begin_src emacs-lisp
+(map! :ni "M-o" #'dired-jump
+      :leader :prefix "o"
+      :desc "Dired here" "o" #'dired-jump)
 #+end_src
 
 * vterm terminal emulator
-** jk escape
-
-/use jk escape in vterm-mode/
-
+** use jk escape in vterm-mode
 #+begin_src emacs-lisp
 (after! evil-escape (delete 'vterm-mode evil-escape-excluded-major-modes))
 #+end_src
 
-** toggle key
+** vterm buffer refresh timer
 #+begin_src emacs-lisp
-(map! :i "M-RET" #'+vterm/toggle
+(setq! vterm-timer-delay 0.01)
+#+end_src
+
+** open/focus vterm
+#+begin_src emacs-lisp
+(map! :ni "M-e" #'+vterm/toggle
       :leader
-      :n "RET" #'+vterm/toggle
+      :desc "Vterm popup" "e" #'+vterm/toggle
       :prefix "o"
-      :n "RET" #'+vterm/here)
+      :desc "Vterm window" "e" #'+vterm/here)
+
+;; (after! vterm
+;;   (map! :map vterm-mode-map
+;;         :ni "M-e" #'evil-window-mru))
 #+end_src
 
 ** kill shell process when vterm buffer is closed
+# #+begin_src emacs-lisp
+# (setq! vterm-kill-buffer-on-exit 't)
+# #+end_src
+
+** detect vterm prompt location through shell
 #+begin_src emacs-lisp
-(setq! vterm-kill-buffer-on-exit 't)
+(setq! vterm-use-vterm-prompt-detection-method nil)
 #+end_src
 
 * avy jump
 
-/jump to visible text using a char-based decision tree/
+jump to visible text using a char-based decision tree
 
 ** type any number of chars within timer
 #+begin_src emacs-lisp
@@ -157,42 +211,48 @@
 
 * evil lion
 
-/char aligning tool/
+char aligning tool
 
-** change lion bindings from gl/gL to gH/gL
-in org mode ~gH~ is goto header
 #+begin_src emacs-lisp
-(map! :nv "gH" #'evil-lion-left
-      :nv "gL" #'evil-lion-right)
+;; use `g a` (mnemonic `align`)
+;; these variables should be changed before (evil-lion-mode) is called
+(setq evil-lion-left-align-key (kbd "g a"))
+(setq evil-lion-right-align-key (kbd "g A"))
+(evil-lion-mode)
 #+end_src
 
 * evil surround
 #+begin_src emacs-lisp
 (map! :prefix "g"
-      :n "s" #'evil-surround-change
-      :v "s" #'evil-surround-edit)
+      :desc "Change surround" :n "s" #'evil-surround-change
+      :desc "Edit surround"   :v "s" #'evil-surround-edit)
 #+end_src
 
 * evil vimish fold
 #+begin_src emacs-lisp
-(map! :nv "zv" #'evil-vimish-fold-mode)
+;; (setq global-evil-vimish-fold-mode 't)
+(map! :prefix "z"
+      :nv "v" #'evil-vimish-fold-mode)
 #+end_src
 
 * org mode
 ** org paths
 #+begin_src emacs-lisp
-(setq org-directory "~/.gurjal/org/" org-roam-directory "~/.gurjal/org/zettelkasten")
+(setq! org-directory      "~/.gurjal/org/"
+       org-roam-directory "~/.gurjal/org/zettelkasten"
+       org-agenda-files '("~/.gurjal/org/todo.org"
+                          "~/.gurjal/org/notes.org"))
 #+end_src
 
 ** include time in org-time-stamp
 #+begin_src emacs-lisp
-(after! org
-  (setq org-time-stamp-formats '("<%Y-%m-%d %a %H:%M>" . "<%Y-%m-%d %a %H:%M>")))
+;; (after! evil-org
+;;   (setq! org-time-stamp-formats '("<%Y-%m-%d %a %H:%M>" . "<%Y-%m-%d %a %H:%M>")))
 #+end_src
 
 ** folds
 #+begin_src emacs-lisp
-(after! org
+(after! evil-org
   (setq! org-startup-folded 't
          org-startup-numerated 't
          org-num-max-level 2)
@@ -200,31 +260,21 @@ in org mode ~gH~ is goto header
   (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2))
 #+end_src
 
-** font emphasis
-*** hide markers
+** HOLD font emphasis
+*** HOLD hide markers
 #+begin_src emacs-lisp
-(setq! org-hide-emphasis-markers 't)
+;; (setq! org-hide-emphasis-markers nil)
 #+end_src
 
-*** toggle markers
+*** HOLD toggle markers
 #+begin_src emacs-lisp
-(map! :leader
-      :prefix "t"
-      :n "e" #'(lambda ()
-                 (interactive)
-                 (if org-hide-emphasis-markers
-                     (progn (setq! org-hide-emphasis-markers nil)
-                            (message "org emphasis markers are hidden"))
-                   (progn (setq! org-hide-emphasis-markers 't)
-                          (message "org emphasis markers are visible")))
-                 (revert-buffer)))
-#+end_src
-
-*** emphasize font
-#+begin_src emacs-lisp
-(map! :leader
-      :prefix "j"
-      :v "e" #'org-emphasize)
+;; (map! :leader
+;;       :prefix "t"
+;;       :n "e" #'(lambda () (interactive)
+;;                  (if org-hide-emphasis-markers
+;;                      (progn (setq! org-hide-emphasis-markers nil) (message "org emphasis markers are hidden"))
+;;                    (progn (setq! org-hide-emphasis-markers 't) (message "org emphasis markers are visible")))
+;;                  (revert-buffer)))
 #+end_src
 
 ** link hints
@@ -233,6 +283,7 @@ in org mode ~gH~ is goto header
       :leader
       :n "l" #'link-hint-open-link)
 #+end_src
+
 ** org-roam-ui
 #+begin_src emacs-lisp
 (use-package! websocket
@@ -246,351 +297,48 @@ in org mode ~gH~ is goto header
         org-roam-ui-open-on-start t))
 #+end_src
 
-** org roam keymap
+** format src block
+#+begin_src emacs-lisp
+(map! :leader :prefix "n"
+      :desc "Indent block" "b" #'org-indent-block)
+
+#+end_src
+
+** org keymap
 #+begin_src emacs-lisp
 (map! :n "-" #'org-mark-ring-goto
-      :leader
-      (:prefix-map ("j" . "journal")
-                   "j" #'org-roam-dailies-goto-today
-                   "f" #'org-roam-node-find
-                   "F" #'org-roam-ref-find
-                   "i" #'org-roam-node-insert
-                   "c" #'org-roam-capture
-                   "m" #'org-roam-refile
-                   "s" #'org-roam-db-sync
-                   "l" #'org-store-link
-                   "t" #'org-roam-tag-add
-                   "T" #'org-roam-tag-remove
-                   "r" #'org-roam-buffer-toggle
-                   "R" #'org-roam-buffer-display-dedicated
-                   (:prefix ("g" . "gui")
-                            "g" #'org-roam-ui-mode
-                            "f" #'org-roam-ui-follow-mode
-                            "z" #'org-roam-ui-node-zoom
-                            "l" #'org-roam-ui-node-local
-                            "a" #'org-roam-ui-add-to-local-graph
-                            "r" #'org-roam-ui-remove-from-local-graph)
-                   (:prefix ("d" . "dailies")
-                            "d" #'org-roam-dailies-goto-date
-                            "D" #'org-roam-dailies-capture-date
-                            "m" #'org-roam-dailies-goto-tomorrow
-                            "M" #'org-roam-dailies-capture-tomorrow
-                            "t" #'org-roam-dailies-goto-today
-                            "T" #'org-roam-dailies-capture-today
-                            "y" #'org-roam-dailies-goto-yesterday
-                            "Y" #'org-roam-dailies-capture-yesterday
-                            "f" #'org-roam-dailies-goto-next-note
-                            "b" #'org-roam-dailies-goto-previous-note
-                            "-" #'org-roam-dailies-find-directory)
-                   (:prefix ("o" . "properties")
-                            "t" #'org-roam-tag-add
-                            "T" #'org-roam-tag-remove
-                            "r" #'org-roam-ref-add
-                            "R" #'org-roam-ref-remove
-                            "a" #'org-roam-alias-add
-                            "A" #'org-roam-alias-remove)))
+      :leader :prefix-map ("j" . "journal")
+      :desc "Daily note"      "d" #'org-roam-dailies-goto-date
+      :desc "Insert node"     "i" #'org-roam-node-insert
+      :desc "Find node"       "f" #'org-roam-node-find
+      :desc "Find node ref"   "F" #'org-roam-ref-find
+      :desc "Capture"         "n" #'org-roam-capture
+      :desc "Refile"          "m" #'org-roam-refile
+      :desc "Store link"      "l" #'org-store-link
+      :desc "Tag add"         "t" #'org-roam-tag-add
+      :desc "Tag remove"      "T" #'org-roam-tag-remove
+      :desc "Sync roam db"    "s" #'org-roam-db-sync
+      :desc "Backlinks"       "r" (cmd! (org-roam-buffer-toggle) (+popup/other))
+      :desc "Other backlinks" "R" #'org-roam-buffer-display-dedicated
+      (:prefix ("o" . "properties")
+               "t" #'org-roam-tag-add
+               "T" #'org-roam-tag-remove
+               "r" #'org-roam-ref-add
+               "R" #'org-roam-ref-remove
+               "a" #'org-roam-alias-add
+               "A" #'org-roam-alias-remove)
+      (:prefix ("g" . "gui")
+               "g" #'org-roam-ui-mode
+               "f" #'org-roam-ui-follow-mode
+               "z" #'org-roam-ui-node-zoom
+               "l" #'org-roam-ui-node-local
+               "a" #'org-roam-ui-add-to-local-graph
+               "r" #'org-roam-ui-remove-from-local-graph))
 #+end_src
 
-** TODO org-roam buffer key
-- [ ] add roam buffer specific bindings for quit and maximise
-- [ ] change behavior when selecting backlink from buffer
+* tramp optimizations
 #+begin_src emacs-lisp
-(map! :n "M-r" #'(lambda () (interactive) (org-roam-buffer-toggle) (+popup/other)))
-;; (map! :map org-mode-map :niv "M-," #'(lambda ()) (interactive) (org-roam-buffer-toggle) (+popup/other))
-#+end_src
-* zen mode
-#+begin_src emacs-lisp
-;; zen mode
-(after! writeroom-mode
-  (setq +zen-text-scale 0.5)
-  ;; Disable line numbers
-  (add-hook! 'writeroom-mode-enable-hook
-    (when (bound-and-true-p display-line-numbers-mode)
-      (setq-local +line-num--was-activate-p display-line-numbers-type)
-      (display-line-numbers-mode -1)))
-  (add-hook! 'writeroom-mode-disable-hook
-    (when (bound-and-true-p +line-num--was-activate-p)
-      (display-line-numbers-mode +line-num--was-activate-p))))
-#+end_src
-
-* init.el
-#+begin_src emacs-lisp :tangle init.el
-;;; init.el -*- lexical-binding: t; -*-
-
-(doom! :input
-       ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
-       ;;chinese
-       ;;japanese
-       ;;layout            ; auie,ctsrnm is the superior home row
-
-       :completion
-       (company           ; the ultimate code completion backend
-        +childframe)
-       ;;helm              ; the *other* search engine for love and life
-       ;;ido               ; the other *other* search engine...
-       ;;ivy               ; a search engine for love and life
-       (vertico           ; the search engine of the future
-        +icons)
-
-       :ui
-       ;;deft              ; notational velocity for Emacs
-       doom              ; what makes DOOM look the way it does
-       doom-dashboard    ; a nifty splash screen for Emacs
-       doom-quit         ; DOOM quit-message prompts when you quit Emacs
-       ;;(emoji +unicode)  ; 🙂
-       hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;;hydra
-       ;;indent-guides     ; highlighted indent columns
-       ligatures         ; ligatures and symbols to make your code pretty again
-       ;;minimap           ; show a map of the code on the side
-       modeline          ; snazzy, Atom-inspired modeline, plus API
-       nav-flash         ; blink cursor line after big motions
-       ;;neotree           ; a project drawer, like NERDTree for vim
-       ophints           ; highlight the region an operation acts on
-       (popup             ; tame sudden yet inevitable temporary windows
-        +all
-        +defaults)
-       ;;tabs              ; a tab bar for Emacs
-       (treemacs          ; a project drawer, like neotree but cooler
-        +lsp)
-       ;;unicode           ; extended unicode support for various languages
-       (vc-gutter         ; vcs diff in the fringe
-        +diff-hl
-        +pretty)
-       vi-tilde-fringe   ; fringe tildes to mark beyond EOB
-       ;;window-select     ; visually switch windows
-       workspaces        ; tab emulation, persistence & separate workspaces
-       zen               ; distraction-free coding or writing
-
-       :editor
-       (evil            ; come to the dark side, we have cookies
-        +everywhere)
-       file-templates    ; auto-snippets for empty files
-       fold              ; (nigh) universal code folding
-       format            ; automated prettiness
-       ;;god               ; run Emacs commands without modifier keys
-       ;;lispy             ; vim for lisp, for people who don't like vim
-       ;;multiple-cursors  ; editing in many places at once
-       ;;objed             ; text object editing for the innocent
-       ;;parinfer          ; turn lisp into python, sort of
-       rotate-text       ; cycle region at point between text candidates
-       snippets          ; my elves. They type so I don't have to
-       ;;word-wrap         ; soft wrapping with language-aware indent
-
-       :emacs
-       (dired             ; making dired pretty [functional]
-        +icons
-        +ranger)
-       electric          ; smarter, keyword-based electric-indent
-       (ibuffer           ; interactive buffer management
-        +icons)
-       undo              ; persistent, smarter undo for your inevitable mistakes
-       vc                ; version-control and Emacs, sitting in a tree
-
-       :term
-       ;;eshell            ; the elisp shell that works everywhere
-       ;;shell             ; simple shell REPL for Emacs
-       ;;term              ; basic terminal emulator for Emacs
-       vterm             ; the best terminal emulation in Emacs
-
-       :checkers
-       (syntax             ; tasing you for every semicolon you forget
-        +childframe)
-       ;; (spell            ; tasing you for misspelling mispelling
-       ;;  +flyspell)
-       ;;grammar           ; tasing grammar mistake every you make
-
-       :tools
-       ;;ansible
-       ;;biblio            ; Writes a PhD for you (citation needed)
-       ;;debugger          ; FIXME stepping through code, to help you add bugs
-       ;;direnv
-       ;;docker
-       ;;editorconfig      ; let someone else argue about tabs vs spaces
-       ;;ein               ; tame Jupyter notebooks with emacs
-       (eval              ; run code, run (also, repls)
-        +overlay)
-       ;;gist              ; interacting with github gists
-       lookup              ; navigate your code and its documentation
-       (lsp               ; M-x vscode
-        +peek)
-       magit             ; a git porcelain for Emacs
-       make              ; run make tasks from Emacs
-       ;;pass              ; password manager for nerds
-       pdf               ; pdf enhancements
-       ;;prodigy           ; FIXME managing external services & code builders
-       rgb               ; creating color strings
-       ;;taskrunner        ; taskrunner for all your projects
-       ;;terraform         ; infrastructure as code
-       ;;tmux              ; an API for interacting with tmux
-       tree-sitter       ; syntax and parsing, sitting in a tree...
-       ;;upload            ; map local to remote projects via ssh/ftp
-
-       :os
-       (:if IS-MAC macos)  ; improve compatibility with macOS
-       ;;tty               ; improve the Emacs experience
-
-       :lang
-       ;;agda              ; types of types of types of types...
-       ;;beancount         ; mind the GAAP
-       (cc                ; C > C++ == 1
-        +lsp
-        +tree-sitter)
-       ;;clojure           ; java with a lisp
-       ;;common-lisp       ; if you've seen one lisp, you've seen them all
-       ;;coq               ; proofs-as-programs
-       ;;crystal           ; ruby at the speed of c
-       ;;csharp            ; unity, .NET, and mono shenanigans
-       data              ; config/data formats
-       ;;(dart +flutter)   ; paint ui and not much else
-       ;;dhall
-       ;;elixir            ; erlang done right
-       ;;elm               ; care for a cup of TEA?
-       emacs-lisp        ; drown in parentheses
-       ;;erlang            ; an elegant language for a more civilized age
-       ;;ess               ; emacs speaks statistics
-       ;;factor
-       ;;faust             ; dsp, but you get to keep your soul
-       ;;fortran           ; in FORTRAN, GOD is REAL (unless declared INTEGER)
-       ;;fsharp            ; ML stands for Microsoft's Language
-       ;;fstar             ; (dependent) types and (monadic) effects and Z3
-       ;;gdscript          ; the language you waited for
-       ;;(go +lsp)         ; the hipster dialect
-       ;;(graphql +lsp)    ; Give queries a REST
-       ;;(haskell +lsp)    ; a language that's lazier than I am
-       ;;hy                ; readability of scheme w/ speed of python
-       ;;idris             ; a language you can depend on
-       (json              ; At least it ain't XML
-        +lsp
-        +tree-sitter)
-       ;;(java +lsp)       ; the poster child for carpal tunnel syndrome
-       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
-       ;;julia             ; a better, faster MATLAB
-       ;;kotlin            ; a better, slicker Java(Script)
-       ;;latex             ; writing papers in Emacs has never been so fun
-       ;;lean              ; for folks with too much to prove
-       ;;ledger            ; be audit you can be
-       (lua               ; one-based indices? one-based indices
-        +lsp
-        +tree-sitter)
-       markdown          ; writing docs for people to ignore
-       ;;nim               ; python + lisp at the speed of c
-       ;;nix               ; I hereby declare "nix geht mehr!"
-       ;;ocaml             ; an objective camel
-       (org               ; organize your plain life in plain text
-        +roam2)
-       ;;php               ; perl's insecure younger brother
-       ;;plantuml          ; diagrams for confusing people more
-       ;;purescript        ; javascript, but functional
-       (python            ; beautiful is better than ugly
-        +lsp
-        +pyright)
-       ;;qt                ; the 'cutest' gui framework ever
-       ;;racket            ; a DSL for DSLs
-       ;;raku              ; the artist formerly known as perl6
-       ;;rest              ; Emacs as a REST client
-       ;;rst               ; ReST in peace
-       ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
-       (rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
-        +lsp
-        +tree-sitter)
-       ;;scala             ; java, but good
-       ;;(scheme +guile)   ; a fully conniving family of lisps
-       (sh                ; she sells {ba,z,fi}sh shells on the C xor
-        +lsp
-        +tree-sitter)
-       ;;sml
-       ;;solidity          ; do you need a blockchain? No.
-       ;;swift             ; who asked for emoji variables?
-       ;;terra             ; Earth and Moon in alignment for performance.
-       (web               ; the tubes
-        +lsp
-        +tree-sitter)
-       ;;yaml              ; JSON, but readable
-       ;;zig               ; C, but simpler
-
-       :email
-       ;;(mu4e +org +gmail)
-       ;;notmuch
-       ;;(wanderlust +gmail)
-
-       :app
-       ;;calendar
-       ;;emms
-       ;;everywhere        ; *leave* Emacs!? You must be joking
-       ;;irc               ; how neckbeards socialize
-       ;;(rss +org)        ; emacs as an RSS reader
-       ;;twitter           ; twitter client https://twitter.com/vnought
-
-       :config
-       literate
-       (default
-         +bindings
-         +smartparens))
-#+end_src
-
-* packages.el
-#+begin_src emacs-lisp :tangle packages.el
-;; -*- no-byte-compile: t; -*-
-;;; $DOOMDIR/packages.el
-
-;; snipe - f/F, t/T behaviour is annoying
-(package! evil-snipe :disable t)
-
-;; org-roam-ui - need latest version roam
-(unpin! org-roam)
-(package! org-roam-ui)
-#+end_src
-
-* TODO vterm insert mode paste
-#+begin_src emacs-lisp
-;;NOTE dont think i this because i can use 'C-y' emacs binding to paste in insert mode
-;; (map! :after vterm
-;;       :map vterm-mode-map
-;;       :i "M-p" #'evil-paste-after)
-#+end_src
-
-* TODO vim marker folds
-#+begin_src emacs-lisp
-;; vim marker folds
-;; (add-hook 'prog-mode-hook 'evil-vimish-fold-mode)
-;; (add-hook 'text-mode-hook 'evil-vimish-fold-mode)
-;; (setq evil-vimish-fold-target-modes '(prog-mode conf-mode text-mode))
-(setq global-evil-vimish-fold-mode 't)
-#+end_src
-
-* TODO fucking around here on...
-#+begin_src emacs-lisp
-;;
-;; fucking around here on...
-;;
-
-;; TODO trying to search roam notes by filetags
-;;
-;; (after! org
-;;  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))))
-
-;; TODO org roam capture templates
-;;
-;; '(("n" "node" plain
-;;    "%a\n* %?"
-;;    :if-new (file+head "%<%y%m%d%h%m%s>-${slug}.org" "#+title: ${title}\n")
-;;    :unnarrowed t)
-;;   ("i" "index" plain
-;;    "%a\n* %?"
-;;    :if-new (file+head "%<%y%m%d%h%m%s>-${slug}.org" "#+title: ${title}\n#+filetags: index\n")
-;;    :unnarrowed t)
-;;   ("p" "plain" plain
-;;    "%?"
-;;    :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-;; :unnarrowed t))
-
-;; TODO scroll mode with 'C-d' and 'C-u' as 'd' and 'u'
-;;
-;; (add-hook! 'scroll-lock-mode-hook
-;;            :local (map! :n "d" #'evil-scroll-down
-;;                         :n "u" #'evil-scroll-up))
-;; (remove-hook! 'scroll-lock-mode-finished-hook
-;;   :local (map! :n "d" #'evil-delete
-;;                :n "u" #'evil-undo))
+(setq! doom-modeline-project-detection nil)
+(setq! projectile-auto-update-cache    nil)
+(setq! projectile-dynamic-mode-line    nil)
 #+end_src

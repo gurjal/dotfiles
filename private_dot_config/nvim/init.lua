@@ -79,6 +79,7 @@ vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "focus left window" })
 vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "focus down window" })
 vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "focus up window" })
 vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "focus right window" })
+vim.keymap.set("n", "<leader>ww", "<C-W>w", { desc = "focus next window" })
 vim.keymap.set("n", "<leader>wH", "<C-w>H", { desc = "move window left" })
 vim.keymap.set("n", "<leader>wJ", "<C-w>J", { desc = "move window down" })
 vim.keymap.set("n", "<leader>wK", "<C-w>K", { desc = "move window up" })
@@ -149,7 +150,7 @@ require("lazy").setup {
         config = function(_, opts)
             local wk = require("which-key")
             wk.setup(opts)
-            wk.register({
+            wk.add({
                 {
                     mode = { "n", "v" },
                     { "<leader><tab>", group = "tabs" },
@@ -272,12 +273,14 @@ require("lazy").setup {
         config = function()
             require("nvim-treesitter.configs").setup {
                 ensure_installed = { "c", "lua", "rust" },
-                highlight = { enable = true, }
+                -- highlight = { enable = true, }
             }
         end
     },
     -- }}}
     -- lsp-zero.nvim {{{
+    -- lsp-zero is obsolete, redo this without it
+    -- https://lsp-zero.netlify.app/blog/lsp-config-overview.html
     {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v1.x',
@@ -583,4 +586,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("nord")
+vim.cmd.colorscheme("rose-pine")

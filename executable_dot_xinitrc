@@ -18,32 +18,34 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
-# system76 discrete nvidia
-if system76-power graphics | grep -q 'nvidia'; then
-  xrandr --setprovideroutputsource modesetting NVIDIA-0
-  xrandr --auto
-  xrandr --dpi 96
-fi
+# apparent this not the best idea
+# use tlp instead
+# powertop is more useful as a diagnosis tool
+# powertop --auto-tune
+
+# # system76 discrete nvidia
+# if system76-power graphics | grep -q 'nvidia'; then
+#   xrandr --setprovideroutputsource modesetting NVIDIA-0
+#   xrandr --auto
+#   xrandr --dpi 96
+# fi
 
 # # syncthing start runit user service
 # [ -z "$(sv status syncthing | grep run)" ] && sv up syncthing
 
-# # start pipewire for non-systemd setups
-# pipewire &
-
-# power management settings
-powertop --auto-tune
-
 # # emacs daemon start if not already running
 # [ -z "$(ps aux | grep emacs --daemon | grep -v grep)" ] && emacs --daemon &
 
+# start pipewire for non-systemd setups
+pipewire &
+
 # redshift &
-light -S 100
+slstatus &
 set-bg &
-picom &
+light -S 100
 dunst &
 xbanish &
-slstatus &
+picom &
 
 # start
 dbus-run-session -- dwm

@@ -14,24 +14,21 @@ alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
 alias diff="diff --color=auto"
-alias rmr="rm -rf"
+# alias rmr="rm -r"
 alias pg="$PAGER"
 alias wget="wget --hsts-file=${XDG_DATA_HOME}/wget-hsts"
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ......="cd ../../../../.."
-
+# alias ...="cd ../.."
+# alias ....="cd ../../.."
+# alias .....="cd ../../../.."
+# alias ......="cd ../../../../.."
 # chezmoi
 alias cz="chezmoi"
-
 # git
 alias ,="git"
 alias ,s="git status -sb ."
 alias ,status="git status"
 alias ,clone="git clone"
-alias ,l="git log --oneline --graph --decorate -10 | cat"
-alias ,la="git log --oneline --graph --decorate --all"
+alias ,l="git log --oneline --graph --decorate -10"
 alias ,lo="git log --oneline --graph --decorate"
 alias ,log="git log"
 alias ,la="git log --all --oneline --graph --decorate"
@@ -55,23 +52,17 @@ alias ,remote="git remote"
 alias ,reset="git reset"
 alias ,restore="git restore"
 alias ,mod="git submodule"
-alias ,tag="git tag -n --sort=-version:refname"
 alias ,rm="git rm"
 alias ,mv="git mv"
-
 # bat
 alias cat="bat -pp"
-
 # skim
-alias sk="sk -p ' ' --inline-info --bind=ctrl-n:down,ctrl-p:up,alt-n:up,alt-p:down,alt-m:accept,ctrl-g:abort"
-
+alias sk="sk -p ' ' --inline-info"
 # xclip
 alias cl="xclip -selection clipboard"
-
 # neovim
 alias v="$EDITOR"
 alias suv="sudo $EDITOR"
-
 # trashman
 alias tm="trashman"
 
@@ -119,117 +110,87 @@ setopt no_case_glob
 # }}}
 # functions {{{
 
-# find file with sk
+# pick file with sk
 #   if cmdline buffer is empty, open file in nvim
 #   if cmdline buffer is not empty, return path of file
 function __find_file()
 {
-    if [ -z $BUFFER ]
-    then
-        local file=$(fd -E .git -t f\
-            | sk --height=$SK_HEIGHT --preview 'bat -ppf --line-range :500 {}'\
-                --bind=alt-h:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+    if [ -z $BUFFER ]; then
+        local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT \
+            --preview 'bat -ppf --line-range :500 {}')
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER="$EDITOR $file"
+        BUFFER="$EDITOR '$file'"
         zle accept-line
     else
-        local file=$(fd -E .git -t f\
-            | sk --height=$SK_HEIGHT\
-                --bind=alt-h:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+        local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER+=" $file"
+        BUFFER+=" '$file'"
         zle end-of-line
     fi
 }
 zle -N __find_file
 
-# find a hidden file with sk
+# grip a hidden file with sk
 #   if cmdline buffer is empty, open hidden file in nvim
 #   if cmdline buffer is not empty, return path of hidden file
 function __find_hidden_file()
 {
-    if [ -z $BUFFER ]
-    then
-        local file=$(fd -E .git -t f -H\
-            | rg "^\."\
-            | sk --height=$SK_HEIGHT --preview 'bat -ppf --line-range :500 {}'\
-                --bind=alt-h:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+    if [ -z $BUFFER ]; then
+        local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT \
+            --preview 'bat -ppf --line-range :500 {}')
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER="$EDITOR $file"
+        BUFFER="$EDITOR '$file'"
         zle accept-line
     else
-        local file=$(fd -E .git -t f -H\
-            | rg "^\."\
-            | sk --height=$SK_HEIGHT\
-                --bind=alt-h:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+        local file=$(fd -E .git -t f -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $file ] && return
-        BUFFER+=" $file"
+        BUFFER+=" '$file'"
         zle end-of-line
     fi
 }
 zle -N __find_hidden_file
 
-# find a directory with sk
+# hop to a directory with sk
 #   if cmdline buffer is empty, cd into directory
 #   if cmdline buffer is not empty, return path of directory
 function __find_directory()
 {
-    if [ -z $BUFFER ]
-    then
-        local dir=$(fd -t d\
-            | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+    if [ -z $BUFFER ]; then
+        local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER="cd $dir"
+        BUFFER="cd '$dir'"
         zle accept-line
     else
-        local dir=$(fd -t d\
-            | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+        local dir=$(fd -t d | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER+=" $dir"
+        BUFFER+=" '$dir'"
         zle end-of-line
     fi
 }
 zle -N __find_directory
 
-# find a hidden directory with sk
+# hop to a hidden directory with sk
 #   if cmdline buffer is empty, cd into directory
 #   if cmdline buffer is not empty, return path of directory
 function __find_hidden_directory
 {
-    if [ -z $BUFFER ]
-    then
-        local dir=$(fd -t d -H\
-            | rg "^\."\
-            | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+    if [ -z $BUFFER ]; then
+        local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER="cd $dir"
+        BUFFER="cd '$dir'"
         zle accept-line
     else
-        local dir=$(fd -t d -H\
-            | rg "^\."\
-            | sk --height=$SK_HEIGHT\
-                --bind=alt-g:abort --multi\
-            | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+        local dir=$(fd -t d -H | rg "^\." | sk --reverse --height=$SK_HEIGHT)
         zle reset-prompt
         [ -z $dir ] && return
-        BUFFER+=" $dir"
+        BUFFER+=" '$dir'"
         zle end-of-line
     fi
 }
@@ -238,36 +199,33 @@ zle -N __find_hidden_directory
 # operate a file with xdg-open
 function __open_file()
 {
-    local file=$(fd -E .git -t f\
-        | sk --height=$SK_HEIGHT)
-            # --bind=ctrl-o:abort)
-        # | sed -e 's/[^a-zA-Z0-9,._+@%/-]/\\&/g; 1{$s/^$/""/}; 1!s/^/"/; $!s/$/"/')
+    local file=$(fd -E .git -t f | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
     [ -z $file ] && return
     xdg-open $file
 }
 zle -N __open_file
 
-# interrogate ps about cpu usage
-function __list_pid()
-{
-    # local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
-    #     sk --reverse --no-sort --tac\
-    #         --header='id      user    cpu mem start time command')
-    # zle reset-prompt
-    # [ -z $proc ] && return
-    # echo $proc
-    # BUFFER=" top -o '+%CPU'"
-    BUFFER=" htop --sort-key=PERCENT_CPU"
-    zle accept-line
-}
-zle -N __list_pid
+# # interrogate ps about cpu usage
+# function __list_pid()
+# {
+#     # local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
+#     #     sk --reverse --no-sort --tac \
+#     #         --header='id      user    cpu mem start time command')
+#     # zle reset-prompt
+#     # [ -z $proc ] && return
+#     # echo $proc
+#     # BUFFER=" top -o '+%CPU'"
+#     BUFFER=" htop --sort-key=PERCENT_CPU"
+#     zle accept-line
+# }
+# zle -N __list_pid
 
 # interrogate ps about mem usage
 function __interrogate_proc_mem()
 {
     # local proc=$(ps axuk %mem | awk '{print $2"\t"$1"\t"$4" "$3" "$9" "$10" "$11}' |
-    #     sk --reverse --no-sort --tac\
+    #     sk --reverse --no-sort --tac \
     #         --header='id      user    mem cpu start time command')
     # zle reset-prompt
     # [ -z $proc ] && return
@@ -279,10 +237,7 @@ zle -N __interrogate_proc_mem
 
 function __find_env()
 {
-    # local env_var=$(env | sk --reverse --tac)
-    local env_var=$(env\
-        | sk --tac --multi)
-            # --bind=ctrl-e:abort)
+    local env_var=$(env | sk --reverse --tac)
     zle reset-prompt
     [ -z $env_var ] && return
     if [ -z $BUFFER ]; then
@@ -296,11 +251,8 @@ zle -N __find_env
 
 function __kill_pid()
 {
-    # local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
-    #     sk --reverse --no-sort --tac --color=header:160\
-    #         --header="id      user    cpu mem start time command" | awk '{print $1}')
-    local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |\
-        sk --no-sort --tac --color=header:160 --multi\
+    local proc=$(ps axuk %cpu | awk '{print $2"\t"$1"\t"$3" "$4" "$9" "$10" "$11}' |
+        sk --reverse --no-sort --tac --color=header:160 \
             --header="id      user    cpu mem start time command" | awk '{print $1}')
     zle reset-prompt
     [ -z $proc ] && return
@@ -310,11 +262,8 @@ zle -N __kill_pid
 
 function __find_hist()
 {
-    # local cmd=$(bat -pp "$HISTFILE" |
-    #     sk --reverse --tac --no-sort --height=$SK_HEIGHT)
     local cmd=$(bat -pp "$HISTFILE" |
-        sk --tac --no-sort --height=$SK_HEIGHT)
-            # --bind=ctrl-r:abort)
+        sk --reverse --tac --no-sort --height=$SK_HEIGHT)
     zle reset-prompt
     [ -z $cmd ] && return
     zle push-input
@@ -338,10 +287,7 @@ function __mount_drive()
         fi
     done
     lsblk
-    # local dev=$(fd . '/dev/' | sk --reverse --height=$SK_HEIGHT)
-    local dev=$(fd . '/dev/'\
-        | sk --height=$SK_HEIGHT)
-            # --bind=alt-ctrl-m:abort)
+    local dev=$(fd . '/dev/' | sk --reverse --height=$SK_HEIGHT)
     zle reset-prompt
     [ -z $dev ] && return
     BUFFER="sudo mount '$dev' $mnt"
@@ -350,7 +296,7 @@ function __mount_drive()
 zle -N __mount_drive
 
 # run updatedb before locate
-function locat()
+function locatedb()
 {
     sudo updatedb
     locate $1
@@ -375,11 +321,6 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='fg=red,bold'
 
 set -o emacs
 
-# bindkey -M emacs '^[h' backward-delete-char
-# bindkey -M emacs '^[H' backward-delete-word
-
-bindkey -M emacs "^[m" accept-line
-
 # nav
 bindkey -M emacs "^[h" __find_file
 bindkey -M emacs "^[g" __find_directory
@@ -388,19 +329,17 @@ bindkey -M emacs "^[^g" __find_hidden_directory
 # xdg-open
 bindkey -M emacs "^[o" __open_file
 # env
-bindkey -M emacs "^[^e" __find_env
+bindkey -M emacs "^[e" __find_env
 # hist
-bindkey -M emacs "^[^r" __find_hist
+bindkey -M emacs "^[r" __find_hist
 # mount
-bindkey -M emacs "^[^m" __mount_drive
+bindkey -M emacs "^[m" __mount_drive
 # pid
-bindkey -M emacs "^[^k" __kill_pid
-bindkey -M emacs "^[^p" __list_pid
+bindkey -M emacs "^[k" __kill_pid
+# bindkey -M emacs "^[p" __list_pid
 # zsh-history-substring-search
-bindkey -M emacs '^n' history-substring-search-down
-bindkey -M emacs '^[n' history-substring-search-up
-bindkey -M emacs '^p' history-substring-search-up
-bindkey -M emacs '^[p' history-substring-search-down
+bindkey -M emacs '^P' history-substring-search-up
+bindkey -M emacs '^N' history-substring-search-down
 bindkey -M emacs '<Up>' history-substring-search-up
 bindkey -M emacs '<Down>' history-substring-search-down
 

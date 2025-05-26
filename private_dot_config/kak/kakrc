@@ -7,7 +7,7 @@ evaluate-commands %sh{
 }
 
 # UI
-colorscheme seoul256
+colorscheme ayu
 set-option global tabstop 4
 set-option global indentwidth 0
 set-option global scrolloff 0,4

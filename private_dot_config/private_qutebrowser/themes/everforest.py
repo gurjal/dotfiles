@@ -4,15 +4,8 @@
 #
 
 bg_default = "#323d43"
-
-# og text brightess
-#   same as dwm
-# fg_default = "#868d80"
-# fg_selection = "#d8caac"
-
-# dimmer text
-fg_default = "#6b7067" # 25% darker than og value
-fg_selection = "#868d80" # fg_default og value
+fg_default = "#868d80"
+fg_selection = "#d8caac"
 
 bg_lightest = "#485860"
 fg_disabled = "#60655b"
