@@ -1,6 +1,8 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-(setq! doom-theme 'doom-rose-pine-moon)
+(setq! catppuccin-flavor 'frappe)
+
+(setq! doom-theme 'doom-palenight)
 
 (setq! doom-font                (font-spec :family "Iosevka Nerd Font Mono" :weight 'normal  :size 18)
        doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font"      :weight 'normal  :size 18)
@@ -29,8 +31,8 @@
       "f" #'+default/find-file-under-here
       "F" #'find-file)
 
-(map! :ni "M-]" #'evil-next-buffer
-      :ni "M-[" #'evil-prev-buffer
+(map! :n "\\" #'evil-next-buffer
+      :n "|" #'evil-prev-buffer
       :leader
       :desc "Save"        "y" #'save-buffer
       :desc "Kill buffer" "k" #'kill-current-buffer)
@@ -39,7 +41,8 @@
       :leader
       :desc "Close window" "d" #'+workspace/close-window-or-workspace
       :prefix "w"
-      :desc "Maximize buffer" "o" #'doom/window-maximize-buffer)
+      :desc "Maximize buffer" "i" #'doom/window-enlargen
+      :desc "Only buffer"     "o" #'doom/window-maximize-buffer)
 
 (map! :prefix "g"
       :desc "Go to line start" :nv "h" #'evil-beginning-of-line
@@ -80,6 +83,44 @@
       :leader :prefix "o"
       :desc "Dired here" "o" #'dired-jump)
 
+(defun my-vc-off-if-remote ()
+  (if (file-remote-p (buffer-file-name))
+      (setq-local vc-handled-backends nil)))
+(add-hook 'find-file-hook 'my-vc-off-if-remote)
+
+;; Dont use remote file locks
+(setq! remote-file-name-inhibit-locks t)
+
+(after! tramp
+  (setq! tramp-default-method "ssh"               ; Use SSH by default
+         tramp-verbose 1                          ; Reduce verbosity
+         tramp-use-ssh-controlmaster-options nil  ; Don't use control master
+         tramp-chunksize 500                      ; Bigger chunks for better performance
+         tramp-connection-timeout 10              ; Shorter timeout
+         ;; Use SSH configuration
+         tramp-use-ssh-controlmaster-options nil
+         ;; Cache remote files
+         remote-file-name-inhibit-cache nil
+         ;; Enable file-name-handler cache
+         tramp-cache-read-persistent-data t))
+
+;; ;; Not necessary if already turning off remote vc
+;; ;; Ignore certain directories when remote for vc
+;; (setq vc-ignore-dir-regexp
+;;       (format "%s\\|%s"
+;;               vc-ignore-dir-regexp
+;;               tramp-file-name-regexp))
+
+
+;; Projectile auto caching
+(setq! doom-modeline-project-detection nil)
+(setq! projectile-auto-update-cache    nil)
+(setq! projectile-dynamic-mode-line    nil)
+
+;; (require 'tramp-term)
+(map! :leader :prefix "o"
+      :desc "Tramp ssh" "s" #'tramp-term)
+
 (after! evil-escape (delete 'vterm-mode evil-escape-excluded-major-modes))
 
 (setq! vterm-timer-delay 0.01)
@@ -118,15 +159,18 @@
        org-agenda-files '("~/.gurjal/org/todo.org"
                           "~/.gurjal/org/notes.org"))
 
+;; (setq! org-tags-exclude-from-inheritance '("crypt" "index"))
+
 ;; (after! evil-org
 ;;   (setq! org-time-stamp-formats '("<%Y-%m-%d %a %H:%M>" . "<%Y-%m-%d %a %H:%M>")))
 
-(after! evil-org
-  (setq! org-startup-folded 't
-         org-startup-numerated 't
-         org-num-max-level 2)
-  ;; Make the backlinks buffer easier to peruse by folding leaves by default.
-  (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2))
+(after! org
+  (setq! org-agenda-inhibit-startup nil ;; org doesnt honor org-startup-folded when this is true
+         org-startup-folded 'show2levels
+         org-startup-numerated nil
+         org-num-max-level 1))
+;; Make the backlinks buffer easier to peruse by folding leaves by default.
+(add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2)
 
 ;; (setq! org-hide-emphasis-markers nil)
 
@@ -152,23 +196,22 @@
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 
-(map! :leader :prefix "n"
-      :desc "Indent block" "b" #'org-indent-block)
-
 (map! :n "-" #'org-mark-ring-goto
       :leader :prefix-map ("j" . "journal")
-      :desc "Daily note"      "d" #'org-roam-dailies-goto-date
-      :desc "Insert node"     "i" #'org-roam-node-insert
-      :desc "Find node"       "f" #'org-roam-node-find
-      :desc "Find node ref"   "F" #'org-roam-ref-find
-      :desc "Capture"         "n" #'org-roam-capture
-      :desc "Refile"          "m" #'org-roam-refile
-      :desc "Store link"      "l" #'org-store-link
-      :desc "Tag add"         "t" #'org-roam-tag-add
-      :desc "Tag remove"      "T" #'org-roam-tag-remove
-      :desc "Sync roam db"    "s" #'org-roam-db-sync
-      :desc "Backlinks"       "r" (cmd! (org-roam-buffer-toggle) (+popup/other))
-      :desc "Other backlinks" "R" #'org-roam-buffer-display-dedicated
+      :desc "Daily note"       "d" #'org-roam-dailies-goto-date
+      :desc "Insert node"      "i" #'org-roam-node-insert
+      :desc "Find node"        "f" #'org-roam-node-find
+      :desc "Find node ref"    "F" #'org-roam-ref-find
+      :desc "Backlinks"        "r" (cmd! (org-roam-buffer-toggle) (+popup/other))
+      :desc "Search backlinks" "R" #'org-roam-buffer-display-dedicated
+      :desc "Format src block" "b" #'org-indent-block
+      :desc "Search notes"     "/" #'+default/org-notes-search
+      :desc "Search agenda"    "s" #'+default/org-notes-headlines
+      :desc "Sync roam db"     "S" #'org-roam-db-sync
+      :desc "Capture"          "n" #'org-roam-capture
+      :desc "Refile"           "m" #'org-roam-refile
+      :desc "Store link"       "l" #'org-store-link
+      :desc "Tag add"          "t" #'org-roam-tag-add
       (:prefix ("o" . "properties")
                "t" #'org-roam-tag-add
                "T" #'org-roam-tag-remove
@@ -184,6 +227,7 @@
                "a" #'org-roam-ui-add-to-local-graph
                "r" #'org-roam-ui-remove-from-local-graph))
 
-(setq! doom-modeline-project-detection nil)
-(setq! projectile-auto-update-cache    nil)
-(setq! projectile-dynamic-mode-line    nil)
+(map! :map org-agenda-mode-map
+      :localleader
+      :desc "Filter by tree" "s" "s^"
+      :desc "Remove filter" "x" "S")

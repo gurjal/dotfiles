@@ -6,8 +6,14 @@
 #+end_src
 
 * theme
+** catppuccin config
 #+begin_src emacs-lisp
-(setq! doom-theme 'doom-rose-pine-moon)
+(setq! catppuccin-flavor 'frappe)
+#+end_src
+
+** set theme
+#+begin_src emacs-lisp
+(setq! doom-theme 'doom-palenight)
 #+end_src
 
 * fonts
@@ -67,8 +73,8 @@ nil          no line numbers
 
 * buffer keys
 #+begin_src emacs-lisp
-(map! :ni "M-]" #'evil-next-buffer
-      :ni "M-[" #'evil-prev-buffer
+(map! :n "\\" #'evil-next-buffer
+      :n "|" #'evil-prev-buffer
       :leader
       :desc "Save"        "y" #'save-buffer
       :desc "Kill buffer" "k" #'kill-current-buffer)
@@ -80,7 +86,8 @@ nil          no line numbers
       :leader
       :desc "Close window" "d" #'+workspace/close-window-or-workspace
       :prefix "w"
-      :desc "Maximize buffer" "o" #'doom/window-maximize-buffer)
+      :desc "Maximize buffer" "i" #'doom/window-enlargen
+      :desc "Only buffer"     "o" #'doom/window-maximize-buffer)
 #+end_src
 
 # #+begin_src emacs-lisp
@@ -165,6 +172,56 @@ directory editor
       :desc "Dired here" "o" #'dired-jump)
 #+end_src
 
+* tramp
+** optimizations
+projectile seems to slow down tramp connection
+
+#+begin_src emacs-lisp
+(defun my-vc-off-if-remote ()
+  (if (file-remote-p (buffer-file-name))
+      (setq-local vc-handled-backends nil)))
+(add-hook 'find-file-hook 'my-vc-off-if-remote)
+
+;; Dont use remote file locks
+(setq! remote-file-name-inhibit-locks t)
+
+(after! tramp
+  (setq! tramp-default-method "ssh"               ; Use SSH by default
+         tramp-verbose 1                          ; Reduce verbosity
+         tramp-use-ssh-controlmaster-options nil  ; Don't use control master
+         tramp-chunksize 500                      ; Bigger chunks for better performance
+         tramp-connection-timeout 10              ; Shorter timeout
+         ;; Use SSH configuration
+         tramp-use-ssh-controlmaster-options nil
+         ;; Cache remote files
+         remote-file-name-inhibit-cache nil
+         ;; Enable file-name-handler cache
+         tramp-cache-read-persistent-data t))
+
+;; ;; Not necessary if already turning off remote vc
+;; ;; Ignore certain directories when remote for vc
+;; (setq vc-ignore-dir-regexp
+;;       (format "%s\\|%s"
+;;               vc-ignore-dir-regexp
+;;               tramp-file-name-regexp))
+
+
+;; Projectile auto caching
+(setq! doom-modeline-project-detection nil)
+(setq! projectile-auto-update-cache    nil)
+(setq! projectile-dynamic-mode-line    nil)
+#+end_src
+
+** directory tracking
+Installed 'tramp-term' package through melpa repo
+Use M-x tramp-term to connect with directory tracking
+
+#+begin_src emacs-lisp
+;; (require 'tramp-term)
+(map! :leader :prefix "o"
+      :desc "Tramp ssh" "s" #'tramp-term)
+#+end_src
+
 * vterm terminal emulator
 ** use jk escape in vterm-mode
 #+begin_src emacs-lisp
@@ -244,20 +301,27 @@ char aligning tool
                           "~/.gurjal/org/notes.org"))
 #+end_src
 
-** include time in org-time-stamp
+** TODO org roam tags
+i want to inherit all the tags in a org roam node except the index tags when capturing to link new nodes
+#+begin_src emacs-lisp
+;; (setq! org-tags-exclude-from-inheritance '("crypt" "index"))
+#+end_src
+
+** HOLD include time in org-time-stamp
 #+begin_src emacs-lisp
 ;; (after! evil-org
 ;;   (setq! org-time-stamp-formats '("<%Y-%m-%d %a %H:%M>" . "<%Y-%m-%d %a %H:%M>")))
 #+end_src
 
-** folds
+** fold levels
 #+begin_src emacs-lisp
-(after! evil-org
-  (setq! org-startup-folded 't
-         org-startup-numerated 't
-         org-num-max-level 2)
-  ;; Make the backlinks buffer easier to peruse by folding leaves by default.
-  (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2))
+(after! org
+  (setq! org-agenda-inhibit-startup nil ;; org doesnt honor org-startup-folded when this is true
+         org-startup-folded 'show2levels
+         org-startup-numerated nil
+         org-num-max-level 1))
+;; Make the backlinks buffer easier to peruse by folding leaves by default.
+(add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2)
 #+end_src
 
 ** HOLD font emphasis
@@ -297,29 +361,24 @@ char aligning tool
         org-roam-ui-open-on-start t))
 #+end_src
 
-** format src block
-#+begin_src emacs-lisp
-(map! :leader :prefix "n"
-      :desc "Indent block" "b" #'org-indent-block)
-
-#+end_src
-
 ** org keymap
 #+begin_src emacs-lisp
 (map! :n "-" #'org-mark-ring-goto
       :leader :prefix-map ("j" . "journal")
-      :desc "Daily note"      "d" #'org-roam-dailies-goto-date
-      :desc "Insert node"     "i" #'org-roam-node-insert
-      :desc "Find node"       "f" #'org-roam-node-find
-      :desc "Find node ref"   "F" #'org-roam-ref-find
-      :desc "Capture"         "n" #'org-roam-capture
-      :desc "Refile"          "m" #'org-roam-refile
-      :desc "Store link"      "l" #'org-store-link
-      :desc "Tag add"         "t" #'org-roam-tag-add
-      :desc "Tag remove"      "T" #'org-roam-tag-remove
-      :desc "Sync roam db"    "s" #'org-roam-db-sync
-      :desc "Backlinks"       "r" (cmd! (org-roam-buffer-toggle) (+popup/other))
-      :desc "Other backlinks" "R" #'org-roam-buffer-display-dedicated
+      :desc "Daily note"       "d" #'org-roam-dailies-goto-date
+      :desc "Insert node"      "i" #'org-roam-node-insert
+      :desc "Find node"        "f" #'org-roam-node-find
+      :desc "Find node ref"    "F" #'org-roam-ref-find
+      :desc "Backlinks"        "r" (cmd! (org-roam-buffer-toggle) (+popup/other))
+      :desc "Search backlinks" "R" #'org-roam-buffer-display-dedicated
+      :desc "Format src block" "b" #'org-indent-block
+      :desc "Search notes"     "/" #'+default/org-notes-search
+      :desc "Search agenda"    "s" #'+default/org-notes-headlines
+      :desc "Sync roam db"     "S" #'org-roam-db-sync
+      :desc "Capture"          "n" #'org-roam-capture
+      :desc "Refile"           "m" #'org-roam-refile
+      :desc "Store link"       "l" #'org-store-link
+      :desc "Tag add"          "t" #'org-roam-tag-add
       (:prefix ("o" . "properties")
                "t" #'org-roam-tag-add
                "T" #'org-roam-tag-remove
@@ -336,9 +395,11 @@ char aligning tool
                "r" #'org-roam-ui-remove-from-local-graph))
 #+end_src
 
-* tramp optimizations
+* org agenda
+** filter in agenda
 #+begin_src emacs-lisp
-(setq! doom-modeline-project-detection nil)
-(setq! projectile-auto-update-cache    nil)
-(setq! projectile-dynamic-mode-line    nil)
+(map! :map org-agenda-mode-map
+      :localleader
+      :desc "Filter by tree" "s" "s^"
+      :desc "Remove filter" "x" "S")
 #+end_src

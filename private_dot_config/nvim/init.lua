@@ -118,7 +118,7 @@ vim.keymap.set("n", "<leader>tl", ":set nu! rnu!<cr>", { desc = "toggle linenumb
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 -- search
-vim.keymap.set({ "i", "n" }, "<esc>", ":noh<cr><esc>")
+vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>")
 -- add undo break-points
 vim.keymap.set("i", ",", ",<c-g>u")
 vim.keymap.set("i", ".", ".<c-g>u")
@@ -586,4 +586,4 @@ require("lazy").setup {
 
 }
 
-vim.cmd.colorscheme("rose-pine")
+vim.cmd.colorscheme("palenight")

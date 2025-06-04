@@ -7,3 +7,8 @@
 ;; org-roam-ui - need latest version roam
 (unpin! org-roam)
 (package! org-roam-ui)
+
+;; https://github.com/catppuccin/emacs
+(package! catppuccin-theme)
+
+(package! tramp-term)
