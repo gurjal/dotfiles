@@ -108,6 +108,12 @@ nil          no line numbers
       :desc "Go to line end"   :nv "l" #'evil-end-of-line)
 #+end_src
 
+* insert keys
+#+begin_src emacs-lisp
+(map! :leader :prefix "i"
+      :desc "Org block" :n "o" #'org-insert-structure-template)
+#+end_src
+
 * popup buffer
 #+begin_src emacs-lisp
 (map! :leader
@@ -301,8 +307,8 @@ char aligning tool
                           "~/.gurjal/org/notes.org"))
 #+end_src
 
-** TODO org roam tags
-i want to inherit all the tags in a org roam node except the index tags when capturing to link new nodes
+** TODO org roam subtree tag inheritance
+when capturing a child node, inherit all the parent tags excluding the *:INDEX:* tag
 #+begin_src emacs-lisp
 ;; (setq! org-tags-exclude-from-inheritance '("crypt" "index"))
 #+end_src
@@ -313,7 +319,7 @@ i want to inherit all the tags in a org roam node except the index tags when cap
 ;;   (setq! org-time-stamp-formats '("<%Y-%m-%d %a %H:%M>" . "<%Y-%m-%d %a %H:%M>")))
 #+end_src
 
-** fold levels
+** initial fold levels
 #+begin_src emacs-lisp
 (after! org
   (setq! org-agenda-inhibit-startup nil ;; org doesnt honor org-startup-folded when this is true
@@ -324,22 +330,22 @@ i want to inherit all the tags in a org roam node except the index tags when cap
 (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2)
 #+end_src
 
-** HOLD font emphasis
-*** HOLD hide markers
+** font emphasis markers
+*** hide markers
 #+begin_src emacs-lisp
-;; (setq! org-hide-emphasis-markers nil)
+(setq! org-hide-emphasis-markers 't)
 #+end_src
 
 *** HOLD toggle markers
-#+begin_src emacs-lisp
-;; (map! :leader
-;;       :prefix "t"
-;;       :n "e" #'(lambda () (interactive)
-;;                  (if org-hide-emphasis-markers
-;;                      (progn (setq! org-hide-emphasis-markers nil) (message "org emphasis markers are hidden"))
-;;                    (progn (setq! org-hide-emphasis-markers 't) (message "org emphasis markers are visible")))
-;;                  (revert-buffer)))
-#+end_src
+# #+begin_src emacs-lisp
+# (map! :leader
+#       :prefix "t"
+#       :n "e" #'(lambda () (interactive)
+#                  (if org-hide-emphasis-markers
+#                      (progn (setq! org-hide-emphasis-markers nil) (message "org emphasis markers are hidden"))
+#                    (progn (setq! org-hide-emphasis-markers 't) (message "org emphasis markers are visible")))
+#                  (revert-buffer)))
+# #+end_src
 
 ** link hints
 #+begin_src emacs-lisp

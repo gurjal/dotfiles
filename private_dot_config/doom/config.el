@@ -48,6 +48,9 @@
       :desc "Go to line start" :nv "h" #'evil-beginning-of-line
       :desc "Go to line end"   :nv "l" #'evil-end-of-line)
 
+(map! :leader :prefix "i"
+      :desc "Org block" :n "o" #'org-insert-structure-template)
+
 (map! :leader
       :desc "Toggle popup buffer" :n "r" (cmd! (+popup/toggle) (ignore-errors (+popup/other)))
       :desc "Raise popup buffer"  :n "R" #'+popup/raise)
@@ -172,15 +175,7 @@
 ;; Make the backlinks buffer easier to peruse by folding leaves by default.
 (add-hook 'org-roam-buffer-postrender-functions #'magit-section-show-level-2)
 
-;; (setq! org-hide-emphasis-markers nil)
-
-;; (map! :leader
-;;       :prefix "t"
-;;       :n "e" #'(lambda () (interactive)
-;;                  (if org-hide-emphasis-markers
-;;                      (progn (setq! org-hide-emphasis-markers nil) (message "org emphasis markers are hidden"))
-;;                    (progn (setq! org-hide-emphasis-markers 't) (message "org emphasis markers are visible")))
-;;                  (revert-buffer)))
+(setq! org-hide-emphasis-markers 't)
 
 (map! :map org-mode-map
       :leader
